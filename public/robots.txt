@@ -1,0 +1,12 @@
+# Robots.txt for Cloudlem
+User-agent: *
+Allow: /
+
+# Disallow admin or private paths (if any in future)
+# Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://cloudlem.com/sitemap.xml
+
+# Crawl-delay (optional, removes if causing issues)
+Crawl-delay: 1

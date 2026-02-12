@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-plus: "Plus Jakarta Sans", sans-serif;
+
+  /* Brand Palette */
+  --color-brand-black: #050505;
+  --color-brand-dark: #0A0A0A;
+  --color-brand-gray: #1F1F1F;
+  --color-brand-light: #F0F4FA;
+  --color-brand-muted: #F5F7FA;
+
+  /* Accent Colors */
+  --color-accent-pink: #FF0080;
+  --color-accent-magenta: #E91E90;
+  --color-accent-cyan: #00C2FF;
+  --color-accent-blue: #2563EB;
+  --color-accent-teal: #0D9488;
+  --color-accent-purple: #7928CA;
+  --color-accent-yellow: #FFD700;
+
+  --spacing-section: 80px;
+  --width-container: 1320px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer utilities {
+  .container-systems {
+    @apply max-w-[1320px] mx-auto px-4 lg:px-8;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Gradient Text Utility */
+  .text-gradient-vibrant {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-pink via-accent-purple to-accent-cyan;
+  }
+
+  .text-gradient-cyan {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-cyan to-blue-500;
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-yellow via-orange-400 to-accent-pink;
+  }
+
+  /* Hero Text - Professional corporate style */
+  .text-hero {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .text-section-title {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 700;
+    color: white;
+  }
+
+  .text-section-title-light {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 700;
+    color: white;
+  }
+
+  /* "LEARN MORE →" link style — Systems Limited pattern */
+  .link-learn-more {
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-accent-blue hover:text-accent-purple transition-colors;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus);
+  @apply bg-brand-black text-white antialiased;
 }
