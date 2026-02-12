@@ -76,11 +76,11 @@ export default function Contact() {
              viewport={{ once: false }}
           >
             <motion.h2 variants={itemVariants} className="text-4xl font-bold text-brand-dark mb-6">
-              Let's Start a Conversation
+              Let&apos;s Start a Conversation
             </motion.h2>
             
             <motion.p variants={itemVariants} className="text-gray-600 text-lg leading-relaxed mb-12">
-              Whether you're looking to migrate to the cloud, optimize your existing infrastructure, or implement AI solutions, our team is ready to help you achieve your goals.
+              Whether you&apos;re looking to migrate to the cloud, optimize your existing infrastructure, or implement AI solutions, our team is ready to help you achieve your goals.
             </motion.p>
 
             <div className="space-y-8 mb-12">

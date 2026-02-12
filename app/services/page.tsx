@@ -1,82 +1,47 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import ServiceCard from '../components/services/ServiceCard';
-import { Settings, Cloud, Brain, Shield, Box, Gauge } from 'lucide-react';
+import ServiceInquiryModal from '../components/services/ServiceInquiryModal';
+import { Brain, Globe, ServerCog, Palette, TrendingUp } from 'lucide-react';
 
 const services = [
   {
-    title: 'DevOps Consulting & Automation',
-    description: 'End-to-end DevOps implementation including CI/CD pipelines, infrastructure as code, and automation strategies.',
-    icon: Settings,
-    gradient: 'from-accent-purple to-accent-magenta',
-    features: [
-      'CI/CD Pipeline Development',
-      'Infrastructure as Code',
-      'Containerization & Orchestration',
-      'Monitoring & Observability'
-    ]
-  },
-  {
-    title: 'Cloud Infrastructure',
-    description: 'Design, implement, and manage scalable cloud infrastructure across AWS, Azure, and Google Cloud Platform.',
-    icon: Cloud,
-    gradient: 'from-accent-teal to-accent-blue',
-    features: [
-      'Cloud Migration & Modernization',
-      'Multi-Cloud Strategy',
-      'Serverless Architecture',
-      'Cost Optimization'
-    ]
-  },
-  {
     title: 'AI & Machine Learning',
-    description: 'Build and deploy intelligent solutions with our AI/ML expertise, from data pipelines to production models.',
+    description: 'Intelligent solutions and data models for automation, prediction, and business intelligence.',
     icon: Brain,
+    gradient: 'from-accent-purple to-accent-magenta',
+    features: ['Predictive Analytics', 'AI Workflow Automation', 'Recommendation Engines', 'Model Deployment Pipelines'],
+  },
+  {
+    title: 'Web Development',
+    description: 'High-performance, scalable websites and applications engineered for speed and reliability.',
+    icon: Globe,
+    gradient: 'from-accent-teal to-accent-blue',
+    features: ['Custom Web Platforms', 'Performance Optimization', 'Scalable Architecture', 'SEO-Ready Development'],
+  },
+  {
+    title: 'DevOps',
+    description: 'End-to-end deployment automation and cloud infrastructure streamlining for faster delivery.',
+    icon: ServerCog,
     gradient: 'from-accent-yellow to-orange-500',
-    features: [
-      'MLOps Implementation',
-      'Predictive Analytics',
-      'Computer Vision Solutions',
-      'Natural Language Processing'
-    ]
+    features: ['CI/CD Pipelines', 'Infrastructure as Code', 'Cloud Monitoring', 'Kubernetes Operations'],
   },
   {
-    title: 'Cloud Security & Compliance',
-    description: 'Implement robust security frameworks and ensure compliance with industry standards and regulations.',
-    icon: Shield,
+    title: 'Graphic Design & Brand Promotion',
+    description: 'Visual identity design and campaign execution including email marketing systems.',
+    icon: Palette,
     gradient: 'from-red-500 to-accent-magenta',
-    features: [
-      'Security Architecture Design',
-      'Compliance Auditing',
-      'Identity & Access Management',
-      'Threat Detection & Response'
-    ]
+    features: ['Brand Identity', 'Campaign Creatives', 'Email Marketing Design', 'Marketing Collateral'],
   },
   {
-    title: 'Kubernetes & Containerization',
-    description: 'Containerize your applications and manage them at scale with Kubernetes and cloud-native technologies.',
-    icon: Box,
-    gradient: 'from-accent-purple to-indigo-500',
-    features: [
-      'Kubernetes Cluster Setup',
-      'Helm Chart Development',
-      'Service Mesh Implementation',
-      'Auto-scaling Solutions'
-    ]
-  },
-  {
-    title: 'Performance Optimization',
-    description: 'Optimize your applications and infrastructure for maximum performance, scalability, and cost-efficiency.',
-    icon: Gauge,
+    title: 'Business Development',
+    description: 'Growth-focused strategy to scale your business, open markets, and improve conversion systems.',
+    icon: TrendingUp,
     gradient: 'from-green-500 to-accent-teal',
-    features: [
-      'Application Performance Tuning',
-      'Database Optimization',
-      'CDN Implementation',
-      'Load Testing & Analysis'
-    ]
-  }
+    features: ['Growth Strategy', 'Market Expansion', 'Partnership Development', 'Revenue Optimization'],
+  },
 ];
 
 const containerVariants = {
@@ -84,72 +49,73 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" as const }
-  }
+    transition: { duration: 0.6, ease: 'easeOut' as const },
+  },
 };
 
 export default function Services() {
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+
   return (
     <main className="min-h-screen">
-      {/* Dark Hero Section */}
       <section className="relative bg-brand-black pt-32 pb-24">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-black via-[#0A1628] to-brand-black" />
         <div className="absolute inset-0 bg-gradient-to-tr from-accent-blue/5 via-transparent to-accent-teal/5" />
-        <div className="container-systems relative z-10">
-          <div className="text-center">
-             <motion.h1 
-               initial={{ opacity: 0, y: 30 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: false }}
-               transition={{ duration: 0.8 }}
-               className="text-hero text-white mb-6"
-             >
-               Our <span className="text-gradient-vibrant">Services</span>
-             </motion.h1>
-             <motion.p 
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: false }}
-               transition={{ delay: 0.2, duration: 0.8 }}
-               className="text-lg text-white/70 max-w-3xl mx-auto font-light"
-             >
-               Comprehensive DevOps, Cloud, and AI solutions to accelerate your digital transformation
-             </motion.p>
-          </div>
+        <div className="container-systems relative z-10 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8 }}
+            className="text-hero text-white mb-6"
+          >
+            Our <span className="text-gradient-vibrant">Services</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-lg text-white/70 max-w-3xl mx-auto font-light"
+          >
+            Click Learn More on any service to open a focused inquiry popup.
+          </motion.p>
         </div>
       </section>
 
-      {/* Content Section */}
       <section className="bg-white py-24">
         <div className="container-systems">
-
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-50px" }}
+            viewport={{ once: false, margin: '-50px' }}
           >
-            {services.map((service, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <ServiceCard 
-                  {...service} 
-                />
+            {services.map((service) => (
+              <motion.div key={service.title} variants={itemVariants}>
+                <ServiceCard {...service} onLearnMore={setSelectedService} />
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
+
+      <ServiceInquiryModal
+        serviceTitle={selectedService || ''}
+        isOpen={Boolean(selectedService)}
+        onClose={() => setSelectedService(null)}
+      />
     </main>
   );
 }

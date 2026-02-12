@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
 
 const projects = [
   {

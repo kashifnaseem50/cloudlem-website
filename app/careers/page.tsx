@@ -95,7 +95,7 @@ export default function Careers() {
         >
           <h2 className="text-3xl font-bold text-brand-dark mb-6">Why Work at Cloudlem?</h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            At Cloudlem, we're building the next generation of cloud solutions while fostering a culture of innovation, collaboration, and continuous learning. Join us to work on challenging projects with cutting-edge technologies.
+            At Cloudlem, we are building the next generation of cloud solutions while fostering a culture of innovation, collaboration, and continuous learning. Join us to work on challenging projects with cutting-edge technologies.
           </p>
         </motion.div>
 
