@@ -121,17 +121,15 @@ const services = [
 
 const Services = () => {
   return (
-    <section className="py-[120px] bg-linear-to-b from-white via-gray-50/50 to-white text-brand-dark relative overflow-hidden">
+    <section className="py-[120px] bg-brand-black text-white relative overflow-hidden">
       {/* Background Slideshow */}
       <div className="absolute inset-0 z-0">
         <Slideshow
-          images={[
-            "/images/backgrounds/section-2-1.jpg",
-            "/images/backgrounds/section-2-2.jpg",
-          ]}
+          images={["/images/backgrounds/section-2-2.jpg"]}
           alt="Services Section Background"
         />
-        <div className="absolute inset-0 bg-transparent" />
+        <div className="absolute inset-0 bg-brand-black/50" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-transparent to-brand-black z-10" />
       </div>
 
       {/* Background decoration */}

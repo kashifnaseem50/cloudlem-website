@@ -3,6 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, TrendingUp, Zap, Shield, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 const Slideshow = ({
   images,
@@ -30,10 +32,12 @@ const Slideshow = ({
         transition={{ duration: 1.5 }}
         className="absolute inset-0"
       >
-        <img
+        <Image
           src={images[currentIndex]}
           alt={alt}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
         />
       </motion.div>
     </AnimatePresence>
@@ -54,7 +58,9 @@ const projects = [
       { label: "99.9%", desc: "Uptime achieved" },
       { label: "15min", desc: "Deployment time" },
     ],
+
     highlight: "Featured Case Study",
+    link: "#",
   },
   {
     title: "GCP AI Platform for Healthcare",
@@ -69,7 +75,9 @@ const projects = [
       { label: "10x", desc: "Faster processing" },
       { label: "HIPAA", desc: "Compliant" },
     ],
+
     highlight: "Award Winner",
+    link: "#",
   },
   {
     title: "Azure DevOps for Financial Services",
@@ -84,7 +92,9 @@ const projects = [
       { label: "0", desc: "Downtime" },
       { label: "100%", desc: "Compliant" },
     ],
+
     highlight: "Enterprise Solution",
+    link: "#",
   },
 ];
 
@@ -104,6 +114,7 @@ const Projects = () => {
           alt="Projects Section Background"
         />
         <div className="absolute inset-0 bg-linear-to-b from-brand-black/20 via-brand-black/50 to-brand-black" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-transparent to-brand-black z-10" />
       </div>
 
       {/* Background decoration */}
@@ -151,93 +162,95 @@ const Projects = () => {
           {projects.map((project, index) => (
             <motion.div
               key={index}
-              className="group cursor-pointer"
+              className="group cursor-pointer h-full"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false }}
               transition={{ delay: index * 0.15, duration: 0.6 }}
             >
-              <div className="relative h-full bg-linear-to-br from-white/5 via-white/2 to-transparent rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-2xl hover:shadow-accent-cyan/10 overflow-hidden">
-                {/* Gradient accent line */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-                />
+              <Link href={project.link || "#"} className="block h-full">
+                <div className="relative h-full bg-linear-to-br from-white/5 via-white/2 to-transparent rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-2xl hover:shadow-accent-cyan/10 overflow-hidden">
+                  {/* Gradient accent line */}
+                  <div
+                    className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                  />
 
-                {/* Hover background effect */}
-                <div
-                  className={`absolute inset-0 bg-linear-to-br ${project.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`}
-                />
+                  {/* Hover background effect */}
+                  <div
+                    className={`absolute inset-0 bg-linear-to-br ${project.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`}
+                  />
 
-                <div className="relative z-10">
-                  {/* Badge & Icon */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div
-                      className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br ${project.gradient} group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      <project.icon
-                        size={26}
-                        className="text-white"
-                        strokeWidth={2.5}
+                  <div className="relative z-10">
+                    {/* Badge & Icon */}
+                    <div className="flex items-start justify-between mb-6">
+                      <div
+                        className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br ${project.gradient} group-hover:scale-110 transition-transform duration-300`}
+                      >
+                        <project.icon
+                          size={26}
+                          className="text-white"
+                          strokeWidth={2.5}
+                        />
+                      </div>
+                      <span className="text-accent-cyan font-bold text-xs uppercase tracking-widest px-3 py-1 bg-accent-cyan/10 rounded-full border border-accent-cyan/20">
+                        {project.highlight}
+                      </span>
+                    </div>
+
+                    {/* Category */}
+                    <span className="text-white/50 font-semibold text-xs uppercase tracking-widest mb-3 block">
+                      {project.category}
+                    </span>
+
+                    {/* Title */}
+                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-white group-hover:to-accent-cyan transition-all">
+                      {project.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-white/60 text-[15px] leading-relaxed mb-6">
+                      {project.description}
+                    </p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-white/5">
+                      {project.tags.map((tag, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-md text-xs text-white/70 border border-white/10 hover:border-white/20 transition-colors"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Results */}
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      {project.results.map((result, i) => (
+                        <div key={i} className="text-center">
+                          <div
+                            className={`text-2xl font-bold mb-1 text-transparent bg-clip-text bg-linear-to-r ${project.gradient}`}
+                          >
+                            {result.label}
+                          </div>
+                          <div className="text-white/50 text-xs">
+                            {result.desc}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* CTA */}
+                    <div className="flex items-center gap-2 text-white font-semibold text-sm group-hover:gap-3 transition-all">
+                      View Case Study
+                      <ArrowUpRight
+                        size={16}
+                        className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
                       />
                     </div>
-                    <span className="text-accent-cyan font-bold text-xs uppercase tracking-widest px-3 py-1 bg-accent-cyan/10 rounded-full border border-accent-cyan/20">
-                      {project.highlight}
-                    </span>
-                  </div>
-
-                  {/* Category */}
-                  <span className="text-white/50 font-semibold text-xs uppercase tracking-widest mb-3 block">
-                    {project.category}
-                  </span>
-
-                  {/* Title */}
-                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-white group-hover:to-accent-cyan transition-all">
-                    {project.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-white/60 text-[15px] leading-relaxed mb-6">
-                    {project.description}
-                  </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-white/5">
-                    {project.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-md text-xs text-white/70 border border-white/10 hover:border-white/20 transition-colors"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Results */}
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    {project.results.map((result, i) => (
-                      <div key={i} className="text-center">
-                        <div
-                          className={`text-2xl font-bold mb-1 text-transparent bg-clip-text bg-linear-to-r ${project.gradient}`}
-                        >
-                          {result.label}
-                        </div>
-                        <div className="text-white/50 text-xs">
-                          {result.desc}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-2 text-white font-semibold text-sm group-hover:gap-3 transition-all">
-                    View Case Study
-                    <ArrowUpRight
-                      size={16}
-                      className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
-                    />
                   </div>
                 </div>
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>

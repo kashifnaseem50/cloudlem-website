@@ -85,7 +85,8 @@ const Impact = () => {
           ]}
           alt="Impact Section Background"
         />
-        <div className="absolute inset-0 bg-transparent" />
+        <div className="absolute inset-0 bg-brand-black/50" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-transparent to-brand-black z-10" />
       </div>
 
       {/* Background decoration */}
@@ -102,41 +103,41 @@ const Impact = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8 }}
-            className="bg-white/30 backdrop-blur-xl rounded-3xl p-8 lg:p-12 shadow-2xl border border-white/20"
+            className="bg-brand-black/60 backdrop-blur-md rounded-3xl p-8 lg:p-12 shadow-2xl border border-white/10"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-blue/10 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-6 border border-white/10">
               <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse" />
-              <span className="text-sm font-semibold text-brand-dark/70 uppercase tracking-wider">
+              <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">
                 Our Impact
               </span>
             </div>
 
-            <h2 className="text-4xl lg:text-5xl font-bold text-brand-dark leading-[1.1] mb-6">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white leading-[1.1] mb-6">
               Translating technology into{" "}
               <span className="text-gradient-vibrant">measurable results</span>
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed mb-8">
+            <p className="text-white/70 text-lg leading-relaxed mb-8">
               Our enterprise-grade solutions deliver proven outcomes. From
               Fortune 500 companies to innovative startups, we help businesses
               achieve their digital transformation goals.
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 rounded-lg border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 shadow-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full" />
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-sm font-semibold text-white/80">
                   99.9% Uptime SLA
                 </span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 rounded-lg border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 shadow-sm">
                 <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-sm font-semibold text-white/80">
                   SOC 2 Compliant
                 </span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 rounded-lg border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 shadow-sm">
                 <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-sm font-semibold text-white/80">
                   24/7 Support
                 </span>
               </div>
