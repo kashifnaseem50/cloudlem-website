@@ -96,8 +96,8 @@ const JobApplicationModal = ({ isOpen, onClose, jobTitle }: JobApplicationModalP
               <X size={24} />
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent-blue to-accent-purple rounded-xl flex items-center justify-center">
+              <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-linear-to-br from-accent-blue to-accent-purple rounded-xl flex items-center justify-center">
                 <Briefcase size={24} className="text-white" />
               </div>
               <div>
@@ -172,21 +172,21 @@ const JobApplicationModal = ({ isOpen, onClose, jobTitle }: JobApplicationModalP
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">Resume / CV Link *</label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Resume / CV *</label>
                 <div className="relative">
-                  <input 
-                    type="url" 
-                    name="resume_link"
+                  <input
+                    id="resume"
+                    type="file"
+                    name="resume"
                     required
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-brand-dark focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-all placeholder:text-gray-400"
-                    placeholder="Google Drive, Dropbox, or personal website link"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-brand-dark focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-all cursor-pointer file:mr-3 file:rounded-md file:border-0 file:bg-brand-dark file:text-white file:px-4 file:py-2 file:text-sm file:font-semibold"
+                    accept=".pdf,.doc,.docx"
                   />
-                  <Upload size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Please share a link to your resume (Google Drive, Dropbox, personal website, etc.)
+                  Upload your resume as a PDF or DOC/DOCX file (max 5MB).
                 </p>
-                <ValidationError prefix="Resume Link" field="resume_link" errors={state.errors} />
+                <ValidationError prefix="Resume" field="resume" errors={state.errors} />
               </div>
 
               <div>
