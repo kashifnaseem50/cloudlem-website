@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import JobCard from '../components/careers/JobCard';
+import JobApplicationModal from '../components/careers/JobApplicationModal';
 
 const jobs = [
   {
@@ -53,6 +55,8 @@ const itemVariants = {
 };
 
 export default function Careers() {
+  const [selectedJob, setSelectedJob] = useState<string | null>(null);
+
   return (
     <main className="min-h-screen">
       {/* Dark Hero Section */}
@@ -108,13 +112,19 @@ export default function Careers() {
         >
           {jobs.map((job, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <JobCard {...job} />
+              <JobCard {...job} onApply={() => setSelectedJob(job.title)} />
             </motion.div>
           ))}
         </motion.div>
 
         </div>
       </section>
+
+      <JobApplicationModal 
+        isOpen={!!selectedJob} 
+        onClose={() => setSelectedJob(null)}
+        jobTitle={selectedJob || ''}
+      />
     </main>
   );
 }

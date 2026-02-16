@@ -6,19 +6,20 @@ import Link from 'next/link';
 const Hero = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden bg-brand-black">
+      {/* Video Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-black via-[#0A1628] to-brand-black" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-accent-blue/5 via-transparent to-accent-teal/5" />
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 194, 255, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 194, 255, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '100px 100px',
-          }}
-        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/hero-background.mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlay to make text readable */}
+        <div className="absolute inset-0 bg-brand-black/60" />
+        <div className="absolute inset-0 bg-linear-to-tr from-accent-blue/10 via-transparent to-accent-teal/10" />
       </div>
 
       <div className="relative z-10 h-full flex items-end pb-24 lg:pb-32">

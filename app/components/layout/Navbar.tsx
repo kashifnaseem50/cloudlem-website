@@ -36,7 +36,7 @@ const Navbar = () => {
     >
       <div className="container-systems w-full flex items-center justify-between">
         <Link href="/" className="flex items-center gap-1">
-          <span className="text-[22px] font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-accent-cyan to-accent-blue">
+          <span className="text-[22px] font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-white via-accent-cyan to-accent-blue">
             Cloudlem
           </span>
         </Link>

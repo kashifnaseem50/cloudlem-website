@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Linkedin, Twitter, Github } from 'lucide-react';
+import { Users, Linkedin, Twitter, Github, ArrowUpRight } from 'lucide-react';
 
 interface TeamCardProps {
   name: string;
@@ -17,44 +17,78 @@ const TeamCard = ({ name, role, description, gradient, github }: TeamCardProps) 
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: false }}
-      className="group relative bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center p-8"
+      className="group relative bg-white rounded-2xl overflow-hidden border border-gray-200/60 hover:border-gray-300 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col items-center text-center p-8"
     >
-      {/* Top Gradient Bar */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient}`} />
+      {/* Gradient accent line */}
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+      
+      {/* Hover background effect */}
+      <div className={`absolute inset-0 bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-[0.02] transition-opacity duration-300`} />
 
       {/* Profile Icon */}
       <div className="mb-6 relative mt-2">
-         <div className={`relative z-10 w-24 h-24 flex items-center justify-center rounded-full bg-gradient-to-br ${gradient} p-[2px]`}>
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-               <User size={40} className="text-gray-300" />
+         <div className={`relative z-10 w-28 h-28 flex items-center justify-center rounded-2xl bg-linear-to-br ${gradient} p-[3px] shadow-lg group-hover:scale-105 transition-transform duration-300`}>
+            <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center overflow-hidden">
+               <Users size={48} className="text-gray-300" strokeWidth={1.5} />
             </div>
          </div>
+         {/* Decorative ring */}
+         <div className={`absolute inset-0 rounded-2xl bg-linear-to-br ${gradient} opacity-20 blur-xl group-hover:opacity-30 transition-opacity`} />
       </div>
 
-      <h3 className="text-xl font-bold text-brand-dark mb-1 leading-tight">
-        {name}
-      </h3>
-      
-      <span className={`text-xs font-bold uppercase tracking-widest mb-4 bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
-        {role}
-      </span>
-      
-      <p className="text-gray-500 mb-6 leading-relaxed text-sm">
-        {description}
-      </p>
+      <div className="relative z-10">
+        <h3 className="text-xl font-bold text-brand-dark mb-2 leading-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-brand-dark group-hover:to-gray-600 transition-all">
+          {name}
+        </h3>
+        
+        <span className={`inline-block text-xs font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full bg-linear-to-r ${gradient} bg-opacity-10`}>
+          <span className={`text-transparent bg-clip-text bg-linear-to-r ${gradient}`}>
+            {role}
+          </span>
+        </span>
+        
+        <p className="text-gray-600 mb-6 leading-relaxed text-sm">
+          {description}
+        </p>
 
-      {/* Social Links */}
-      <div className="flex bg-gray-50 rounded-full px-4 py-2 gap-4 mt-auto border border-gray-100">
-        <Linkedin size={16} className="text-gray-400 hover:text-brand-dark cursor-pointer transition-colors" />
-        <Twitter size={16} className="text-gray-400 hover:text-brand-dark cursor-pointer transition-colors" />
-        {github && (
-          <a href={github} target="_blank" rel="noopener noreferrer">
-             <Github size={16} className="text-gray-400 hover:text-brand-dark cursor-pointer transition-colors" />
+        {/* Social Links */}
+        <div className="flex items-center justify-center gap-3 mt-auto">
+          <a 
+            href="#" 
+            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-brand-dark hover:text-white transition-all group/social"
+          >
+            <Linkedin size={16} />
           </a>
-        )}
-        {!github && (
-           <Github size={16} className="text-gray-400 hover:text-brand-dark cursor-pointer transition-colors" />
-        )}
+          <a 
+            href="#" 
+            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-brand-dark hover:text-white transition-all group/social"
+          >
+            <Twitter size={16} />
+          </a>
+          {github ? (
+            <a 
+              href={github} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-brand-dark hover:text-white transition-all group/social"
+            >
+              <Github size={16} />
+            </a>
+          ) : (
+            <a 
+              href="#" 
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-brand-dark hover:text-white transition-all group/social"
+            >
+              <Github size={16} />
+            </a>
+          )}
+        </div>
+
+        {/* View Profile Link */}
+        <button className="mt-6 flex items-center gap-2 text-sm font-semibold text-gray-400 group-hover:text-brand-dark transition-colors mx-auto group-hover:gap-3">
+          View Profile
+          <ArrowUpRight size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+        </button>
       </div>
     </motion.div>
   );

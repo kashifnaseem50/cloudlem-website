@@ -19,7 +19,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div className="space-y-5">
             <Link href="/" className="flex items-center gap-1">
-              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-brand-dark via-accent-cyan to-accent-blue">
+              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-brand-dark via-accent-cyan to-accent-blue">
                 Cloudlem
               </span>
             </Link>

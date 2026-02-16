@@ -21,11 +21,11 @@ const BlogCard = ({ title, excerpt, category, date, gradient, icon }: BlogCardPr
       viewport={{ once: false }}
       className="group relative h-full bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col"
     >
-      <div className={`h-1 w-full bg-gradient-to-r ${gradient}`} />
+      <div className={`h-1 w-full bg-linear-to-r ${gradient}`} />
 
-      <div className="p-8 flex-grow flex flex-col">
+      <div className="p-8 grow flex flex-col">
         <div className="mb-6">
-          <div className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-white shadow-md`}>
+          <div className={`w-12 h-12 flex items-center justify-center rounded-xl bg-linear-to-br ${gradient} text-white shadow-md`}>
             {icon}
           </div>
         </div>
@@ -34,7 +34,7 @@ const BlogCard = ({ title, excerpt, category, date, gradient, icon }: BlogCardPr
           {title}
         </h3>
 
-        <p className="text-gray-500 mb-8 flex-grow leading-relaxed text-sm">{excerpt}</p>
+        <p className="text-gray-500 mb-8 grow leading-relaxed text-sm">{excerpt}</p>
 
         <div className="flex items-center justify-between text-xs text-gray-400 uppercase tracking-wider mb-6 border-t border-gray-100 pt-6">
           <div className="flex items-center gap-2">
