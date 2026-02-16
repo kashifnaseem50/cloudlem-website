@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -27,7 +27,7 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: 'easeOut' as const }}
+            transition={{ duration: 1, ease: "easeOut" as const }}
             className="max-w-4xl"
           >
             <h1 className="text-hero text-white mb-6">
@@ -36,8 +36,9 @@ const Hero = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl font-light leading-relaxed">
-              Cloudlem helps businesses grow with intelligent automation, high-performance web solutions,
-              and cloud-native delivery systems built for scale.
+              Cloudlem helps businesses grow with intelligent automation,
+              high-performance web solutions, and cloud-native delivery systems
+              built for scale.
             </p>
 
             <div className="flex flex-wrap gap-4">
