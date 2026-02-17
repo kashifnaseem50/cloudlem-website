@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "@fontsource/plus-jakarta-sans/400.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
@@ -130,11 +131,13 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
-      <body>
-        <script
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <Script
+          id="structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          strategy="beforeInteractive"
         />
         <Navbar />
         <main>{children}</main>

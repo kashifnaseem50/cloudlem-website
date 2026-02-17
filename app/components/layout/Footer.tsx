@@ -26,6 +26,10 @@ const Footer = () => {
             <p className="text-gray-500 leading-relaxed text-sm">
               Helping businesses scale through AI, web development, DevOps, design systems, and business strategy.
             </p>
+            <div className="text-gray-500 text-sm">
+              <p className="font-semibold text-gray-600">Address:</p>
+              <p>Gilgit, Pakistan</p>
+            </div>
             <div className="flex items-center gap-3">
               <a href="https://www.linkedin.com/company/cloudlem" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-brand-dark/5 flex items-center justify-center text-gray-500 hover:bg-brand-dark hover:text-white transition-all">
                 <Linkedin size={16} />

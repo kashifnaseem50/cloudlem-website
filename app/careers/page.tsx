@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import JobCard from '../components/careers/JobCard';
 import JobApplicationModal from '../components/careers/JobApplicationModal';
+import { Users } from 'lucide-react';
 
 const jobs = [
   {
@@ -61,19 +62,25 @@ export default function Careers() {
     <main className="min-h-screen">
       {/* Dark Hero Section */}
       <section className="relative bg-brand-black pt-32 pb-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-black via-[#0A1628] to-brand-black" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-accent-blue/5 via-transparent to-accent-teal/5" />
+        <div className="absolute inset-0 bg-linear-to-br from-brand-black via-[#0A1628] to-brand-black" />
+        <div className="absolute inset-0 bg-linear-to-tr from-accent-blue/5 via-transparent to-accent-teal/5" />
         <div className="container-systems relative z-10">
           <div className="text-center">
-             <motion.h1 
+             <motion.div
                initial={{ opacity: 0, y: 30 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: false }}
                transition={{ duration: 0.8 }}
-               className="text-hero text-white mb-6"
              >
-               Join Our <span className="text-gradient-vibrant">Team</span>
-             </motion.h1>
+               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-6 border border-white/10">
+                 <Users size={16} className="text-accent-cyan" />
+                 <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">Join Our Team</span>
+               </div>
+               
+               <h1 className="text-hero text-white mb-6">
+                 Career <span className="text-gradient-vibrant">Opportunities</span>
+               </h1>
+             </motion.div>
              <motion.p 
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
@@ -81,14 +88,14 @@ export default function Careers() {
                transition={{ delay: 0.2, duration: 0.8 }}
                className="text-lg text-white/70 max-w-2xl mx-auto font-light"
              >
-               Build the future of cloud technology with us
+               Build the future of cloud technology with talented engineers, designers, and strategists who love what they do.
              </motion.p>
           </div>
         </div>
       </section>
 
       {/* Content Section */}
-      <section className="bg-white py-24">
+      <section className="bg-linear-to-b from-white via-gray-50/50 to-white py-24">
         <div className="container-systems">
 
         <motion.div 

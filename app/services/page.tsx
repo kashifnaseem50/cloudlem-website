@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import ServiceCard from '../components/services/ServiceCard';
 import ServiceInquiryModal from '../components/services/ServiceInquiryModal';
-import { Brain, Globe, ServerCog, Palette, TrendingUp } from 'lucide-react';
+import { Brain, Globe, ServerCog, Palette, TrendingUp, Sparkles } from 'lucide-react';
 
 const services = [
   {
@@ -69,18 +69,24 @@ export default function Services() {
   return (
     <main className="min-h-screen">
       <section className="relative bg-brand-black pt-32 pb-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-black via-[#0A1628] to-brand-black" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-accent-blue/5 via-transparent to-accent-teal/5" />
+        <div className="absolute inset-0 bg-linear-to-br from-brand-black via-[#0A1628] to-brand-black" />
+        <div className="absolute inset-0 bg-linear-to-tr from-accent-blue/5 via-transparent to-accent-teal/5" />
         <div className="container-systems relative z-10 text-center">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8 }}
-            className="text-hero text-white mb-6"
           >
-            Our <span className="text-gradient-vibrant">Services</span>
-          </motion.h1>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-6 border border-white/10">
+              <Sparkles size={16} className="text-accent-cyan" />
+              <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">Enterprise Solutions</span>
+            </div>
+            
+            <h1 className="text-hero text-white mb-6">
+              Our <span className="text-gradient-vibrant">Services</span>
+            </h1>
+          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -88,12 +94,12 @@ export default function Services() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-lg text-white/70 max-w-3xl mx-auto font-light"
           >
-            Click Learn More on any service to open a focused inquiry popup.
+            Enterprise-grade solutions trusted by forward-thinking teams. Click any service to learn more and get started.
           </motion.p>
         </div>
       </section>
 
-      <section className="bg-white py-24">
+      <section className="bg-linear-to-b from-white via-gray-50/50 to-white py-24">
         <div className="container-systems">
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
