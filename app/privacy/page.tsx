@@ -328,7 +328,7 @@ export default function PrivacyPolicyPage() {
                   </a>
                 </p>
                 <p><strong>Company:</strong> Cloudlem</p>
-                <p><strong>Address:</strong> Gilgit, Pakistan</p>
+                <p><strong>Location:</strong> Gilgit, Pakistan</p>
               </div>
 
               <p className="mt-6 text-sm text-gray-600">

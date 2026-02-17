@@ -27,7 +27,7 @@ const Footer = () => {
               Helping businesses scale through AI, web development, DevOps, design systems, and business strategy.
             </p>
             <div className="text-gray-500 text-sm">
-              <p className="font-semibold text-gray-600">Address:</p>
+              <p className="font-semibold text-gray-600">Location:</p>
               <p>Gilgit, Pakistan</p>
             </div>
             <div className="flex items-center gap-3">
