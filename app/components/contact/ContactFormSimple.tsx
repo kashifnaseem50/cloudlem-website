@@ -55,7 +55,7 @@ const ContactFormSimple = () => {
         </p>
         <button
           onClick={() => setSubmitStatus('idle')}
-          className="mt-6 btn-primary-outline"
+          className="mt-6 px-6 py-3 border-2 border-accent-blue text-accent-blue font-semibold rounded-lg hover:bg-accent-blue hover:text-white transition-all"
         >
           Send Another Message
         </button>
@@ -79,7 +79,7 @@ const ContactFormSimple = () => {
               id="name"
               name="name"
               required
-              className="input-primary"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-brand-dark placeholder-gray-400 focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all"
               placeholder="John Doe"
             />
           </div>
@@ -96,7 +96,7 @@ const ContactFormSimple = () => {
               id="email"
               name="email"
               required
-              className="input-primary"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-brand-dark placeholder-gray-400 focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all"
               placeholder="john@company.com"
             />
           </div>
@@ -114,7 +114,7 @@ const ContactFormSimple = () => {
               type="text"
               id="company"
               name="company"
-              className="input-primary"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-brand-dark placeholder-gray-400 focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all"
               placeholder="Your Company"
             />
           </div>
@@ -130,7 +130,7 @@ const ContactFormSimple = () => {
               type="tel"
               id="phone"
               name="phone"
-              className="input-primary"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-brand-dark placeholder-gray-400 focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all"
               placeholder="+1 (555) 000-0000"
             />
           </div>
@@ -146,7 +146,7 @@ const ContactFormSimple = () => {
           <select
             id="service"
             name="service"
-            className="input-primary"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-brand-dark focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all"
           >
             <option value="">Select a service</option>
             <option value="AI & Machine Learning">AI & Machine Learning</option>
@@ -170,7 +170,7 @@ const ContactFormSimple = () => {
             name="message"
             required
             rows={5}
-            className="input-primary resize-none"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-brand-dark placeholder-gray-400 focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all resize-none"
             placeholder="Tell us about your project..."
           />
         </div>
@@ -187,7 +187,7 @@ const ContactFormSimple = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-6 py-4 bg-linear-to-r from-accent-blue to-accent-teal text-white font-bold rounded-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <>
