@@ -11,9 +11,8 @@ interface JobApplicationModalProps {
 }
 
 const JobApplicationModal = ({ isOpen, onClose, jobTitle }: JobApplicationModalProps) => {
-  // Job application form - using same Formspree form
-  // You can create a separate form for job applications if needed
-  const [state, handleSubmit] = useForm("xvzbqbla");
+  // Job application form with dedicated Formspree ID
+  const [state, handleSubmit] = useForm("xaqdbdvv");
 
   if (state.succeeded) {
     return (
