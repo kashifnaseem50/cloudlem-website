@@ -2,9 +2,14 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import JobCard from '../components/careers/JobCard';
-import JobApplicationModal from '../components/careers/JobApplicationModal';
 import { Users } from 'lucide-react';
+
+// Load JobApplicationModal only on client side
+const JobApplicationModal = dynamic(() => import('../components/careers/JobApplicationModal'), {
+  ssr: false,
+});
 
 const jobs = [
   {

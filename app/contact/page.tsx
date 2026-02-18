@@ -1,8 +1,18 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import ContactForm from '../components/contact/ContactForm';
+import dynamic from 'next/dynamic';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github, Youtube, Instagram, MessageSquare } from 'lucide-react';
+
+// Load ContactForm only on client side to avoid prerender issues
+const ContactForm = dynamic(() => import('../components/contact/ContactForm'), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white border border-gray-100 rounded-xl p-12 h-full flex items-center justify-center">
+      <div className="text-gray-500">Loading form...</div>
+    </div>
+  ),
+});
 
 const containerVariants = {
   hidden: { opacity: 0 },
