@@ -6,8 +6,9 @@ import { useForm, ValidationError } from "@formspree/react";
 
 const ContactForm = () => {
   // SAFE: Using environment variable for Formspree ID
+  // Fallback to a dummy ID to allow build to succeed
   const [state, handleSubmit] = useForm(
-    process.env.NEXT_PUBLIC_FORMSPREE_ID || "",
+    process.env.NEXT_PUBLIC_FORMSPREE_ID || "placeholder",
   );
 
   if (state.succeeded) {
