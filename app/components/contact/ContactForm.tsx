@@ -5,11 +5,8 @@ import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { useForm, ValidationError } from "@formspree/react";
 
 const ContactForm = () => {
-  // SAFE: Using environment variable for Formspree ID
-  // Fallback to a dummy ID to allow build to succeed
-  const [state, handleSubmit] = useForm(
-    process.env.NEXT_PUBLIC_FORMSPREE_ID || "placeholder",
-  );
+  // Contact form using Formspree
+  const [state, handleSubmit] = useForm("xvzbqbla");
 
   if (state.succeeded) {
     return (

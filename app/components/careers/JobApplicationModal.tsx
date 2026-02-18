@@ -11,9 +11,9 @@ interface JobApplicationModalProps {
 }
 
 const JobApplicationModal = ({ isOpen, onClose, jobTitle }: JobApplicationModalProps) => {
-  // REPLACE 'placeholder' WITH YOUR ACTUAL FORMSPREE ID
-  // Create a separate form at formspree.io for job applications
-  const [state, handleSubmit] = useForm(process.env.NEXT_PUBLIC_FORMSPREE_JOB_ID || "placeholder");
+  // Job application form - using same Formspree form
+  // You can create a separate form for job applications if needed
+  const [state, handleSubmit] = useForm("xvzbqbla");
 
   if (state.succeeded) {
     return (
