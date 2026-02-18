@@ -85,7 +85,7 @@ export default function Contact() {
               Let&apos;s Start a Conversation
             </motion.h2>
             
-            <motion.p variants={itemVariants} className="text-gray-600 text-lg leading-relaxed mb-12">
+            <motion.p variants={itemVariants} className="text-gray-700 text-lg leading-relaxed mb-12">
               Whether you&apos;re looking to migrate to the cloud, optimize your existing infrastructure, or implement AI solutions, our team is ready to help you achieve your goals.
             </motion.p>
 
@@ -97,7 +97,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="text-brand-dark font-bold mb-1">Email</h4>
-                  <a href="mailto:info@cloudlem.com" className="text-gray-500 hover:text-accent-blue transition-colors">
+                  <a href="mailto:info@cloudlem.com" className="text-gray-700 hover:text-accent-blue transition-colors text-lg">
                     info@cloudlem.com
                   </a>
                 </div>
@@ -110,7 +110,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="text-brand-dark font-bold mb-1">Phone</h4>
-                  <a href="tel:+923554502615" className="text-gray-500 hover:text-accent-blue transition-colors">
+                  <a href="tel:+923554502615" className="text-gray-700 hover:text-accent-blue transition-colors text-lg">
                     +92 355 4502615
                   </a>
                 </div>
@@ -123,7 +123,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="text-brand-dark font-bold mb-1">Location</h4>
-                  <p className="text-gray-500">
+                  <p className="text-gray-700 text-lg">
                     Gilgit, Pakistan
                   </p>
                 </div>
