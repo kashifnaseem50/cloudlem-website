@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github, Youtube, Instagram, MessageSquare } from 'lucide-react';
 
+// Prevent static generation of this page
+export const dynamic = 'force-dynamic';
+
 // Load ContactForm only on client side to avoid prerender issues
 const ContactForm = dynamic(() => import('../components/contact/ContactForm'), {
   ssr: false,
