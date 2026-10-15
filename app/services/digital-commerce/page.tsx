@@ -1,11 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-
+import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,37 +21,15 @@ import {
 
 import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
-// ==========================================
-// CLOUDLEM — DIGITAL COMMERCE
-// ==========================================
-
 const SERVICE_TITLE = "Digital Commerce";
 
-// EXISTING CLOUDLEM IMAGE ASSETS
-// These are safe local image paths.
-// Replace with dedicated commerce photography
-// when the final images are selected.
-
+// Existing Cloudlem image assets.
 const images = {
   hero: "/images/backgrounds/section-1-1.jpg",
   storefront: "/images/backgrounds/section-1-2.jpg",
   operations: "/images/backgrounds/section-3-1.jpg",
   experience: "/images/backgrounds/section-3-2.jpg",
   feature: "/images/backgrounds/section-2-2.jpg",
-};
-
-// ==========================================
-// ANIMATION SETTINGS
-// ==========================================
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
 };
 
 // ==========================================
@@ -69,9 +46,7 @@ const editorialSections = [
     alt: "Technology environment representing digital commerce",
     paragraphs: [
       "A successful digital storefront is more than a product catalog. It is an experience that helps customers discover products, evaluate their options, and complete purchases with confidence. Every interaction, from the first page visit to checkout, can influence how customers perceive a business.",
-
       "Cloudlem approaches digital commerce development by connecting customer experience with business functionality. We consider navigation, product organization, responsive design, accessibility, performance, and the operational requirements behind an online store.",
-
       "Whether a business is developing a new commerce platform or improving an existing experience, the objective is to create a digital environment that is practical to manage, easy for customers to use, and adaptable as business requirements evolve.",
     ],
     points: [
@@ -89,9 +64,7 @@ const editorialSections = [
     alt: "Digital infrastructure supporting connected operations",
     paragraphs: [
       "Managing online commerce often requires several systems to work together. Product information, inventory, orders, customer records, payment providers, and reporting tools all contribute to the everyday operation of a digital business.",
-
       "Disconnected applications and manual processes can introduce delays, duplicate work, and inconsistent information. An effective commerce strategy considers how data moves between systems and where integration or automation may simplify operations.",
-
       "Cloudlem helps businesses evaluate commerce workflows and plan connections between storefronts and supporting business applications. By improving how information moves through the organization, teams can establish more reliable and manageable commerce processes.",
     ],
     points: [
@@ -109,9 +82,7 @@ const editorialSections = [
     alt: "Connected digital technology representing customer experience",
     paragraphs: [
       "Customers expect digital shopping experiences to be straightforward, consistent, and accessible across devices. Complicated navigation, confusing product information, and unnecessary steps during checkout can create friction throughout the buying journey.",
-
       "A customer-centered approach examines how visitors interact with the storefront, how they find information, and what happens between initial product discovery and a completed order. These insights can inform improvements to interface design, content presentation, and conversion pathways.",
-
       "We focus on creating commerce experiences that align with customer needs while remaining manageable for the business. A thoughtful combination of usability, performance, and operational planning provides the foundation for continuous improvement.",
     ],
     points: [
@@ -216,6 +187,76 @@ const audiences = [
 ];
 
 // ==========================================
+// REUSABLE SCROLL ANIMATION
+// Respects reduced-motion preferences.
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      initial={
+        reduceMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 24 : 0,
+              x:
+                direction === "left"
+                  ? -24
+                  : direction === "right"
+                    ? 24
+                    : 0,
+            }
+      }
+      whileInView={{ opacity: 1, y: 0, x: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.68,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// SHARED SECTION EYEBROW
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#9460B6]"
+      />
+      <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-[#8151A2]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
 // DIGITAL COMMERCE PAGE
 // ==========================================
 
@@ -223,604 +264,822 @@ export default function DigitalCommercePage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#292131]">
 
-      {/* ===================================
-          HERO — CHARCOAL
-      =================================== */}
+      {/* ======================================
+          01 — HERO
+          Bright Lavender / White
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pt-32 pb-20 sm:pt-36 lg:pt-40 lg:pb-28">
 
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+        {/* Ambient lighting */}
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-32 h-96 w-96 rounded-full bg-[#DAC4EB]/35 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/65 to-transparent" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-24 h-[450px] w-[450px] rounded-full bg-white/70 blur-3xl"
+        />
 
-        <div className="container-systems relative z-10 w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[880px]"
-          >
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
+
+          {/* HERO COPY */}
+
+          <Reveal className="relative z-10 min-w-0">
+
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#8151A2] transition-colors hover:text-[#45285B] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8151A2]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
               All Services
             </Link>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
+            <Eyebrow>
+              Digital / Digital Commerce
+            </Eyebrow>
 
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D8D2C8]">
-                Digital / Digital Commerce
-              </p>
-            </div>
-
-            <h1 className="max-w-[850px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em] text-[#D8D2C8]">
+            <h1 className="max-w-[750px] text-[clamp(2.9rem,5.3vw,5.5rem)] font-semibold leading-[1.06] tracking-[-0.06em] text-[#291D34]">
               Commerce built
-
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 around your
               </span>
-
               customers.
             </h1>
 
-            <p className="mt-7 max-w-[650px] text-[16px] leading-[1.8] text-[#D8D2C8] sm:text-[17px]">
-              Create connected digital shopping
-              experiences that bring together
-              customers, products, payments, and
-              business operations. Build a commerce
-              platform designed for usability,
+            <p className="mt-7 max-w-[640px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
+              Create connected digital shopping experiences
+              that bring together customers, products,
+              payments, and business operations. Build a
+              commerce platform designed for usability,
               reliability, and future growth.
             </p>
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Your Commerce Project
+            <div className="mt-9 flex flex-wrap items-center gap-3">
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
+              {/* MAIN INQUIRY BUTTON */}
+
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Your Commerce Project
+
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
+
+              {/* SECONDARY ACTION */}
+
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-[border-color,background-color] duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
+
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+
+            </div>
+          </Reveal>
+
+          {/* HERO IMAGE */}
+
+          <Reveal
+            direction="right"
+            delay={0.12}
+            className="relative min-w-0 lg:pl-4"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
+
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
+
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
               />
-            </button>
-          </motion.div>
+
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
+
+              {/* FLOATING EDITORIAL LABEL */}
+
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[310px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Digital Commerce
+                </span>
+
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Customers. Products. Operations.
+                </p>
+
+              </div>
+
+            </div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          SERVICE INTRODUCTION
-      =================================== */}
+      {/* ======================================
+          02 — SERVICE INTRODUCTION
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        className="bg-white py-20 sm:py-24 lg:py-28"
+        aria-labelledby="commerce-intro-heading"
+      >
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
-          >
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+          <Reveal>
+            <Eyebrow>
+              Our Commerce Perspective
+            </Eyebrow>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Commerce Perspective
-                </p>
-              </div>
+            <h2
+              id="commerce-intro-heading"
+              className="max-w-[760px] text-[clamp(2.45rem,3.8vw,4.3rem)] font-semibold leading-[1.17] tracking-[-0.035em] text-[#291D34]"
+            >
+              Digital experiences
+              <span className="block text-[#8B58AC]">
+                connected to business.
+              </span>
+            </h2>
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Digital experiences
+            <div
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+              aria-hidden="true"
+            />
+          </Reveal>
 
-                <span className="block text-[#625C51]">
-                  connected to business.
-                </span>
-              </h2>
-            </div>
+          <Reveal delay={0.1}>
 
-            <div className="lg:pt-3">
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Modern digital commerce should make
-                shopping easier for customers and
-                operations more manageable for
-                businesses.
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Modern digital commerce should make
+              shopping easier for customers and
+              operations more manageable for businesses.
+            </p>
+
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+
+              <p>
+                Online shopping experiences rely on much
+                more than a website. Product information,
+                customer interactions, payment systems,
+                inventory processes, and order fulfillment
+                must work together to support the business.
               </p>
 
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
-                <p>
-                  Online shopping experiences rely on
-                  much more than a website. Product
-                  information, customer interactions,
-                  payment systems, inventory processes,
-                  and order fulfillment must work
-                  together to support the business.
-                </p>
+              <p>
+                When these processes are disconnected,
+                organizations may encounter repetitive
+                administration, inconsistent data, and
+                unnecessary complexity. A practical commerce
+                strategy considers the complete customer
+                journey alongside the operational systems
+                that support it.
+              </p>
 
-                <p>
-                  When these processes are disconnected,
-                  organizations may encounter repetitive
-                  administration, inconsistent data,
-                  and unnecessary complexity. A practical
-                  commerce strategy considers the
-                  complete customer journey alongside
-                  the operational systems that support it.
-                </p>
+              <p>
+                Cloudlem approaches digital commerce by
+                combining application development, user
+                experience design, technology integration,
+                and process improvement. Our objective is
+                to help businesses build manageable digital
+                platforms that can evolve with customer needs.
+              </p>
 
-                <p>
-                  Cloudlem approaches digital commerce
-                  by combining application development,
-                  user experience design, technology
-                  integration, and process improvement.
-                  Our objective is to help businesses
-                  build manageable digital platforms
-                  that can evolve with customer needs.
-                </p>
-              </div>
             </div>
-          </motion.div>
+
+          </Reveal>
         </div>
       </section>
 
-      {/* ===================================
-          EDITORIAL CONTENT SECTIONS
-      =================================== */}
+      {/* ======================================
+          03–05 — EDITORIAL SERVICE SECTIONS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-[72px] ${
+            className={`py-20 sm:py-24 lg:py-28 ${
               index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+                ? "bg-[#F7F2FB]"
+                : "bg-white"
             }`}
+            aria-labelledby={`commerce-editorial-${section.number}`}
           >
-            <div className="container-systems">
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-                {/* TEXT COLUMN */}
+              {/* EDITORIAL CONTENT */}
 
-                <motion.div
-                  {...reveal}
-                  className={reverse ? "lg:order-2" : ""}
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+                direction={reversed ? "right" : "left"}
+              >
+
+                <div className="mb-5 flex items-center gap-4">
+
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+
+                </div>
+
+                <h2
+                  id={`commerce-editorial-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                  {section.title}
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
-                    </p>
-                  </div>
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
+                </h2>
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                    {section.title}
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
 
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
+                  {section.paragraphs.map(
+                    (paragraph, paragraphIndex) => (
+                      <p
+                        key={paragraphIndex}
+                        className={
+                          paragraphIndex === 0
+                            ? "font-medium text-[#43354D]"
+                            : ""
+                        }
+                      >
+                        {paragraph}
+                      </p>
+                    )
+                  )}
 
-                  <div className="mt-5 space-y-4">
-                    {section.paragraphs.map(
-                      (paragraph, paragraphIndex) => (
-                        <p
-                          key={paragraphIndex}
-                          className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                            paragraphIndex === 0
-                              ? "font-medium"
-                              : ""
-                          }`}
-                        >
-                          {paragraph}
-                        </p>
-                      )
-                    )}
-                  </div>
+                </div>
 
-                  {/* KEY FOCUS AREAS */}
+                {/* FOCUS AREA CARD */}
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/80 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
 
-                    <ul className="space-y-3">
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
 
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
+                  <ul className="space-y-3">
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
+                        </span>
 
-                {/* IMAGE COLUMN */}
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
 
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65 }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
+                </div>
+
+              </Reveal>
+
+              {/* EDITORIAL IMAGE */}
+
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+              >
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
+
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
 
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] bg-[#181818]" />
-                </motion.div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
 
-              </div>
+                  <div className="absolute bottom-6 left-6 flex items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[#653D82] backdrop-blur-md">
+
+                    <span className="h-2 w-2 rounded-full bg-[#A572C3]" />
+
+                    {section.eyebrow}
+
+                  </div>
+
+                </div>
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE IMAGE FEATURE
-      =================================== */}
+      {/* ======================================
+          06 — IMMERSIVE IMAGE FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-[72px] text-[#D8D2C8] lg:min-h-[480px]">
+      <section
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+        aria-labelledby="commerce-feature-heading"
+      >
 
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="-z-10 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/85" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(ellipse_at_80%_30%,rgba(217,181,237,0.18),transparent_60%)]"
+        />
 
         <div className="container-systems relative z-10">
-          <motion.div
-            {...reveal}
-            className="max-w-[830px]"
-          >
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+
+          <Reveal className="max-w-[870px]">
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               Connected Commerce Experiences
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
+            <h2
+              id="commerce-feature-heading"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Connect the customer
 
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 experience to operations.
               </span>
             </h2>
 
-            <p className="mt-6 max-w-[670px] text-[16px] leading-[1.8] text-[#D8D2C8]">
+            <p className="mt-7 max-w-[680px] text-[16px] leading-[1.85] text-[#F0E7F6]">
               Digital commerce works best when
-              customer-facing experiences and
-              supporting business systems operate
-              together. A connected approach can
-              help businesses simplify workflows,
-              improve information visibility, and
-              prepare for changing demand.
+              customer-facing experiences and supporting
+              business systems operate together. A
+              connected approach can help businesses
+              simplify workflows, improve information
+              visibility, and prepare for changing demand.
             </p>
-          </motion.div>
+
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          COMMERCE CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — DIGITAL COMMERCE CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+        aria-labelledby="commerce-capabilities-heading"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Our Areas of Focus
-              </p>
+          {/* SECTION HEADER */}
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+          <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+
+            <Reveal>
+
+              <Eyebrow>
+                Our Areas of Focus
+              </Eyebrow>
+
+              <h2
+                id="commerce-capabilities-heading"
+                className="text-[clamp(2.4rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+              >
                 Digital commerce
 
-                <span className="block text-[#B7B09F]">
+                <span className="block text-[#8855A9]">
                   capabilities.
                 </span>
               </h2>
-            </div>
 
-            <p className="max-w-[540px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              From storefront development and payment
-              integration to order workflows and
-              commerce analytics, these capabilities
-              address key parts of a digital
-              shopping experience.
-            </p>
-          </motion.div>
+            </Reveal>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Reveal delay={0.08}>
+
+              <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70] lg:justify-self-end">
+                From storefront development and payment
+                integration to order workflows and
+                commerce analytics, these capabilities
+                address key parts of a digital shopping
+                experience.
+              </p>
+
+            </Reveal>
+
+          </div>
+
+          {/* CAPABILITY CARDS */}
+
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.07}
+                  className="h-full"
                 >
-                  <div className="mb-6 flex items-center justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45 text-[#D8D2C8]">
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+
+                  <article className="group flex h-full min-h-[300px] flex-col rounded-[17px] border border-[#E9DDF1] bg-white p-6 shadow-[0_10px_28px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D3B8E4] hover:shadow-[0_20px_46px_rgba(70,34,99,0.105)] motion-safe:hover:-translate-y-1.5 sm:p-7">
+
+                    <div className="mb-7 flex items-start justify-between">
+
+                      <span className="flex h-14 w-14 items-center justify-center rounded-[14px] border border-[#E6D5F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EEDDF7] motion-safe:group-hover:scale-105">
+
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+
+                      </span>
+
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
+
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em] text-[#D8D2C8]">
-                    {item.title}
-                  </h3>
+                    <div
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
 
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
-                </motion.article>
+                  </article>
+
+                </Reveal>
               );
             })}
+
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          OUR COMMERCE APPROACH
-      =================================== */}
+      {/* ======================================
+          08 — OUR DELIVERY APPROACH
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        className="bg-white py-20 sm:py-24 lg:py-28"
+        aria-labelledby="commerce-approach-heading"
+      >
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
 
-            <motion.div {...reveal}>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+          {/* INTRODUCTION */}
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  How We Approach Commerce
-                </p>
-              </div>
+          <Reveal>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                From storefront
+            <Eyebrow>
+              How We Approach Commerce
+            </Eyebrow>
 
-                <span className="block text-[#625C51]">
-                  to customer experience.
-                </span>
-              </h2>
+            <h2
+              id="commerce-approach-heading"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              From storefront
 
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
-                Building an effective digital commerce
-                solution requires an understanding of
-                customers, business workflows, platform
-                requirements, and the technology that
-                connects them.
-              </p>
+              <span className="block text-[#8B57AB]">
+                to customer experience.
+              </span>
 
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
+            </h2>
+
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              Building an effective digital commerce
+              solution requires an understanding of
+              customers, business workflows, platform
+              requirements, and the technology that
+              connects them.
+            </p>
+
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-[#F8F3FC] p-5">
+
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
+
                 <Users
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
 
-                <p className="text-[15px] leading-[1.75]">
-                  The right commerce experience
-                  balances customer convenience,
-                  operational practicality, and
-                  long-term maintainability.
-                </p>
-              </div>
-            </motion.div>
+              </span>
 
-            <div className="border-t border-[#181818]/20">
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                The right commerce experience balances
+                customer convenience, operational
+                practicality, and long-term maintainability.
+              </p>
+
+            </div>
+
+          </Reveal>
+
+          {/* DELIVERY TIMELINE */}
+
+          <ol className="relative space-y-0 border-l border-[#E6D8EF] pl-7 sm:pl-9">
+
+            {approach.map((step, index) => (
+
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[39px] top-0 flex h-[22px] w-[22px] items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[47px]"
+                />
+
+                <Reveal
+                  delay={(index % 3) * 0.04}
                 >
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
 
-                  <div>
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-[#FBF9FD] p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#F7F0FC] motion-safe:hover:translate-x-1 sm:p-6">
+
+                    <div className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </div>
+
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
-                  </div>
-                </div>
-              ))}
-            </div>
 
-          </div>
+                  </div>
+
+                </Reveal>
+
+              </li>
+
+            ))}
+
+          </ol>
+
         </div>
+
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          09 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+        aria-labelledby="commerce-audiences-heading"
+      >
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Who We Help
-              </p>
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Built for
+          {/* SECTION INTRODUCTION */}
 
-                <span className="block text-[#514C43]">
-                  evolving commerce needs.
-                </span>
-              </h2>
-            </div>
+          <Reveal>
 
-            <div>
-              <p className="text-[17px] font-medium leading-[1.75]">
-                Digital Commerce is relevant to
-                organizations launching new online
-                sales channels, improving customer
-                experiences, or connecting existing
-                business operations.
-              </p>
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-              <div className="mt-5 space-y-3">
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
+            <h2
+              id="commerce-audiences-heading"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Built for
+
+              <span className="block text-[#8B57AB]">
+                evolving commerce needs.
+              </span>
+
+            </h2>
+
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Digital Commerce is relevant to organizations
+              launching new online sales channels,
+              improving customer experiences, or
+              connecting existing business operations.
+            </p>
+
+          </Reveal>
+
+          {/* AUDIENCE CARDS */}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+
+            {audiences.map((item, index) => (
+
+              <Reveal
+                key={item}
+                delay={(index % 2) * 0.08}
+                className="h-full"
+              >
+
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-white p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
+
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
+
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                  </span>
 
-      {/* ===================================
-          FINAL CTA
-      =================================== */}
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+                </div>
 
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+              </Reveal>
 
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-                Ready to grow your
-
-                <span className="block text-[#625C51]">
-                  digital commerce?
-                </span>
-              </h2>
-            </div>
-
-            <div className="lg:justify-self-end">
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-                Tell us about your products, customer
-                experience goals, and existing
-                commerce challenges. We can discuss
-                your requirements and explore a
-                practical direction for your project.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Your Project
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
+            ))}
 
           </div>
+
         </div>
+
       </section>
 
-      {/* ===================================
+      {/* ======================================
+          10 — FINAL PROJECT CTA
+      ====================================== */}
+
+      <section
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+        aria-labelledby="commerce-cta-heading"
+      >
+
+        {/* SOFT DECORATIVE LIGHTING */}
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 bottom-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          {/* CTA TITLE */}
+
+          <Reveal>
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="commerce-cta-heading"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready to grow your
+
+              <span className="block text-[#F0D9FA]">
+                digital commerce?
+              </span>
+
+            </h2>
+
+          </Reveal>
+
+          {/* CTA DESCRIPTION AND BUTTON */}
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your products, customer
+              experience goals, and existing commerce
+              challenges. We can discuss your requirements
+              and explore a practical direction for your
+              project.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+
+              Discuss Your Project
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+
+            </button>
+
+          </Reveal>
+
+        </div>
+
+      </section>
+
+      {/* ======================================
           EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+          PRESERVED
+      ====================================== */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}

@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   ArrowLeft,
@@ -18,20 +18,18 @@ import {
   LayoutDashboard,
   ShieldCheck,
   Workflow,
-  UsersRound,
 } from "lucide-react";
 
 import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
 // ==========================================
 // CLOUDLEM — BUSINESS APPLICATIONS
+// Premium Soft Lavender & White
 // ==========================================
 
 const SERVICE_TITLE = "Business Applications";
 
-// ==========================================
 // EXISTING CLOUDLEM IMAGE ASSETS
-// ==========================================
 
 const images = {
   hero: "/images/backgrounds/section-1-4.jpg",
@@ -42,21 +40,7 @@ const images = {
 };
 
 // ==========================================
-// ANIMATION CONFIGURATION
-// ==========================================
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
-};
-
-// ==========================================
-// EDITORIAL SERVICE CONTENT
+// EDITORIAL CONTENT — PRESERVED
 // ==========================================
 
 const editorialSections = [
@@ -69,9 +53,7 @@ const editorialSections = [
     alt: "Digital technology representing business applications",
     paragraphs: [
       "Every organization has its own workflows, operational requirements, and business challenges. Standard software products may support common activities, but they do not always fit the specific processes that make a business work.",
-
       "Custom business applications provide an opportunity to organize information, simplify tasks, and connect essential operations through software designed around real user needs. From internal dashboards and administrative portals to customer-facing applications, an effective solution should make work easier rather than introduce additional complexity.",
-
       "Cloudlem approaches application development by understanding business requirements before choosing technologies. We consider users, data structures, access controls, integrations, performance, and long-term maintenance to create a practical foundation for digital operations.",
     ],
     points: [
@@ -89,9 +71,7 @@ const editorialSections = [
     alt: "Connected infrastructure representing application integration",
     paragraphs: [
       "Organizations frequently depend on multiple applications to manage customers, finances, projects, inventory, communication, and reporting. When these systems operate independently, employees may spend valuable time moving information manually between platforms.",
-
       "Application integration allows different tools to exchange relevant information through APIs, supported connectors, and carefully designed workflows. This can reduce duplicate data entry, improve consistency, and help teams access information when they need it.",
-
       "We help businesses evaluate existing software environments and identify suitable integration approaches. Our planning considers data consistency, error handling, security, reliability, and the operational requirements of each connected system.",
     ],
     points: [
@@ -109,9 +89,7 @@ const editorialSections = [
     alt: "Cloud infrastructure representing application modernization",
     paragraphs: [
       "Business applications need to evolve as organizations grow and operational demands change. Older systems may become difficult to maintain, integrate, or adapt, particularly when they rely on outdated technologies or processes that were designed for a different stage of the business.",
-
       "Application modernization can involve improving existing functionality, updating interfaces, restructuring software components, strengthening deployment practices, or evaluating cloud-based architecture. The appropriate approach depends on the condition of the existing system and the value of the proposed changes.",
-
       "Cloudlem focuses on practical modernization planning that considers continuity, security, maintainability, and technical feasibility. Rather than replacing systems unnecessarily, we evaluate where targeted improvements or a more substantial redesign may deliver better long-term value.",
     ],
     points: [
@@ -172,7 +150,7 @@ const capabilities = [
 ];
 
 // ==========================================
-// OUR DELIVERY APPROACH
+// APPLICATION DELIVERY APPROACH
 // ==========================================
 
 const approach = [
@@ -220,665 +198,939 @@ const audiences = [
 ];
 
 // ==========================================
-// BUSINESS APPLICATIONS PAGE
+// REUSABLE ANIMATED REVEAL
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reducedMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={
+        reducedMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 22 : 0,
+              x:
+                direction === "left"
+                  ? -22
+                  : direction === "right"
+                    ? 22
+                    : 0,
+            }
+      }
+      whileInView={{
+        opacity: 1,
+        x: 0,
+        y: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.12,
+      }}
+      transition={{
+        duration: reducedMotion ? 0 : 0.65,
+        delay: reducedMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION EYEBROW
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#A477C0]"
+      />
+
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#80519F]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
+// SHARED CARD STYLES
+// ==========================================
+
+const cardStyle =
+  "group flex h-full flex-col rounded-[18px] border border-[#E8DDEF] bg-white p-6 shadow-[0_10px_30px_rgba(75,38,103,0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D0B3E1] hover:shadow-[0_22px_48px_rgba(75,38,103,0.11)] motion-safe:hover:-translate-y-1 sm:p-7";
+
+const iconStyle =
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-[15px] border border-[#E7D6F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EBDBF5] motion-safe:group-hover:scale-105";
+
+// ==========================================
+// MAIN BUSINESS APPLICATIONS PAGE
 // ==========================================
 
 export default function BusinessApplicationsPage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#30243B]">
 
-      {/* ===================================
-          HERO — CHARCOAL
-      =================================== */}
+      {/* ======================================
+          01 — PREMIUM LAVENDER HERO
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
+      <section
+        aria-labelledby="business-applications-title"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pb-20 pt-32 sm:pt-36 lg:pb-28 lg:pt-40"
+      >
+        {/* AMBIENT BACKGROUND */}
 
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-28 h-96 w-96 rounded-full bg-[#DDC9ED]/35 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-[430px] w-[430px] rounded-full bg-white/70 blur-3xl"
+        />
 
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/65 to-transparent" />
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
 
-        <div className="container-systems relative z-10 w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[880px]"
-          >
+          {/* HERO COPY */}
 
-            {/* BREADCRUMB */}
+          <Reveal className="min-w-0">
 
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#80519F] transition-colors hover:text-[#4B2B65] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#80519F]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
-
               All Services
             </Link>
 
-            {/* SERVICE CATEGORY */}
+            <Eyebrow>
+              Digital / Business Applications
+            </Eyebrow>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
-
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D8D2C8]">
-                Digital / Business Applications
-              </p>
-            </div>
-
-            {/* MAIN HEADING */}
-
-            <h1 className="max-w-[850px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em] text-[#D8D2C8]">
+            <h1
+              id="business-applications-title"
+              className="max-w-[740px] text-[clamp(2.8rem,5.2vw,5.4rem)] font-semibold leading-[1.06] tracking-[-0.06em] text-[#291D34]"
+            >
               Smarter software
 
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 for better
               </span>
 
               business.
             </h1>
 
-            {/* DESCRIPTION */}
-
-            <p className="mt-7 max-w-[680px] text-[16px] leading-[1.8] text-[#D8D2C8] sm:text-[17px]">
-              Transform daily business operations
-              with applications designed around
-              your organization. Connect workflows,
-              simplify information management,
-              and build software that supports
+            <p className="mt-7 max-w-[650px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
+              Transform daily business operations with
+              applications designed around your organization.
+              Connect workflows, simplify information
+              management, and build software that supports
               productivity and long-term growth.
             </p>
 
-            {/* CTA BUTTON */}
+            {/* HERO ACTIONS */}
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Your Application
+            <div className="mt-9 flex flex-wrap items-center gap-3">
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
-              />
-            </button>
-          </motion.div>
-        </div>
-      </section>
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Your Application
 
-      {/* ===================================
-          INTRODUCTION — WARM CREAM
-      =================================== */}
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
 
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-[border-color,background-color] duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+
+            </div>
+
+          </Reveal>
+
+          {/* HERO IMAGE */}
+
+          <Reveal
+            direction="right"
+            delay={0.12}
+            className="relative min-w-0 lg:pl-4"
           >
 
-            {/* HEADING */}
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
 
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Application Perspective
-                </p>
-              </div>
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
+              />
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Software built
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
 
-                <span className="block text-[#625C51]">
-                  for real operations.
+              {/* FLOATING INFORMATION CARD */}
+
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[310px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Business Applications
                 </span>
-              </h2>
-            </div>
 
-            {/* INTRODUCTION TEXT */}
-
-            <div className="lg:pt-3">
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Business applications should make
-                everyday work more organized,
-                efficient, and manageable.
-              </p>
-
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
-                <p>
-                  Modern businesses depend on software
-                  to manage essential activities,
-                  coordinate teams, serve customers,
-                  and make decisions. However, when
-                  applications are disconnected or
-                  difficult to use, technology can
-                  become a source of operational
-                  complexity rather than improvement.
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Built for the way you work.
                 </p>
 
-                <p>
-                  An effective business application
-                  brings together relevant information,
-                  clear workflows, and practical tools
-                  that support how employees actually
-                  work. The solution should reflect
-                  operational requirements instead
-                  of forcing every process into a
-                  rigid software structure.
-                </p>
-
-                <p>
-                  Cloudlem combines application
-                  development, cloud engineering,
-                  integrations, and automation
-                  planning to help organizations
-                  build and modernize digital
-                  systems that serve a clear
-                  business purpose.
-                </p>
               </div>
+
             </div>
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          EDITORIAL SECTIONS
-      =================================== */}
+      {/* ======================================
+          02 — APPLICATION INTRODUCTION
+      ====================================== */}
+
+      <section
+        aria-labelledby="applications-introduction"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
+
+          <Reveal>
+
+            <Eyebrow>
+              Our Application Perspective
+            </Eyebrow>
+
+            <h2
+              id="applications-introduction"
+              className="max-w-[570px] text-[clamp(2.3rem,3.6vw,3.65rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Software built
+
+              <span className="block text-[#8B58AC]">
+                for real operations.
+              </span>
+            </h2>
+
+            <div
+              aria-hidden="true"
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+            />
+
+          </Reveal>
+
+          <Reveal delay={0.1}>
+
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Business applications should make everyday
+              work more organized, efficient, and manageable.
+            </p>
+
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+
+              <p>
+                Modern businesses depend on software to
+                manage essential activities, coordinate
+                teams, serve customers, and make decisions.
+                However, when applications are disconnected
+                or difficult to use, technology can become
+                a source of operational complexity rather
+                than improvement.
+              </p>
+
+              <p>
+                An effective business application brings
+                together relevant information, clear
+                workflows, and practical tools that support
+                how employees actually work. The solution
+                should reflect operational requirements
+                instead of forcing every process into
+                a rigid software structure.
+              </p>
+
+              <p>
+                Cloudlem combines application development,
+                cloud engineering, integrations, and
+                automation planning to help organizations
+                build and modernize digital systems that
+                serve a clear business purpose.
+              </p>
+
+            </div>
+
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* ======================================
+          03–05 — EDITORIAL SERVICE SECTIONS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-[72px] ${
+            aria-labelledby={`application-pillar-${section.number}`}
+            className={`py-20 sm:py-24 lg:py-28 ${
               index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+                ? "bg-[#F7F2FB]"
+                : "bg-white"
             }`}
           >
-            <div className="container-systems">
 
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-                {/* TEXT COLUMN */}
+              {/* EDITORIAL TEXT */}
 
-                <motion.div
-                  {...reveal}
-                  className={reverse ? "lg:order-2" : ""}
+              <Reveal
+                direction={reversed ? "right" : "left"}
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+              >
+
+                <div className="mb-5 flex items-center gap-4">
+
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+
+                </div>
+
+                <h2
+                  id={`application-pillar-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
+                  {section.title}
 
-                  {/* SECTION LABEL */}
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
 
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                </h2>
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
-                    </p>
-                  </div>
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
 
-                  {/* HEADING */}
+                {/* ORIGINAL DETAILED CONTENT */}
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                    {section.title}
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
+                  {section.paragraphs.map(
+                    (paragraph, paragraphIndex) => (
+                      <p
+                        key={paragraphIndex}
+                        className={
+                          paragraphIndex === 0
+                            ? "font-medium text-[#43354D]"
+                            : ""
+                        }
+                      >
+                        {paragraph}
+                      </p>
+                    )
+                  )}
 
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
+                </div>
 
-                  {/* DETAILED CONTENT */}
+                {/* FOCUS AREA CARD */}
 
-                  <div className="mt-5 space-y-4">
-                    {section.paragraphs.map(
-                      (paragraph, paragraphIndex) => (
-                        <p
-                          key={paragraphIndex}
-                          className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                            paragraphIndex === 0
-                              ? "font-medium"
-                              : ""
-                          }`}
-                        >
-                          {paragraph}
-                        </p>
-                      )
-                    )}
-                  </div>
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/85 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
 
-                  {/* FOCUS AREAS */}
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
+                  <ul className="space-y-3">
 
-                    <ul className="space-y-3">
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
+                      >
 
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
 
-                {/* EDITORIAL IMAGE */}
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
 
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65 }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
+                        </span>
+
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
+
+                      </li>
+                    ))}
+
+                  </ul>
+
+                </div>
+
+              </Reveal>
+
+              {/* EDITORIAL IMAGE */}
+
+              <Reveal
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+              >
+
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
+
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
 
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] bg-[#181818]" />
-                </motion.div>
-              </div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
+
+                  {/* IMAGE CATEGORY */}
+
+                  <div className="absolute bottom-6 left-6 right-6 flex w-fit max-w-[calc(100%-3rem)] items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#653D82] backdrop-blur-md">
+
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#A572C3]" />
+
+                    <span>{section.eyebrow}</span>
+
+                  </div>
+
+                </div>
+
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE FEATURE SECTION
-      =================================== */}
+      {/* ======================================
+          06 — IMMERSIVE PHOTOGRAPHIC FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-[72px] text-[#D8D2C8] lg:min-h-[480px]">
+      <section
+        aria-labelledby="applications-feature"
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+      >
 
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/85" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
 
-        <div className="container-systems relative z-10">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-[radial-gradient(ellipse_at_80%_30%,rgba(217,181,237,0.18),transparent_60%)]"
+        />
 
-          <motion.div
-            {...reveal}
-            className="max-w-[830px]"
-          >
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+        <div className="container-systems relative z-20">
+
+          <Reveal className="max-w-[870px]">
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               Connected Business Technology
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
+            <h2
+              id="applications-feature"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Bring your business
 
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 systems together.
               </span>
+
             </h2>
 
-            <p className="mt-6 max-w-[680px] text-[16px] leading-[1.8] text-[#D8D2C8]">
-              The value of business software grows
-              when applications, information, and
-              people can work together. Thoughtful
-              integrations, maintainable systems,
-              and practical automation help
-              organizations establish a more
-              connected digital environment.
+            <p className="mt-7 max-w-[700px] text-[16px] leading-[1.85] text-[#F0E7F6]">
+              The value of business software grows when
+              applications, information, and people can
+              work together. Thoughtful integrations,
+              maintainable systems, and practical automation
+              help organizations establish a more connected
+              digital environment.
             </p>
-          </motion.div>
+
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          BUSINESS APPLICATION CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — BUSINESS APPLICATION CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        aria-labelledby="applications-capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
+
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Our Areas of Focus
-              </p>
+          {/* SECTION HEADER */}
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+          <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+
+            <Reveal>
+
+              <Eyebrow>
+                Our Areas of Focus
+              </Eyebrow>
+
+              <h2
+                id="applications-capabilities"
+                className="text-[clamp(2.4rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+              >
                 Business application
 
-                <span className="block text-[#B7B09F]">
+                <span className="block text-[#8855A9]">
                   capabilities.
                 </span>
+
               </h2>
-            </div>
 
-            <p className="max-w-[540px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              From custom business portals and
-              application integrations to workflow
-              automation and modernization, our
-              approach focuses on software that
-              supports real operational needs.
-            </p>
-          </motion.div>
+            </Reveal>
 
-          {/* CAPABILITY CARDS */}
+            <Reveal delay={0.08}>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70]">
+                From custom business portals and application
+                integrations to workflow automation and
+                modernization, our approach focuses on
+                software that supports real operational needs.
+              </p>
+
+            </Reveal>
+
+          </div>
+
+          {/* SIX CAPABILITY CARDS */}
+
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.06}
+                  className="h-full"
                 >
-                  {/* ICON AND NUMBER */}
 
-                  <div className="mb-6 flex items-center justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45 text-[#D8D2C8]">
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+                  <article className={`${cardStyle} min-h-[275px]`}>
+
+                    <div className="mb-7 flex items-start justify-between">
+
+                      <span className={iconStyle}>
+
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+
+                      </span>
+
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
+
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  {/* TITLE */}
+                    <span
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em] text-[#D8D2C8]">
-                    {item.title}
-                  </h3>
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
+                  </article>
 
-                  {/* DESCRIPTION */}
-
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
-                </motion.article>
+                </Reveal>
               );
             })}
+
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          APPLICATION DELIVERY APPROACH
-      =================================== */}
+      {/* ======================================
+          08 — APPLICATION DELIVERY APPROACH
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="applications-approach"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
 
-            {/* SECTION INTRO */}
+          {/* INTRODUCTION */}
 
-            <motion.div {...reveal}>
+          <Reveal>
 
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <Eyebrow>
+              How We Build Applications
+            </Eyebrow>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  How We Build Applications
-                </p>
-              </div>
+            <h2
+              id="applications-approach"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              From business needs
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                From business needs
+              <span className="block text-[#8B57AB]">
+                to working software.
+              </span>
 
-                <span className="block text-[#625C51]">
-                  to working software.
-                </span>
-              </h2>
+            </h2>
 
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
-                A successful business application
-                requires more than writing code.
-                Our approach emphasizes clear
-                requirements, practical architecture,
-                usable interfaces, and thoughtful
-                integration with existing systems.
-              </p>
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              A successful business application requires
+              more than writing code. Our approach
+              emphasizes clear requirements, practical
+              architecture, usable interfaces, and
+              thoughtful integration with existing systems.
+            </p>
 
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
+            {/* SUPPORTING HIGHLIGHT */}
+
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-[#F8F3FC] p-5">
+
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
+
                 <ShieldCheck
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
 
-                <p className="text-[15px] leading-[1.75]">
-                  Security, maintainability, and
-                  user needs should be considered
-                  throughout application planning
-                  and development.
-                </p>
-              </div>
-            </motion.div>
+              </span>
 
-            {/* DELIVERY STAGES */}
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                Security, maintainability, and user needs
+                should be considered throughout application
+                planning and development.
+              </p>
 
-            <div className="border-t border-[#181818]/20">
+            </div>
 
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
-                >
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
+          </Reveal>
 
-                  <div>
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+          {/* FIVE-STEP DELIVERY TIMELINE */}
+
+          <ol className="relative border-l border-[#E6D8EF] pl-7 sm:pl-9">
+
+            {approach.map((step, index) => (
+
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[39px] top-0 flex h-[22px] w-[22px] items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[47px]"
+                />
+
+                <Reveal delay={(index % 3) * 0.04}>
+
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-[#FBF9FD] p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#F7F0FC] motion-safe:hover:translate-x-1 sm:p-6">
+
+                    <div className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </div>
+
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
-                  </div>
-                </div>
-              ))}
 
-            </div>
-          </div>
+                  </div>
+
+                </Reveal>
+
+              </li>
+
+            ))}
+
+          </ol>
+
         </div>
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          09 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="applications-audiences"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-            {/* HEADING */}
+          {/* AUDIENCE INTRODUCTION */}
 
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Who We Help
-              </p>
+          <Reveal>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Built for
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-                <span className="block text-[#514C43]">
-                  modern business needs.
-                </span>
-              </h2>
-            </div>
+            <h2
+              id="applications-audiences"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Built for
 
-            {/* AUDIENCES */}
+              <span className="block text-[#8B57AB]">
+                modern business needs.
+              </span>
 
-            <div>
-              <p className="text-[17px] font-medium leading-[1.75]">
-                Business Applications can support
-                organizations seeking more effective
-                internal processes, connected digital
-                systems, and software tailored to
-                their operational requirements.
-              </p>
+            </h2>
 
-              <div className="mt-5 space-y-3">
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Business Applications can support
+              organizations seeking more effective
+              internal processes, connected digital
+              systems, and software tailored to their
+              operational requirements.
+            </p>
 
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
+          </Reveal>
+
+          {/* FOUR AUDIENCE CARDS */}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+
+            {audiences.map((item, index) => (
+
+              <Reveal
+                key={item}
+                delay={(index % 2) * 0.07}
+                className="h-full"
+              >
+
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-white p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
+
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
+
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
-                  </div>
-                ))}
+                  </span>
 
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
 
-      {/* ===================================
-          FINAL CALL TO ACTION
-      =================================== */}
+                </div>
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+              </Reveal>
 
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+            ))}
 
-            {/* CTA HEADING */}
-
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-                Ready to improve
-
-                <span className="block text-[#625C51]">
-                  your business systems?
-                </span>
-              </h2>
-            </div>
-
-            {/* CTA CONTENT */}
-
-            <div className="lg:justify-self-end">
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-                Tell us about your existing
-                applications, operational challenges,
-                and software requirements. We can
-                discuss the possibilities and
-                explore a practical approach
-                for your project.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Your Project
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+      {/* ======================================
+          10 — FINAL CALL TO ACTION
+      ====================================== */}
+
+      <section
+        aria-labelledby="applications-cta"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+      >
+
+        {/* DECORATIVE ELEMENTS */}
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          {/* CTA HEADING */}
+
+          <Reveal>
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="applications-cta"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready to improve
+
+              <span className="block text-[#F0D9FA]">
+                your business systems?
+              </span>
+
+            </h2>
+
+          </Reveal>
+
+          {/* CTA CONTENT */}
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your existing applications,
+              operational challenges, and software
+              requirements. We can discuss the possibilities
+              and explore a practical approach for your project.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Discuss Your Project
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+
+            </button>
+
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* ======================================
+          ORIGINAL SUPABASE INQUIRY MODAL
+          PRESERVED
+      ====================================== */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}

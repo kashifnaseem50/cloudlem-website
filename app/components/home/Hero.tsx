@@ -143,7 +143,6 @@ export default function Hero() {
           ref={videoRef}
           autoPlay
           loop
-          muted
           playsInline
           preload="metadata"
           tabIndex={-1}
@@ -222,19 +221,19 @@ export default function Hero() {
 
               <p className="text-[11px] font-semibold uppercase tracking-[0.23em] text-[#E7E0D7] sm:text-[12px]">
 
-                Build
-
-                <span className="mx-2 text-white/45">
-                  ·
-                </span>
-
                 Automate
 
                 <span className="mx-2 text-white/45">
                   ·
                 </span>
 
-                Scale
+                Anything
+
+                <span className="mx-2 text-white/45">
+                  ·
+                </span>
+
+                Anywhere
 
               </p>
 
@@ -255,7 +254,7 @@ export default function Hero() {
               Technology, Operations &amp;
               Financial Solutions for{" "}
 
-              <span className="cloudlem-hero-highlight inline-block bg-[linear-gradient(110deg,#FFFFFF_0%,#E8E5DD_32%,#EBCFA7_75%,#C5E1E6_100%)] bg-clip-text text-transparent">
+              <span className="cloudlem-hero-highlight inline-block pb-[0.12em] bg-[linear-gradient(110deg,#FFFFFF_0%,#E8E5DD_32%,#EBCFA7_75%,#C5E1E6_100%)] bg-clip-text text-transparent">
 
                 Growing Businesses
 

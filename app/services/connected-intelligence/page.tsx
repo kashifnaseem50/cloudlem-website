@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   ArrowLeft,
@@ -31,11 +31,10 @@ import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
 // ==========================================
 // CLOUDLEM — CONNECTED INTELLIGENCE
+// Premium Soft Lavender & White
 // ==========================================
 
 const SERVICE_TITLE = "Connected Intelligence";
-
-// EXISTING VERIFIED CLOUDLEM IMAGES
 
 const images = {
   hero: "/images/backgrounds/section-1-4.jpg",
@@ -43,20 +42,6 @@ const images = {
   operations: "/images/backgrounds/section-2-2.jpg",
   applications: "/images/backgrounds/section-1-3.jpg",
   feature: "/images/backgrounds/section-3-1.jpg",
-};
-
-// ==========================================
-// ANIMATION CONFIGURATION
-// ==========================================
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
 };
 
 // ==========================================
@@ -243,7 +228,7 @@ const industryUseCases = [
 ];
 
 // ==========================================
-// INTELLIGENCE FLOW
+// CONNECTED INTELLIGENCE FRAMEWORK
 // ==========================================
 
 const intelligenceFlow = [
@@ -322,7 +307,7 @@ const approach = [
 ];
 
 // ==========================================
-// RELEVANT BUSINESS NEEDS
+// AUDIENCES
 // ==========================================
 
 const audiences = [
@@ -333,862 +318,1108 @@ const audiences = [
 ];
 
 // ==========================================
-// MAIN PAGE COMPONENT
+// REUSABLE ANIMATED REVEAL
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={
+        reduceMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 22 : 0,
+              x:
+                direction === "left"
+                  ? -22
+                  : direction === "right"
+                    ? 22
+                    : 0,
+            }
+      }
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.65,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// SECTION EYEBROW
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#A477C0]"
+      />
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#80519F]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION HEADING
+// ==========================================
+
+function SectionHeading({
+  id,
+  eyebrow,
+  title,
+  highlight,
+  description,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+
+      <Reveal>
+        <Eyebrow>{eyebrow}</Eyebrow>
+
+        <h2
+          id={id}
+          className="text-[clamp(2.35rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em] text-[#30243B]"
+        >
+          {title}
+          <span className="block text-[#8855A9]">
+            {highlight}
+          </span>
+        </h2>
+      </Reveal>
+
+      <Reveal delay={0.08}>
+        <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70]">
+          {description}
+        </p>
+      </Reveal>
+
+    </div>
+  );
+}
+
+// ==========================================
+// SHARED CARD STYLES
+// ==========================================
+
+const cardStyle =
+  "group flex h-full flex-col rounded-[18px] border border-[#E8DDEF] bg-white p-6 shadow-[0_10px_30px_rgba(75,38,103,0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D0B3E1] hover:shadow-[0_22px_48px_rgba(75,38,103,0.11)] motion-safe:hover:-translate-y-1 sm:p-7";
+
+const iconStyle =
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-[15px] border border-[#E7D6F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EBDBF5] motion-safe:group-hover:scale-105";
+
+// ==========================================
+// MAIN CONNECTED INTELLIGENCE PAGE
 // ==========================================
 
 export default function ConnectedIntelligencePage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#30243B]">
 
-      {/* ===================================
-          HERO SECTION
-      =================================== */}
+      {/* ======================================
+          01 — PREMIUM LAVENDER HERO
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
-
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+      <section
+        aria-labelledby="connected-title"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pb-20 pt-32 sm:pt-36 lg:pb-28 lg:pt-40"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-28 h-96 w-96 rounded-full bg-[#DDC9ED]/35 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-[430px] w-[430px] rounded-full bg-white/70 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/65 to-transparent" />
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
 
-        <div className="container-systems relative z-10 w-full">
-
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[900px]"
-          >
+          <Reveal className="min-w-0">
 
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#80519F] transition-colors hover:text-[#4B2B65] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#80519F]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
               All Services
             </Link>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
+            <Eyebrow>
+              Data &amp; Analytics / Connected Intelligence
+            </Eyebrow>
 
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D8D2C8]">
-                Data & Analytics / Connected Intelligence
-              </p>
-            </div>
-
-            <h1 className="max-w-[880px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em]">
+            <h1
+              id="connected-title"
+              className="max-w-[760px] text-[clamp(2.5rem,5.1vw,5.35rem)] font-semibold leading-[1.06] tracking-[-0.06em] text-[#291D34]"
+            >
               Connect your data.
 
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 Empower smarter
               </span>
 
               decisions.
             </h1>
 
-            <p className="mt-7 max-w-[690px] text-[16px] leading-[1.8] sm:text-[17px]">
-              Bring business systems, customer
-              information, and advanced analytics
-              together. Build connected intelligence
-              that provides clearer operational
-              visibility and helps teams act
+            <p className="mt-7 max-w-[650px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
+              Bring business systems, customer information,
+              and advanced analytics together. Build
+              connected intelligence that provides clearer
+              operational visibility and helps teams act
               on meaningful insights.
             </p>
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Connected Intelligence
+            <div className="mt-9 flex flex-wrap items-center gap-3">
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Connected Intelligence
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
+
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-[border-color,background-color] duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+
+            </div>
+
+          </Reveal>
+
+          {/* HERO IMAGE */}
+
+          <Reveal
+            className="relative min-w-0 lg:pl-4"
+            direction="right"
+            delay={0.12}
+          >
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
+
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
+
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
               />
-            </button>
 
-          </motion.div>
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
+
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[320px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Connected Intelligence
+                </span>
+
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Connected data. Better decisions.
+                </p>
+
+              </div>
+
+            </div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          INTRODUCTION
-      =================================== */}
+      {/* ======================================
+          02 — CONNECTED INTELLIGENCE INTRODUCTION
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="connected-intro"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
-          >
+          <Reveal>
+            <Eyebrow>
+              Our Connected Intelligence Perspective
+            </Eyebrow>
 
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <h2
+              id="connected-intro"
+              className="max-w-[570px] text-[clamp(2.3rem,3.6vw,3.65rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              One connected view.
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Connected Intelligence Perspective
-                </p>
-              </div>
+              <span className="block text-[#8B58AC]">
+                Better business understanding.
+              </span>
+            </h2>
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                One connected view.
+            <div
+              aria-hidden="true"
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+            />
+          </Reveal>
 
-                <span className="block text-[#625C51]">
-                  Better business understanding.
-                </span>
-              </h2>
-            </div>
+          <Reveal delay={0.1}>
 
-            <div className="lg:pt-3">
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Connected intelligence brings information,
+              analytics, and business processes together
+              to make insights easier to understand and use.
+            </p>
 
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Connected intelligence brings
-                information, analytics, and
-                business processes together
-                to make insights easier
-                to understand and use.
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+
+              <p>
+                Organizations depend on many applications
+                to manage customers, products, operations,
+                finance, and digital services. Each system
+                contains valuable information, but separate
+                datasets can create incomplete views and
+                inconsistent reporting.
               </p>
 
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
+              <p>
+                Connected intelligence helps organizations
+                explore how information from these systems
+                can be combined, interpreted, and delivered
+                to the teams that need it. Modern integration,
+                business intelligence, and appropriate analytical
+                techniques can help make disconnected information
+                more useful.
+              </p>
 
-                <p>
-                  Organizations depend on many
-                  applications to manage customers,
-                  products, operations, finance,
-                  and digital services. Each system
-                  contains valuable information,
-                  but separate datasets can create
-                  incomplete views and inconsistent
-                  reporting.
-                </p>
+              <p>
+                Cloudlem approaches connected intelligence
+                by examining the relationship between data,
+                people, and business decisions. We focus on
+                dependable integration, meaningful analysis,
+                responsible information handling, and practical
+                applications that support everyday business activities.
+              </p>
 
-                <p>
-                  Connected intelligence helps
-                  organizations explore how
-                  information from these systems
-                  can be combined, interpreted,
-                  and delivered to the teams
-                  that need it. Modern integration,
-                  business intelligence, and
-                  appropriate analytical techniques
-                  can help make disconnected
-                  information more useful.
-                </p>
-
-                <p>
-                  Cloudlem approaches connected
-                  intelligence by examining the
-                  relationship between data,
-                  people, and business decisions.
-                  We focus on dependable integration,
-                  meaningful analysis, responsible
-                  information handling, and practical
-                  applications that support
-                  everyday business activities.
-                </p>
-
-              </div>
             </div>
-          </motion.div>
+
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          THREE EDITORIAL SECTIONS
-      =================================== */}
+      {/* ======================================
+          03–05 — EDITORIAL SERVICE SECTIONS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-[72px] ${
-              index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+            aria-labelledby={`connected-pillar-${section.number}`}
+            className={`py-20 sm:py-24 lg:py-28 ${
+              index % 2 === 0 ? "bg-[#F7F2FB]" : "bg-white"
             }`}
           >
-            <div className="container-systems">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+              {/* TEXT COLUMN */}
 
-                {/* TEXT */}
+              <Reveal
+                direction={reversed ? "right" : "left"}
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+              >
+                <div className="mb-5 flex items-center gap-4">
 
-                <motion.div
-                  {...reveal}
-                  className={reverse ? "lg:order-2" : ""}
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+
+                </div>
+
+                <h2
+                  id={`connected-pillar-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
+                  {section.title}
 
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
+                </h2>
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
-                    </p>
-                  </div>
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                    {section.title}
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
-
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
-
-                  <div className="mt-5 space-y-4">
-
-                    {section.paragraphs.map((paragraph, paragraphIndex) => (
+                  {section.paragraphs.map(
+                    (paragraph, paragraphIndex) => (
                       <p
                         key={paragraphIndex}
-                        className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                          paragraphIndex === 0 ? "font-medium" : ""
-                        }`}
+                        className={
+                          paragraphIndex === 0
+                            ? "font-medium text-[#43354D]"
+                            : ""
+                        }
                       >
                         {paragraph}
                       </p>
+                    )
+                  )}
+
+                </div>
+
+                {/* KEY FOCUS AREAS */}
+
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/85 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
+
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
+
+                  <ul className="space-y-3">
+
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
+                      >
+
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
+
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
+
+                        </span>
+
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
+
+                      </li>
                     ))}
 
-                  </div>
+                  </ul>
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
+                </div>
 
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
+              </Reveal>
 
-                    <ul className="space-y-3">
+              {/* EDITORIAL IMAGE */}
 
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
+              <Reveal
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+              >
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
 
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
-                        </li>
-                      ))}
-
-                    </ul>
-                  </div>
-
-                </motion.div>
-
-                {/* IMAGE */}
-
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65 }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
-                </motion.div>
 
-              </div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
+
+                  <div className="absolute bottom-6 left-6 right-6 flex w-fit max-w-[calc(100%-3rem)] items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#653D82] backdrop-blur-md">
+
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#A572C3]" />
+
+                    <span>{section.eyebrow}</span>
+
+                  </div>
+
+                </div>
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE PHOTOGRAPHIC FEATURE
-      =================================== */}
+      {/* ======================================
+          06 — PHOTOGRAPHIC FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-[72px] text-[#D8D2C8] lg:min-h-[480px]">
-
+      <section
+        aria-labelledby="connected-feature"
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+      >
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/85" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
 
-        <div className="container-systems relative z-10">
+        <div className="container-systems relative z-20">
 
-          <motion.div
-            {...reveal}
-            className="max-w-[830px]"
-          >
+          <Reveal className="max-w-[870px]">
 
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               Intelligence Across Your Business
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
+            <h2
+              id="connected-feature"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Bring data together.
 
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 Put insight into action.
               </span>
             </h2>
 
-            <p className="mt-6 max-w-[690px] text-[16px] leading-[1.8]">
-              Connected intelligence helps
-              organizations move beyond isolated
-              dashboards by combining relevant
-              information and placing useful
-              insights closer to the decisions
-              that matter.
+            <p className="mt-7 max-w-[690px] text-[16px] leading-[1.85] text-[#F0E7F6]">
+              Connected intelligence helps organizations
+              move beyond isolated dashboards by combining
+              relevant information and placing useful insights
+              closer to the decisions that matter.
             </p>
 
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          CONNECTED INTELLIGENCE CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — CONNECTED INTELLIGENCE CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        aria-labelledby="connected-capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeading
+            id="connected-capabilities"
+            eyebrow="Our Areas of Focus"
+            title="Connected intelligence"
+            highlight="capabilities."
+            description="Bring together customer data, supply chain information, digital interactions, and business analytics to support more consistent and informed operational decisions."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Our Areas of Focus
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Connected intelligence
-
-                <span className="block text-[#B7B09F]">
-                  capabilities.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              Bring together customer data,
-              supply chain information, digital
-              interactions, and business analytics
-              to support more consistent and
-              informed operational decisions.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  className="h-full"
+                  delay={(index % 3) * 0.06}
                 >
 
-                  <div className="mb-6 flex items-center justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45">
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+                  <article className={`${cardStyle} min-h-[290px]`}>
+
+                    <div className="mb-7 flex items-start justify-between">
+
+                      <span className={iconStyle}>
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
+
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
+
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {item.title}
-                  </h3>
+                    <span
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
 
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
+                  </article>
 
-                </motion.article>
+                </Reveal>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          INDUSTRY USE CASES
-      =================================== */}
+      {/* ======================================
+          08 — INDUSTRY USE CASES
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="connected-industries"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Practical Applications
-              </p>
+          <SectionHeading
+            id="connected-industries"
+            eyebrow="Practical Applications"
+            title="Connected insights"
+            highlight="across industries."
+            description="Different organizations use intelligence in different ways. These examples illustrate possible applications based on business requirements and available data."
+          />
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Connected insights
+          <div className="grid gap-5 lg:grid-cols-3">
 
-                <span className="block text-[#625C51]">
-                  across industries.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[540px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Different organizations use
-              intelligence in different ways.
-              These examples illustrate possible
-              applications based on business
-              requirements and available data.
-            </p>
-          </motion.div>
-
-          <div className="grid gap-4 lg:grid-cols-3">
-
-            {industryUseCases.map((industry) => {
+            {industryUseCases.map((industry, index) => {
               const Icon = industry.icon;
 
               return (
-                <article
+                <Reveal
                   key={industry.number}
-                  className="flex flex-col border border-[#181818]/20 bg-[#B7B09F]/35 p-6 sm:p-7"
+                  delay={index * 0.06}
+                  className="h-full"
                 >
 
-                  <div className="flex items-center justify-between">
-                    <Icon
-                      size={27}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                  <article className={`${cardStyle} min-h-[480px]`}>
 
-                    <span className="text-[12px] font-bold text-[#625C51]">
-                      {industry.number}
-                    </span>
-                  </div>
+                    <div className="flex items-start justify-between">
 
-                  <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.13em] text-[#625C51]">
-                    {industry.label}
-                  </p>
+                      <span className={iconStyle}>
+                        <Icon
+                          size={26}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
 
-                  <h3 className="mt-3 text-[23px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {industry.title}
-                  </h3>
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {industry.number}
+                      </span>
 
-                  <p className="mt-4 text-[15px] leading-[1.75]">
-                    {industry.description}
-                  </p>
+                    </div>
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
-
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.13em]">
-                      Example Use Cases
+                    <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.14em] text-[#8755A6]">
+                      {industry.label}
                     </p>
 
-                    <ul className="space-y-3">
-                      {industry.examples.map((example) => (
-                        <li
-                          key={example}
-                          className="flex items-start gap-3"
-                        >
-                          <Check
-                            size={17}
-                            className="mt-1 shrink-0"
-                            aria-hidden="true"
-                          />
+                    <h3 className="mt-3 text-[23px] font-semibold leading-[1.26] tracking-[-0.035em] text-[#30213B]">
+                      {industry.title}
+                    </h3>
 
-                          <span className="text-[14px] leading-[1.7]">
-                            {example}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {industry.description}
+                    </p>
 
-                  </div>
-                </article>
+                    <div className="mt-6 border-t border-[#E9DDF1] pt-5">
+
+                      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.14em] text-[#80519F]">
+                        Example Use Cases
+                      </p>
+
+                      <ul className="space-y-3">
+
+                        {industry.examples.map((example) => (
+                          <li
+                            key={example}
+                            className="flex items-start gap-3"
+                          >
+                            <Check
+                              size={17}
+                              strokeWidth={2}
+                              aria-hidden="true"
+                              className="mt-0.5 shrink-0 text-[#8755A6]"
+                            />
+
+                            <span className="text-[14px] leading-[1.7] text-[#51465C]">
+                              {example}
+                            </span>
+                          </li>
+                        ))}
+
+                      </ul>
+
+                    </div>
+
+                  </article>
+
+                </Reveal>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          CONNECTED INTELLIGENCE FRAMEWORK
-      =================================== */}
+      {/* ======================================
+          09 — FIVE-STAGE INTELLIGENCE FRAMEWORK
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="connected-framework"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-9 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeading
+            id="connected-framework"
+            eyebrow="Connected Intelligence Framework"
+            title="From disconnected"
+            highlight="systems to connected action."
+            description="A practical intelligence framework connects information sources, establishes common definitions, and delivers relevant analytical results where teams can use them."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Connected Intelligence Framework
-              </p>
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                From disconnected
-
-                <span className="block text-[#514C43]">
-                  systems to connected action.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              A practical intelligence
-              framework connects information
-              sources, establishes common
-              definitions, and delivers
-              relevant analytical results
-              where teams can use them.
-            </p>
-          </motion.div>
-
-          {/* RESPONSIVE FIVE-STAGE FRAMEWORK */}
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-
-            {intelligenceFlow.map((stage) => {
+            {intelligenceFlow.map((stage, index) => {
               const Icon = stage.icon;
 
               return (
-                <article
-                  key={stage.number}
-                  className="flex flex-col border border-[#181818]/20 bg-[#D8D2C8] p-5"
+                <li key={stage.number} className="min-w-0">
+
+                  <Reveal
+                    className="h-full"
+                    delay={(index % 5) * 0.045}
+                  >
+
+                    <div className="flex h-full min-h-[245px] flex-col rounded-[16px] border border-[#E1D1EA] bg-white p-5 shadow-[0_8px_24px_rgba(75,38,103,0.035)] transition-[transform,border-color,box-shadow] duration-300 hover:border-[#C8A6DC] hover:shadow-[0_14px_32px_rgba(75,38,103,0.09)] motion-safe:hover:-translate-y-1">
+
+                      <span className="text-[11px] font-bold tracking-[0.13em] text-[#9464B3]">
+                        STAGE {stage.number}
+                      </span>
+
+                      <div className="mt-5 flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#F1E5F8] text-[#8250A4]">
+
+                        <Icon
+                          size={22}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+
+                      </div>
+
+                      <h3 className="mt-5 text-[19px] font-semibold leading-[1.3] text-[#32223E]">
+                        {stage.title}
+                      </h3>
+
+                      <p className="mt-3 flex-1 text-[14px] leading-[1.75] text-[#665A70]">
+                        {stage.description}
+                      </p>
+
+                      {index < intelligenceFlow.length - 1 && (
+                        <ArrowRight
+                          size={17}
+                          aria-hidden="true"
+                          className="mt-5 text-[#A277C1]"
+                        />
+                      )}
+
+                    </div>
+
+                  </Reveal>
+
+                </li>
+              );
+            })}
+
+          </ol>
+
+          {/* CROSS-CUTTING REQUIREMENTS */}
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+
+            {[
+              {
+                label: "Privacy & Access Controls",
+                icon: ShieldCheck,
+              },
+              {
+                label: "Data Quality & Governance",
+                icon: Layers3,
+              },
+              {
+                label: "Reliable Integration & Review",
+                icon: Check,
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-[12px] border border-[#E3D4ED] bg-white px-5 py-4 text-[#493456]"
                 >
 
-                  <div className="flex items-center justify-between">
-                    <Icon
-                      size={23}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
-
-                    <span className="text-[12px] font-bold text-[#625C51]">
-                      {stage.number}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-6 text-[19px] font-semibold tracking-[-0.03em]">
-                    {stage.title}
-                  </h3>
-
-                  <p className="mt-3 flex-1 text-[14px] leading-[1.75]">
-                    {stage.description}
-                  </p>
-
-                  <ArrowRight
-                    size={18}
-                    className="mt-5 text-[#625C51]"
+                  <Icon
+                    size={21}
                     aria-hidden="true"
+                    className="shrink-0 text-[#8755A6]"
                   />
 
-                </article>
+                  <span className="text-[14px] font-semibold">
+                    {item.label}
+                  </span>
+
+                </div>
               );
             })}
 
           </div>
 
-          {/* CROSS-CUTTING REQUIREMENTS */}
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-              <ShieldCheck size={21} className="shrink-0" />
-              <span className="text-[14px] font-semibold">
-                Privacy & Access Controls
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-              <Layers3 size={21} className="shrink-0" />
-              <span className="text-[14px] font-semibold">
-                Data Quality & Governance
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-              <Check size={21} className="shrink-0" />
-              <span className="text-[14px] font-semibold">
-                Reliable Integration & Review
-              </span>
-            </div>
-
-          </div>
         </div>
       </section>
 
-      {/* ===================================
-          DELIVERY APPROACH
-      =================================== */}
+      {/* ======================================
+          10 — IMPLEMENTATION APPROACH
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="connected-approach"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
 
-            <motion.div {...reveal}>
+          <Reveal>
 
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <Eyebrow>
+              Our Implementation Approach
+            </Eyebrow>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  Our Implementation Approach
-                </p>
-              </div>
+            <h2
+              id="connected-approach"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              Connecting the right
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Connecting the right
+              <span className="block text-[#8B57AB]">
+                data with real needs.
+              </span>
+            </h2>
 
-                <span className="block text-[#625C51]">
-                  data with real needs.
-                </span>
-              </h2>
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              Connected intelligence should be designed
+              around business objectives and practical
+              use cases. We consider the existing technology
+              environment, the information people need,
+              and how intelligence can become part of
+              everyday operations.
+            </p>
 
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
-                Connected intelligence should
-                be designed around business
-                objectives and practical use
-                cases. We consider the existing
-                technology environment, the
-                information people need, and
-                how intelligence can become
-                part of everyday operations.
-              </p>
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-[#F8F3FC] p-5">
 
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
 
                 <GitMerge
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
 
-                <p className="text-[15px] leading-[1.75]">
-                  Connected data only creates
-                  value when it is understandable,
-                  dependable, appropriately
-                  governed, and relevant to
-                  a real decision.
-                </p>
-              </div>
+              </span>
 
-            </motion.div>
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                Connected data only creates value when
+                it is understandable, dependable,
+                appropriately governed, and relevant
+                to a real decision.
+              </p>
 
-            <div className="border-t border-[#181818]/20">
+            </div>
 
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
-                >
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
+          </Reveal>
 
-                  <div>
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+          {/* IMPLEMENTATION TIMELINE */}
+
+          <ol className="relative border-l border-[#E6D8EF] pl-7 sm:pl-9">
+
+            {approach.map((step, index) => (
+
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[39px] top-0 flex h-[22px] w-[22px] items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[47px]"
+                />
+
+                <Reveal delay={(index % 3) * 0.04}>
+
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-[#FBF9FD] p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#F7F0FC] motion-safe:hover:translate-x-1 sm:p-6">
+
+                    <p className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </p>
+
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
-                  </div>
-                </div>
-              ))}
 
-            </div>
-          </div>
+                  </div>
+
+                </Reveal>
+
+              </li>
+            ))}
+
+          </ol>
+
         </div>
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          11 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="connected-audiences"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Who We Help
-              </p>
+          <Reveal>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Intelligence for
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-                <span className="block text-[#514C43]">
-                  connected organizations.
-                </span>
-              </h2>
-            </div>
+            <h2
+              id="connected-audiences"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Intelligence for
 
-            <div>
+              <span className="block text-[#8B57AB]">
+                connected organizations.
+              </span>
+            </h2>
 
-              <p className="text-[17px] font-medium leading-[1.75]">
-                Connected Intelligence is
-                particularly relevant when
-                useful information exists
-                across different departments,
-                systems, and customer touchpoints.
-              </p>
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Connected Intelligence is particularly
+              relevant when useful information exists
+              across different departments, systems,
+              and customer touchpoints.
+            </p>
 
-              <div className="mt-5 space-y-3">
+          </Reveal>
 
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
+          <div className="grid gap-4 sm:grid-cols-2">
+
+            {audiences.map((item, index) => (
+
+              <Reveal
+                key={item}
+                className="h-full"
+                delay={(index % 2) * 0.07}
+              >
+
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-white p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
+
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
+
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
-                  </div>
-                ))}
+                  </span>
 
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
 
-      {/* ===================================
-          FINAL CALL TO ACTION
-      =================================== */}
+                </div>
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+              </Reveal>
+            ))}
 
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-                Ready to connect
-
-                <span className="block text-[#625C51]">
-                  your business intelligence?
-                </span>
-              </h2>
-            </div>
-
-            <div className="lg:justify-self-end">
-
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-                Tell us about your existing
-                business systems, customer
-                data, operational reporting,
-                and intelligence goals.
-                We can discuss your needs
-                and explore a practical
-                approach for your organization.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Your Project
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </button>
-
-            </div>
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
+      {/* ======================================
+          12 — FINAL CALL TO ACTION
+      ====================================== */}
+
+      <section
+        aria-labelledby="connected-cta"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+      >
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          <Reveal>
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="connected-cta"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready to connect
+
+              <span className="block text-[#F0D9FA]">
+                your business intelligence?
+              </span>
+            </h2>
+
+          </Reveal>
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your existing business systems,
+              customer data, operational reporting, and
+              intelligence goals. We can discuss your needs
+              and explore a practical approach for your
+              organization.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Discuss Your Project
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+
+            </button>
+
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* ======================================
           EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+      ====================================== */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}

@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   Activity,
@@ -32,14 +32,13 @@ import {
 import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
 // ==========================================
-// CLOUDLEM
-// CLOUD APPLICATION DEVELOPMENT & INTEGRATION
+// CLOUDLEM — CLOUD APPLICATION DEVELOPMENT
+// & INTEGRATION
+// Premium Soft Lavender & White
 // ==========================================
 
 const SERVICE_TITLE =
   "Cloud Application Development & Integration";
-
-// EXISTING VERIFIED CLOUDLEM IMAGES
 
 const images = {
   hero: "/images/backgrounds/section-3-1.jpg",
@@ -47,20 +46,6 @@ const images = {
   integration: "/images/backgrounds/section-3-2.jpg",
   modernization: "/images/backgrounds/section-2-2.jpg",
   feature: "/images/backgrounds/section-1-3.jpg",
-};
-
-// ==========================================
-// ANIMATIONS
-// ==========================================
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
 };
 
 // ==========================================
@@ -77,9 +62,7 @@ const editorialSections = [
     alt: "Cloud technology representing modern application development",
     paragraphs: [
       "Modern businesses need applications that can adapt to changing customer expectations, increasing workloads, and evolving operational requirements. Traditional application architectures may become difficult to maintain when new functionality must be introduced quickly or existing systems need to connect with additional services.",
-
       "Cloud-native development uses appropriate cloud capabilities, modern software architecture, and automated delivery practices to create applications designed for their intended operating environment. Depending on project requirements, solutions may use containers, managed application platforms, modular services, APIs, and scalable data technologies.",
-
       "Cloudlem approaches cloud application development by connecting software engineering decisions with business objectives. We consider performance, usability, security, deployment, integration requirements, and long-term maintainability to develop applications that can evolve without unnecessary operational complexity.",
     ],
     points: [
@@ -97,9 +80,7 @@ const editorialSections = [
     alt: "Connected infrastructure representing enterprise application integration",
     paragraphs: [
       "Organizations often rely on several applications to manage customers, finance, inventory, projects, communication, and digital services. When these applications operate separately, important information may need to be transferred manually, creating duplicated work and inconsistent records.",
-
       "Application integration establishes controlled ways for systems to communicate and exchange information. Depending on the business need, this may involve APIs, webhooks, messaging platforms, scheduled data transfers, or integration services that coordinate communication between multiple applications.",
-
       "Cloudlem evaluates existing software environments, information flows, integration requirements, and security considerations before recommending an approach. We focus on maintainable connections, consistent data handling, monitoring, and error management so integrated applications can support dependable everyday operations.",
     ],
     points: [
@@ -117,9 +98,7 @@ const editorialSections = [
     alt: "Modern cloud infrastructure representing application modernization",
     paragraphs: [
       "Many organizations depend on applications that continue to provide business value but were developed using older technology or infrastructure. Over time, these systems may become harder to update, integrate, secure, and deploy, particularly when their architecture limits operational flexibility.",
-
       "Application modernization can involve improving deployment methods, updating software components, moving to supported frameworks, introducing containers, adopting suitable managed cloud services, or redesigning selected parts of an application. A complete replacement is not always necessary or desirable.",
-
       "Cloudlem approaches modernization through assessment and phased planning. We examine existing dependencies, application behavior, technical risks, testing requirements, and business continuity before selecting appropriate improvements. The objective is to preserve useful functionality while preparing applications for future requirements.",
     ],
     points: [
@@ -362,16 +341,135 @@ const approach = [
   },
 ];
 
-// ==========================================
-// WHO THIS SERVICE IS FOR
-// ==========================================
-
 const audiences = [
   "Businesses developing new cloud-based web applications, internal platforms, or digital products.",
   "Organizations connecting CRM, ERP, finance, inventory, customer, or other operational applications.",
   "Teams modernizing legacy software through containers, updated frameworks, or managed cloud services.",
   "Businesses seeking reliable API integrations, automated deployments, and improved application observability.",
 ];
+
+// ==========================================
+// REUSABLE ANIMATED REVEAL
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={
+        reduceMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 22 : 0,
+              x:
+                direction === "left"
+                  ? -22
+                  : direction === "right"
+                    ? 22
+                    : 0,
+            }
+      }
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.65,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION LABEL
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#A477C0]"
+      />
+
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#80519F]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION HEADING
+// ==========================================
+
+function SectionHeader({
+  id,
+  eyebrow,
+  title,
+  highlight,
+  description,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+      <Reveal>
+        <Eyebrow>{eyebrow}</Eyebrow>
+
+        <h2
+          id={id}
+          className="text-[clamp(2.35rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em] text-[#30243B]"
+        >
+          {title}
+
+          <span className="block text-[#8855A9]">
+            {highlight}
+          </span>
+        </h2>
+      </Reveal>
+
+      <Reveal delay={0.08}>
+        <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70]">
+          {description}
+        </p>
+      </Reveal>
+    </div>
+  );
+}
+
+// ==========================================
+// SHARED CARD STYLES
+// ==========================================
+
+const cardStyle =
+  "group flex h-full flex-col rounded-[18px] border border-[#E8DDEF] bg-white p-6 shadow-[0_10px_30px_rgba(75,38,103,0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D0B3E1] hover:shadow-[0_22px_48px_rgba(75,38,103,0.11)] motion-safe:hover:-translate-y-1 sm:p-7";
+
+const iconStyle =
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-[15px] border border-[#E7D6F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EBDBF5] motion-safe:group-hover:scale-105";
 
 // ==========================================
 // MAIN PAGE COMPONENT
@@ -381,964 +479,1048 @@ export default function CloudApplicationDevelopmentIntegrationPage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#30243B]">
 
-      {/* ===================================
-          HERO
-      =================================== */}
+      {/* ======================================
+          01 — PREMIUM LAVENDER HERO
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
-
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+      <section
+        aria-labelledby="cloud-app-title"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pb-20 pt-32 sm:pt-36 lg:pb-28 lg:pt-40"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-28 h-96 w-96 rounded-full bg-[#DDC9ED]/35 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-[430px] w-[430px] rounded-full bg-white/70 blur-3xl"
+        />
 
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/65 to-transparent" />
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
 
-        <div className="container-systems relative z-10 w-full">
+          {/* HERO TEXT */}
 
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[930px]"
-          >
+          <Reveal className="min-w-0">
 
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#80519F] transition-colors hover:text-[#4B2B65] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#80519F]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
               All Services
             </Link>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
+            <Eyebrow>
+              Cloud / Application Development &amp; Integration
+            </Eyebrow>
 
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                Cloud / Application Development & Integration
-              </p>
-            </div>
-
-            <h1 className="max-w-[900px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em]">
-
+            <h1
+              id="cloud-app-title"
+              className="max-w-[760px] text-[clamp(2.55rem,5.1vw,5.3rem)] font-semibold leading-[1.07] tracking-[-0.06em] text-[#291D34]"
+            >
               Build modern apps.
 
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 Connect every
               </span>
 
               possibility.
             </h1>
 
-            <p className="mt-7 max-w-[710px] text-[16px] leading-[1.8] sm:text-[17px]">
+            <p className="mt-7 max-w-[650px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
               Develop modern cloud applications,
-              connect business systems, and
-              modernize existing software.
-              Bring together cloud engineering,
-              application integration, and
-              reliable delivery practices to
-              create solutions that support
-              evolving business needs.
+              connect business systems, and modernize
+              existing software. Bring together cloud
+              engineering, application integration,
+              and reliable delivery practices to
+              create solutions that support evolving
+              business needs.
             </p>
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Your Application
+            {/* HERO BUTTONS */}
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Your Application
+
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
+
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-[border-color,background-color] duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
+
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+
+            </div>
+          </Reveal>
+
+          {/* HERO IMAGE */}
+
+          <Reveal
+            direction="right"
+            delay={0.12}
+            className="relative min-w-0 lg:pl-4"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
+
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
+
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
               />
-            </button>
 
-          </motion.div>
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
+
+              {/* FLOATING INFO CARD */}
+
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[310px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Cloud Application Engineering
+                </span>
+
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Develop. Integrate. Modernize.
+                </p>
+
+              </div>
+
+            </div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          INTRODUCTION
-      =================================== */}
+      {/* ======================================
+          02 — SERVICE INTRODUCTION
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="cloud-app-introduction"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
-          >
+          <Reveal>
 
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <Eyebrow>
+              Our Cloud Application Perspective
+            </Eyebrow>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Cloud Application Perspective
-                </p>
-              </div>
+            <h2
+              id="cloud-app-introduction"
+              className="max-w-[570px] text-[clamp(2.3rem,3.6vw,3.65rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Modern applications.
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+              <span className="block text-[#8B58AC]">
+                Connected digital business.
+              </span>
+            </h2>
 
-                Modern applications.
+            <div
+              aria-hidden="true"
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+            />
 
-                <span className="block text-[#625C51]">
-                  Connected digital business.
-                </span>
-              </h2>
-            </div>
+          </Reveal>
 
-            <div className="lg:pt-3">
+          <Reveal delay={0.1}>
 
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Modern applications need to
-                work reliably on their own
-                while connecting effectively
-                with the wider technology
-                environment of a business.
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Modern applications need to work reliably
+              on their own while connecting effectively
+              with the wider technology environment
+              of a business.
+            </p>
+
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+
+              <p>
+                Organizations increasingly depend on cloud
+                applications for customer services, internal
+                processes, information management, and
+                digital products. These applications often
+                need to communicate with existing databases,
+                third-party platforms, and operational systems.
               </p>
 
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
+              <p>
+                When software is difficult to maintain or
+                applications cannot exchange information
+                effectively, technology may limit business
+                flexibility. Modern development practices
+                and well-designed integration interfaces
+                can help address these challenges.
+              </p>
 
-                <p>
-                  Organizations increasingly
-                  depend on cloud applications
-                  for customer services,
-                  internal processes,
-                  information management,
-                  and digital products.
-                  These applications often
-                  need to communicate with
-                  existing databases,
-                  third-party platforms,
-                  and operational systems.
-                </p>
+              <p>
+                Cloudlem combines software engineering,
+                cloud architecture, application modernization,
+                API integration, and DevOps practices to
+                help organizations develop practical digital
+                solutions. Our focus is on maintainable
+                applications, reliable connections, secure
+                operations, and business-aligned delivery.
+              </p>
 
-                <p>
-                  When software is difficult
-                  to maintain or applications
-                  cannot exchange information
-                  effectively, technology
-                  may limit business flexibility.
-                  Modern development practices
-                  and well-designed integration
-                  interfaces can help
-                  address these challenges.
-                </p>
-
-                <p>
-                  Cloudlem combines software
-                  engineering, cloud architecture,
-                  application modernization,
-                  API integration, and DevOps
-                  practices to help organizations
-                  develop practical digital
-                  solutions. Our focus is on
-                  maintainable applications,
-                  reliable connections,
-                  secure operations, and
-                  business-aligned delivery.
-                </p>
-
-              </div>
             </div>
 
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          THREE EDITORIAL SECTIONS
-      =================================== */}
+      {/* ======================================
+          03–05 — EDITORIAL SERVICE SECTIONS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-[72px] ${
+            aria-labelledby={`cloud-app-pillar-${section.number}`}
+            className={`py-20 sm:py-24 lg:py-28 ${
               index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+                ? "bg-[#F7F2FB]"
+                : "bg-white"
             }`}
           >
-            <div className="container-systems">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+              {/* EDITORIAL CONTENT */}
 
-                {/* EDITORIAL TEXT */}
+              <Reveal
+                direction={reversed ? "right" : "left"}
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+              >
 
-                <motion.div
-                  {...reveal}
-                  className={reverse ? "lg:order-2" : ""}
+                <div className="mb-5 flex items-center gap-4">
+
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+
+                </div>
+
+                <h2
+                  id={`cloud-app-pillar-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
+                  {section.title}
 
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
+                </h2>
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
+
+                {/* DETAILED DESCRIPTION */}
+
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
+
+                  {section.paragraphs.map((paragraph, index) => (
+                    <p
+                      key={index}
+                      className={
+                        index === 0
+                          ? "font-medium text-[#43354D]"
+                          : ""
+                      }
+                    >
+                      {paragraph}
                     </p>
-                  </div>
+                  ))}
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+                </div>
 
-                    {section.title}
+                {/* FOCUS AREA CARD */}
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/85 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
 
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
 
-                  <div className="mt-5 space-y-4">
+                  <ul className="space-y-3">
 
-                    {section.paragraphs.map((paragraph, pIndex) => (
-                      <p
-                        key={pIndex}
-                        className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                          pIndex === 0 ? "font-medium" : ""
-                        }`}
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
                       >
-                        {paragraph}
-                      </p>
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
+
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
+
+                        </span>
+
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
+                      </li>
                     ))}
 
-                  </div>
+                  </ul>
 
-                  {/* FOCUS AREAS */}
+                </div>
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
+              </Reveal>
 
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
+              {/* EDITORIAL IMAGE */}
 
-                    <ul className="space-y-3">
+              <Reveal
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+              >
 
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
-
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
-
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
-
-                        </li>
-                      ))}
-
-                    </ul>
-                  </div>
-
-                </motion.div>
-
-                {/* EDITORIAL IMAGE */}
-
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65 }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
 
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
 
-                </motion.div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
 
-              </div>
+                  <div className="absolute bottom-6 left-6 right-6 flex w-fit max-w-[calc(100%-3rem)] items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#653D82] backdrop-blur-md">
+
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#A572C3]" />
+
+                    <span>{section.eyebrow}</span>
+
+                  </div>
+
+                </div>
+
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE PHOTOGRAPHIC FEATURE
-      =================================== */}
+      {/* ======================================
+          06 — PHOTOGRAPHIC FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-[72px] text-[#D8D2C8] lg:min-h-[480px]">
+      <section
+        aria-labelledby="cloud-app-feature"
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+      >
 
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/85" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
 
-        <div className="container-systems relative z-10">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-[radial-gradient(ellipse_at_80%_30%,rgba(217,181,237,0.18),transparent_60%)]"
+        />
 
-          <motion.div
-            {...reveal}
-            className="max-w-[840px]"
-          >
+        <div className="container-systems relative z-20">
 
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+          <Reveal className="max-w-[870px]">
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               Modern Cloud Application Engineering
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
-
+            <h2
+              id="cloud-app-feature"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Build for today.
 
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 Connect for tomorrow.
               </span>
             </h2>
 
-            <p className="mt-6 max-w-[700px] text-[16px] leading-[1.8]">
-              Cloud applications become more
-              useful when modern engineering
-              and reliable integration work
-              together. Create a foundation
-              that supports new functionality,
-              dependable data exchange,
-              and future business change.
+            <p className="mt-7 max-w-[700px] text-[16px] leading-[1.85] text-[#F0E7F6]">
+              Cloud applications become more useful when
+              modern engineering and reliable integration
+              work together. Create a foundation that
+              supports new functionality, dependable
+              data exchange, and future business change.
             </p>
 
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          CLOUD APPLICATION CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — CLOUD APPLICATION CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        aria-labelledby="cloud-app-capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="cloud-app-capabilities"
+            eyebrow="Our Cloud Application Offerings"
+            title="Development and"
+            highlight="integration capabilities."
+            description="From cloud-native application development and modernization to API integration, deployment automation, and monitoring, these capabilities support connected digital solutions."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Our Cloud Application Offerings
-              </p>
+          {/* NINE CAPABILITY CARDS */}
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                Development and
-
-                <span className="block text-[#B7B09F]">
-                  integration capabilities.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              From cloud-native application
-              development and modernization
-              to API integration, deployment
-              automation, and monitoring,
-              these capabilities support
-              connected digital solutions.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.06}
+                  className="h-full"
                 >
 
-                  <div className="mb-6 flex items-center justify-between">
+                  <article className={`${cardStyle} min-h-[285px]`}>
 
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45">
+                    <div className="mb-7 flex items-start justify-between">
 
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+                      <span className={iconStyle}>
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
+
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
 
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {item.title}
-                  </h3>
+                    <span
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
 
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
+                  </article>
 
-                </motion.article>
+                </Reveal>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          APPLICATION MODERNIZATION APPROACHES
-      =================================== */}
+      {/* ======================================
+          08 — APPLICATION MODERNIZATION
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="cloud-app-modernization"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="cloud-app-modernization"
+            eyebrow="Application Modernization"
+            title="Choose the right"
+            highlight="modernization approach."
+            description="Modernization does not always require rebuilding an application from the beginning. The right approach depends on existing software, dependencies, technical limitations, and business priorities."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Application Modernization
-              </p>
+          {/* FOUR MODERNIZATION OPTIONS */}
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+          <div className="grid gap-5 md:grid-cols-2">
 
-                Choose the right
-
-                <span className="block text-[#625C51]">
-                  modernization approach.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Modernization does not always
-              require rebuilding an application
-              from the beginning. The right
-              approach depends on existing
-              software, dependencies, technical
-              limitations, and business priorities.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-
-            {modernizationOptions.map((option) => {
+            {modernizationOptions.map((option, index) => {
               const Icon = option.icon;
 
               return (
-                <article
+                <Reveal
                   key={option.number}
-                  className="border border-[#181818]/20 bg-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 2) * 0.07}
+                  className="h-full"
                 >
 
-                  <div className="flex items-center justify-between">
+                  <article
+                    className={`${cardStyle} min-h-[270px] bg-[#FCFAFE]`}
+                  >
 
-                    <Icon
-                      size={25}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                    <div className="flex items-start justify-between">
 
-                    <span className="text-[12px] font-bold text-[#625C51]">
-                      {option.number}
-                    </span>
-                  </div>
+                      <span className={iconStyle}>
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
 
-                  <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.14em] text-[#625C51]">
-                    {option.subtitle}
-                  </p>
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {option.number}
+                      </span>
 
-                  <h3 className="mt-3 text-[23px] font-semibold tracking-[-0.035em]">
-                    {option.title}
-                  </h3>
+                    </div>
 
-                  <p className="mt-4 text-[15px] leading-[1.75]">
-                    {option.description}
-                  </p>
+                    <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.14em] text-[#8755A6]">
+                      {option.subtitle}
+                    </p>
 
-                </article>
+                    <h3 className="mt-3 text-[23px] font-semibold leading-[1.3] tracking-[-0.035em] text-[#30213B]">
+                      {option.title}
+                    </h3>
+
+                    <p className="mt-4 text-[15px] leading-[1.8] text-[#665A70]">
+                      {option.description}
+                    </p>
+
+                  </article>
+
+                </Reveal>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          INTEGRATION ARCHITECTURE PATTERNS
-      =================================== */}
+      {/* ======================================
+          09 — INTEGRATION ARCHITECTURE PATTERNS
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="cloud-app-integration"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="cloud-app-integration"
+            eyebrow="Application Integration Architecture"
+            title="Different systems."
+            highlight="Smarter connections."
+            description="Applications can communicate through different integration patterns. Choosing the right method depends on complexity, data volumes, processing requirements, reliability, and the existing environment."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Application Integration Architecture
-              </p>
+          {/* SIX INTEGRATION CARDS */}
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
-                Different systems.
-
-                <span className="block text-[#514C43]">
-                  Smarter connections.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Applications can communicate
-              through different integration
-              patterns. Choosing the right
-              method depends on complexity,
-              data volumes, processing
-              requirements, reliability,
-              and the existing environment.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-
-            {integrationPatterns.map((pattern) => {
+            {integrationPatterns.map((pattern, index) => {
               const Icon = pattern.icon;
 
               return (
-                <article
+                <Reveal
                   key={pattern.number}
-                  className="flex flex-col border border-[#181818]/20 bg-[#D8D2C8] p-6 sm:p-7"
+                  delay={(index % 3) * 0.06}
+                  className="h-full"
                 >
 
-                  <div className="flex items-center justify-between">
+                  <article className={`${cardStyle} min-h-[250px]`}>
 
-                    <Icon
-                      size={25}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                    <div className="flex items-start justify-between">
 
-                    <span className="text-[12px] font-bold text-[#625C51]">
-                      {pattern.number}
-                    </span>
-                  </div>
+                      <span className={iconStyle}>
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
 
-                  <h3 className="mt-6 text-[21px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {pattern.title}
-                  </h3>
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {pattern.number}
+                      </span>
 
-                  <p className="mt-4 text-[15px] leading-[1.75]">
-                    {pattern.description}
-                  </p>
+                    </div>
 
-                </article>
+                    <h3 className="mt-6 text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {pattern.title}
+                    </h3>
+
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {pattern.description}
+                    </p>
+
+                  </article>
+
+                </Reveal>
               );
             })}
 
           </div>
 
-          {/* CROSS-CUTTING REQUIREMENTS */}
+          {/* CROSS-CUTTING INTEGRATION REQUIREMENTS */}
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
 
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-
-              <ShieldCheck size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Secure Communication
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-
-              <Activity size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Reliability & Monitoring
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-
-              <Check size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Validation & Error Handling
-              </span>
-
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ===================================
-          BUSINESS VALUE SECTION
-      =================================== */}
-
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
-
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
-
-            <div>
-
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Business Value
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                Integration that
-
-                <span className="block text-[#625C51]">
-                  supports better work.
-                </span>
-              </h2>
-
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Good application integration
-              is not only about connecting
-              technical systems. It should
-              address operational challenges
-              and improve how information
-              supports employees and customers.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-
-            {benefits.map((benefit) => {
-              const Icon = benefit.icon;
+            {[
+              {
+                label: "Secure Communication",
+                icon: ShieldCheck,
+              },
+              {
+                label: "Reliability & Monitoring",
+                icon: Activity,
+              },
+              {
+                label: "Validation & Error Handling",
+                icon: Check,
+              },
+            ].map((item) => {
+              const Icon = item.icon;
 
               return (
-                <article
-                  key={benefit.title}
-                  className="border border-[#181818]/20 bg-[#B7B09F]/30 p-6 sm:p-7"
+                <div
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-[12px] border border-[#E3D4ED] bg-white px-5 py-4 text-[#493456]"
                 >
 
                   <Icon
-                    size={25}
-                    strokeWidth={1.5}
+                    size={21}
                     aria-hidden="true"
+                    className="shrink-0 text-[#8755A6]"
                   />
 
-                  <h3 className="mt-5 text-[22px] font-semibold tracking-[-0.035em]">
-                    {benefit.title}
-                  </h3>
+                  <span className="text-[14px] font-semibold">
+                    {item.label}
+                  </span>
 
-                  <p className="mt-3 text-[15px] leading-[1.75]">
-                    {benefit.description}
-                  </p>
-
-                </article>
+                </div>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          DELIVERY APPROACH
-      =================================== */}
+      {/* ======================================
+          10 — BUSINESS VALUE
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="cloud-app-benefits"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <SectionHeader
+            id="cloud-app-benefits"
+            eyebrow="Business Value"
+            title="Integration that"
+            highlight="supports better work."
+            description="Good application integration is not only about connecting technical systems. It should address operational challenges and improve how information supports employees and customers."
+          />
 
-            <motion.div {...reveal}>
+          {/* FOUR BUSINESS BENEFITS */}
 
-              <div className="mb-5 flex items-center gap-3">
+          <div className="grid gap-5 md:grid-cols-2">
 
-                <span className="h-px w-8 bg-[#181818]" />
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  Our Implementation Approach
-                </p>
+              return (
+                <Reveal
+                  key={benefit.title}
+                  delay={(index % 2) * 0.07}
+                  className="h-full"
+                >
 
-              </div>
+                  <article className={`${cardStyle} min-h-[230px] bg-[#FCFAFE]`}>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+                    <span className={iconStyle}>
+                      <Icon
+                        size={25}
+                        strokeWidth={1.7}
+                        aria-hidden="true"
+                      />
+                    </span>
 
-                From requirements
+                    <h3 className="mt-6 text-[22px] font-semibold leading-[1.3] tracking-[-0.035em] text-[#30213B]">
+                      {benefit.title}
+                    </h3>
 
-                <span className="block text-[#514C43]">
-                  to connected applications.
-                </span>
-              </h2>
+                    <p className="mt-3 text-[15px] leading-[1.8] text-[#665A70]">
+                      {benefit.description}
+                    </p>
 
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
+                  </article>
 
-                Modern application development
-                and integration require
-                clear planning, reliable
-                engineering practices,
-                and careful testing.
-                Our approach considers
-                the entire delivery process,
-                from understanding business
-                needs to operational support.
+                </Reveal>
+              );
+            })}
 
-              </p>
+          </div>
 
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
+        </div>
+      </section>
+
+      {/* ======================================
+          11 — DELIVERY APPROACH
+      ====================================== */}
+
+      <section
+        aria-labelledby="cloud-app-approach"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+
+          {/* DELIVERY INTRODUCTION */}
+
+          <Reveal>
+
+            <Eyebrow>
+              Our Implementation Approach
+            </Eyebrow>
+
+            <h2
+              id="cloud-app-approach"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              From requirements
+
+              <span className="block text-[#8B57AB]">
+                to connected applications.
+              </span>
+            </h2>
+
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              Modern application development and
+              integration require clear planning,
+              reliable engineering practices, and
+              careful testing. Our approach considers
+              the entire delivery process, from
+              understanding business needs to
+              operational support.
+            </p>
+
+            {/* DELIVERY PRINCIPLE */}
+
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-white p-5">
+
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
 
                 <ShieldCheck
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
 
-                <p className="text-[15px] leading-[1.75]">
-                  Security, application
-                  reliability, maintainable
-                  architecture, and
-                  controlled deployment
-                  should be considered
-                  throughout delivery.
-                </p>
+              </span>
 
-              </div>
-            </motion.div>
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                Security, application reliability,
+                maintainable architecture, and
+                controlled deployment should be
+                considered throughout delivery.
+              </p>
 
-            {/* DELIVERY STAGES */}
+            </div>
 
-            <div className="border-t border-[#181818]/20">
+          </Reveal>
 
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
-                >
+          {/* SIX-STEP DELIVERY TIMELINE */}
 
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
+          <ol className="relative border-l border-[#E6D8EF] pl-7 sm:pl-9">
 
-                  <div>
+            {approach.map((step, index) => (
 
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[39px] top-0 flex h-[22px] w-[22px] items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[47px]"
+                />
+
+                <Reveal delay={(index % 3) * 0.04}>
+
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-white p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#FDFBFF] motion-safe:hover:translate-x-1 sm:p-6">
+
+                    <div className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </div>
+
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
 
                   </div>
-                </div>
-              ))}
 
-            </div>
-          </div>
+                </Reveal>
+
+              </li>
+
+            ))}
+
+          </ol>
+
         </div>
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          12 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="cloud-app-audiences"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-            <div>
+          {/* AUDIENCE INTRODUCTION */}
 
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Who We Help
-              </p>
+          <Reveal>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-                Cloud applications
+            <h2
+              id="cloud-app-audiences"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Cloud applications
 
-                <span className="block text-[#625C51]">
-                  for growing businesses.
-                </span>
-              </h2>
+              <span className="block text-[#8B57AB]">
+                for growing businesses.
+              </span>
+            </h2>
 
-            </div>
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Cloud Application Development &amp;
+              Integration can help organizations
+              building new digital capabilities,
+              connecting existing tools, or
+              modernizing business applications.
+            </p>
 
-            <div>
+          </Reveal>
 
-              <p className="text-[17px] font-medium leading-[1.75]">
+          {/* FOUR AUDIENCE CARDS */}
 
-                Cloud Application Development
-                & Integration can help
-                organizations building
-                new digital capabilities,
-                connecting existing tools,
-                or modernizing business
-                applications.
+          <div className="grid gap-4 sm:grid-cols-2">
 
-              </p>
+            {audiences.map((item, index) => (
 
-              <div className="mt-5 space-y-3">
+              <Reveal
+                key={item}
+                delay={(index % 2) * 0.07}
+                className="h-full"
+              >
 
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-[#FCFAFE] p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
+
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
 
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
+                  </span>
 
-                  </div>
-                ))}
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
 
-              </div>
-            </div>
+                </div>
 
-          </motion.div>
-        </div>
-      </section>
+              </Reveal>
 
-      {/* ===================================
-          FINAL CALL TO ACTION
-      =================================== */}
-
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
-
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-
-            <div>
-
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-
-                Ready to build
-
-                <span className="block text-[#514C43]">
-                  connected applications?
-                </span>
-              </h2>
-
-            </div>
-
-            <div className="lg:justify-self-end">
-
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-
-                Tell us about your
-                application requirements,
-                existing business systems,
-                integration challenges,
-                and modernization goals.
-                We can discuss a practical
-                approach to your project.
-
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Your Project
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-
-              </button>
-            </div>
+            ))}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
+      {/* ======================================
+          13 — FINAL CALL TO ACTION
+      ====================================== */}
+
+      <section
+        aria-labelledby="cloud-app-cta"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+      >
+
+        {/* DECORATIVE ELEMENTS */}
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          {/* CTA HEADING */}
+
+          <Reveal>
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="cloud-app-cta"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready to build
+
+              <span className="block text-[#F0D9FA]">
+                connected applications?
+              </span>
+            </h2>
+
+          </Reveal>
+
+          {/* CTA CONTENT */}
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your application requirements,
+              existing business systems, integration
+              challenges, and modernization goals.
+              We can discuss a practical approach to
+              your project.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Discuss Your Project
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+            </button>
+
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* ======================================
           EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+          PRESERVED
+      ====================================== */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}

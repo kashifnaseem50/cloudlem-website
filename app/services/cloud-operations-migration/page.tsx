@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   Activity,
@@ -31,13 +31,10 @@ import {
 
 import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
-// ==========================================
 // CLOUDLEM — CLOUD OPERATIONS & MIGRATION
-// ==========================================
+// Premium Soft Lavender & White
 
 const SERVICE_TITLE = "Cloud Operations & Migration";
-
-// VERIFIED EXISTING CLOUDLEM IMAGES
 
 const images = {
   hero: "/images/backgrounds/section-1-4.jpg",
@@ -45,20 +42,6 @@ const images = {
   migration: "/images/backgrounds/section-3-1.jpg",
   operations: "/images/backgrounds/section-2-2.jpg",
   feature: "/images/backgrounds/section-3-2.jpg",
-};
-
-// ==========================================
-// ANIMATIONS
-// ==========================================
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
 };
 
 // ==========================================
@@ -75,9 +58,7 @@ const editorialSections = [
     alt: "Technology infrastructure representing cloud assessment",
     paragraphs: [
       "Moving to the cloud is not simply a change of hosting provider. Every application has its own architecture, dependencies, performance requirements, security considerations, and operational responsibilities. Understanding these factors before migration helps organizations choose a practical direction.",
-
       "Cloud readiness assessment begins with an inventory of existing infrastructure, applications, databases, network connections, and business-critical workloads. This creates the foundation for evaluating cloud suitability, migration complexity, expected costs, and the potential operational impact of change.",
-
       "Cloudlem approaches cloud strategy by connecting technical analysis with business priorities. We help organizations consider suitable cloud architectures, migration sequences, implementation requirements, and the controls needed to support secure and maintainable operations.",
     ],
     points: [
@@ -95,9 +76,7 @@ const editorialSections = [
     alt: "Connected technology infrastructure representing cloud migration",
     paragraphs: [
       "Cloud migration may involve moving virtual machines, databases, applications, storage, and supporting services from an existing environment into a new platform. Some workloads can move with relatively limited changes, while others benefit from updates to their architecture or deployment model.",
-
       "An effective migration approach considers data transfer, application compatibility, networking, access permissions, testing, rollback requirements, and the timing of the final cutover. Workloads with sensitive information or significant operational dependencies may require additional validation and carefully coordinated migration stages.",
-
       "Cloudlem focuses on understanding the migration requirements before selecting an implementation method. Whether the appropriate approach is rehosting, replatforming, or application modernization, the goal is to establish a reliable transition path with clear verification and recovery procedures.",
     ],
     points: [
@@ -115,9 +94,7 @@ const editorialSections = [
     alt: "Cloud infrastructure supporting operational monitoring",
     paragraphs: [
       "Cloud adoption introduces new operational opportunities, but it also requires ongoing attention to availability, performance, security, cost, and infrastructure changes. A successful migration should establish the processes needed to manage these responsibilities long after the initial deployment.",
-
       "Cloud operations combine monitoring, incident response, infrastructure automation, configuration management, security reviews, and capacity planning. Consistent operational practices help teams understand how systems are performing and identify issues that require attention.",
-
       "Cloudlem approaches cloud operations by evaluating existing monitoring and management processes, identifying opportunities for automation, and improving visibility into infrastructure health. We emphasize practical controls, documented procedures, and continuous review so cloud platforms can adapt to changing business requirements.",
     ],
     points: [
@@ -199,7 +176,7 @@ const capabilities = [
 ];
 
 // ==========================================
-// MIGRATION STRATEGIES
+// SIX CLOUD MIGRATION STRATEGIES
 // ==========================================
 
 const migrationStrategies = [
@@ -327,10 +304,6 @@ const approach = [
   },
 ];
 
-// ==========================================
-// BUSINESS USE CASES
-// ==========================================
-
 const audiences = [
   "Organizations moving selected applications or infrastructure from on-premises hosting to cloud platforms.",
   "Businesses modernizing legacy systems while managing operational dependencies and security requirements.",
@@ -339,855 +312,974 @@ const audiences = [
 ];
 
 // ==========================================
-// MAIN PAGE
+// REUSABLE ANIMATED REVEAL
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={
+        reduceMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 22 : 0,
+              x:
+                direction === "left"
+                  ? -22
+                  : direction === "right"
+                    ? 22
+                    : 0,
+            }
+      }
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.65,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION EYEBROW
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#A477C0]"
+      />
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#80519F]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION HEADER
+// ==========================================
+
+function SectionHeader({
+  id,
+  eyebrow,
+  title,
+  highlight,
+  description,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+      <Reveal>
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <h2
+          id={id}
+          className="text-[clamp(2.35rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em] text-[#30243B]"
+        >
+          {title}
+          <span className="block text-[#8855A9]">
+            {highlight}
+          </span>
+        </h2>
+      </Reveal>
+
+      <Reveal delay={0.08}>
+        <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70]">
+          {description}
+        </p>
+      </Reveal>
+    </div>
+  );
+}
+
+// ==========================================
+// SHARED CARD STYLES
+// ==========================================
+
+const cardStyle =
+  "group flex h-full flex-col rounded-[18px] border border-[#E8DDEF] bg-white p-6 shadow-[0_10px_30px_rgba(75,38,103,0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D0B3E1] hover:shadow-[0_22px_48px_rgba(75,38,103,0.11)] motion-safe:hover:-translate-y-1 sm:p-7";
+
+const iconStyle =
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-[15px] border border-[#E7D6F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EBDBF5] motion-safe:group-hover:scale-105";
+
+// ==========================================
+// MAIN CLOUD OPERATIONS PAGE
 // ==========================================
 
 export default function CloudOperationsMigrationPage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#30243B]">
 
-      {/* ===================================
-          HERO
-      =================================== */}
+      {/* ======================================
+          01 — PREMIUM LAVENDER HERO
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
-
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+      <section
+        aria-labelledby="cloud-title"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pb-20 pt-32 sm:pt-36 lg:pb-28 lg:pt-40"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-28 h-96 w-96 rounded-full bg-[#DDC9ED]/35 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-[430px] w-[430px] rounded-full bg-white/70 blur-3xl"
+        />
 
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/65 to-transparent" />
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
 
-        <div className="container-systems relative z-10 w-full">
+          {/* HERO COPY */}
 
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[900px]"
-          >
+          <Reveal className="min-w-0">
 
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#80519F] transition-colors hover:text-[#4B2B65] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#80519F]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
               All Services
             </Link>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
+            <Eyebrow>
+              Cloud / Operations &amp; Migration
+            </Eyebrow>
 
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                Cloud / Operations & Migration
-              </p>
-            </div>
-
-            <h1 className="max-w-[880px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em]">
-
+            <h1
+              id="cloud-title"
+              className="max-w-[760px] text-[clamp(2.75rem,5.1vw,5.35rem)] font-semibold leading-[1.06] tracking-[-0.06em] text-[#291D34]"
+            >
               Move to the cloud.
 
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 Operate with
               </span>
 
               confidence.
             </h1>
 
-            <p className="mt-7 max-w-[700px] text-[16px] leading-[1.8] sm:text-[17px]">
-              Plan cloud migrations, modernize
-              infrastructure, and build dependable
-              cloud operations. Connect strategic
-              assessment, careful implementation,
-              monitoring, security, and cost
-              management in one practical approach.
+            <p className="mt-7 max-w-[650px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
+              Plan cloud migrations, modernize infrastructure,
+              and build dependable cloud operations.
+              Connect strategic assessment, careful
+              implementation, monitoring, security, and
+              cost management in one practical approach.
             </p>
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Your Cloud Project
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Your Cloud Project
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
-              />
-            </button>
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-colors duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+            </div>
+          </Reveal>
 
-          </motion.div>
-        </div>
-      </section>
+          {/* HERO IMAGE */}
 
-      {/* ===================================
-          CLOUD SERVICE INTRODUCTION
-      =================================== */}
-
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
-
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
+          <Reveal
+            className="relative min-w-0 lg:pl-4"
+            direction="right"
+            delay={0.12}
           >
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
 
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Cloud Perspective
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
+              />
+
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
+
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[310px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Cloud Operations &amp; Migration
+                </span>
+
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Assess. Migrate. Optimize.
                 </p>
               </div>
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                Cloud transformation
-
-                <span className="block text-[#625C51]">
-                  built around your business.
-                </span>
-              </h2>
             </div>
+          </Reveal>
 
-            <div className="lg:pt-3">
+        </div>
+      </section>
 
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Successful cloud adoption requires
-                more than migrating applications.
-                It requires a reliable foundation
-                for security, operations, performance,
-                and future growth.
+      {/* ======================================
+          02 — CLOUD PERSPECTIVE
+      ====================================== */}
+
+      <section
+        aria-labelledby="cloud-intro"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
+
+          <Reveal>
+            <Eyebrow>
+              Our Cloud Perspective
+            </Eyebrow>
+
+            <h2
+              id="cloud-intro"
+              className="max-w-[570px] text-[clamp(2.3rem,3.6vw,3.65rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Cloud transformation
+              <span className="block text-[#8B58AC]">
+                built around your business.
+              </span>
+            </h2>
+
+            <div
+              aria-hidden="true"
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+            />
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Successful cloud adoption requires more than
+              migrating applications. It requires a reliable
+              foundation for security, operations,
+              performance, and future growth.
+            </p>
+
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+              <p>
+                Organizations adopt cloud technologies for
+                different reasons, including modernizing
+                aging infrastructure, supporting new
+                applications, improving operational
+                flexibility, and accessing managed platform
+                capabilities.
               </p>
 
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
+              <p>
+                Each environment has different requirements.
+                Application dependencies, network design,
+                database compatibility, security, recovery
+                expectations, and ongoing costs all influence
+                the appropriate migration and operating
+                strategy.
+              </p>
 
-                <p>
-                  Organizations adopt cloud
-                  technologies for different
-                  reasons, including modernizing
-                  aging infrastructure, supporting
-                  new applications, improving
-                  operational flexibility, and
-                  accessing managed platform
-                  capabilities.
-                </p>
-
-                <p>
-                  Each environment has different
-                  requirements. Application
-                  dependencies, network design,
-                  database compatibility, security,
-                  recovery expectations, and
-                  ongoing costs all influence
-                  the appropriate migration
-                  and operating strategy.
-                </p>
-
-                <p>
-                  Cloudlem approaches cloud
-                  operations and migration
-                  as a connected journey.
-                  We consider readiness,
-                  architecture, deployment,
-                  validation, monitoring,
-                  governance, and optimization
-                  so organizations can plan
-                  for both the transition
-                  and the environment that
-                  follows.
-                </p>
-
-              </div>
+              <p>
+                Cloudlem approaches cloud operations and
+                migration as a connected journey. We consider
+                readiness, architecture, deployment,
+                validation, monitoring, governance, and
+                optimization so organizations can plan for
+                both the transition and the environment
+                that follows.
+              </p>
             </div>
+          </Reveal>
 
-          </motion.div>
         </div>
       </section>
 
-      {/* ===================================
-          THREE EDITORIAL SECTIONS
-      =================================== */}
+      {/* ======================================
+          03–05 — CLOUD SERVICE PILLARS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-[72px] ${
-              index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+            aria-labelledby={`cloud-pillar-${section.number}`}
+            className={`py-20 sm:py-24 lg:py-28 ${
+              index % 2 === 0 ? "bg-[#F7F2FB]" : "bg-white"
             }`}
           >
-            <div className="container-systems">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+              {/* TEXT COLUMN */}
 
-                <motion.div
-                  {...reveal}
-                  className={reverse ? "lg:order-2" : ""}
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+                direction={reversed ? "right" : "left"}
+              >
+
+                <div className="mb-5 flex items-center gap-4">
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+                </div>
+
+                <h2
+                  id={`cloud-pillar-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
+                  {section.title}
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
+                </h2>
 
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
+                  {section.paragraphs.map((paragraph, pIndex) => (
+                    <p
+                      key={pIndex}
+                      className={
+                        pIndex === 0
+                          ? "font-medium text-[#43354D]"
+                          : ""
+                      }
+                    >
+                      {paragraph}
                     </p>
-                  </div>
+                  ))}
+                </div>
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+                {/* FOCUS AREAS */}
 
-                    {section.title}
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/85 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
 
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
-
-                  <div className="mt-5 space-y-4">
-
-                    {section.paragraphs.map((paragraph, pIndex) => (
-                      <p
-                        key={pIndex}
-                        className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                          pIndex === 0 ? "font-medium" : ""
-                        }`}
+                  <ul className="space-y-3">
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
                       >
-                        {paragraph}
-                      </p>
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
+                        </span>
+
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
+                      </li>
                     ))}
+                  </ul>
+                </div>
+              </Reveal>
 
-                  </div>
+              {/* IMAGE COLUMN */}
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+              >
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
 
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
-
-                    <ul className="space-y-3">
-
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
-
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
-                        </li>
-                      ))}
-
-                    </ul>
-                  </div>
-
-                </motion.div>
-
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65 }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
-                </motion.div>
 
-              </div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
+
+                  <div className="absolute bottom-6 left-6 right-6 flex w-fit max-w-[calc(100%-3rem)] items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#653D82] backdrop-blur-md">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#A572C3]" />
+                    <span>{section.eyebrow}</span>
+                  </div>
+                </div>
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE PHOTOGRAPHIC FEATURE
-      =================================== */}
+      {/* ======================================
+          06 — PHOTOGRAPHIC FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-[72px] text-[#D8D2C8] lg:min-h-[480px]">
-
+      <section
+        aria-labelledby="cloud-feature"
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+      >
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/85" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
 
-        <div className="container-systems relative z-10">
+        <div className="container-systems relative z-20">
+          <Reveal className="max-w-[870px]">
 
-          <motion.div
-            {...reveal}
-            className="max-w-[830px]"
-          >
-
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               From Migration to Modern Operations
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
-
+            <h2
+              id="cloud-feature"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Cloud is a journey.
-
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 Not just a destination.
               </span>
             </h2>
 
-            <p className="mt-6 max-w-[700px] text-[16px] leading-[1.8]">
-              The real value of cloud adoption
-              depends on how workloads are
-              designed, migrated, operated,
-              protected, and continuously
-              improved. Build a clear plan
-              for the transition and the
-              responsibilities that follow.
+            <p className="mt-7 max-w-[700px] text-[16px] leading-[1.85] text-[#F0E7F6]">
+              The real value of cloud adoption depends on
+              how workloads are designed, migrated, operated,
+              protected, and continuously improved.
+              Build a clear plan for the transition and
+              the responsibilities that follow.
             </p>
 
-          </motion.div>
+          </Reveal>
         </div>
       </section>
 
-      {/* ===================================
-          CLOUD OPERATIONS CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — CLOUD CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        aria-labelledby="cloud-capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="cloud-capabilities"
+            eyebrow="Our Cloud Service Offerings"
+            title="End-to-end cloud"
+            highlight="capabilities."
+            description="From readiness assessments and infrastructure migration to automation, security, observability, and cost management, these capabilities support different stages of cloud adoption."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Our Cloud Service Offerings
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                End-to-end cloud
-
-                <span className="block text-[#B7B09F]">
-                  capabilities.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              From readiness assessments
-              and infrastructure migration
-              to automation, security,
-              observability, and cost
-              management, these capabilities
-              support different stages of
-              cloud adoption.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.06}
+                  className="h-full"
                 >
+                  <article className={`${cardStyle} min-h-[280px]`}>
 
-                  <div className="mb-6 flex items-center justify-between">
+                    <div className="mb-7 flex items-start justify-between">
+                      <span className={iconStyle}>
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
 
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45">
-
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {item.title}
-                  </h3>
+                    <span
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
-
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
-
-                </motion.article>
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
+                  </article>
+                </Reveal>
               );
             })}
-
           </div>
         </div>
       </section>
 
-      {/* ===================================
-          MIGRATION STRATEGIES
-      =================================== */}
+      {/* ======================================
+          08 — CLOUD MIGRATION STRATEGIES
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="cloud-strategies"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="cloud-strategies"
+            eyebrow="Cloud Migration Strategies"
+            title="The right migration"
+            highlight="for each workload."
+            description="Not every application requires the same migration method. Workload importance, technical dependencies, operating costs, and modernization goals help determine the most appropriate strategy."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Cloud Migration Strategies
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                The right migration
-
-                <span className="block text-[#625C51]">
-                  for each workload.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Not every application requires
-              the same migration method.
-              Workload importance, technical
-              dependencies, operating costs,
-              and modernization goals help
-              determine the most appropriate
-              strategy.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-
-            {migrationStrategies.map((strategy) => {
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {migrationStrategies.map((strategy, index) => {
               const Icon = strategy.icon;
 
               return (
-                <article
+                <Reveal
                   key={strategy.number}
-                  className="flex h-full flex-col border border-[#181818]/20 bg-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.06}
+                  className="h-full"
                 >
+                  <article
+                    className={`${cardStyle} min-h-[285px] bg-[#FCFAFE]`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <span className={iconStyle}>
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+                      </span>
 
-                  <div className="flex items-center justify-between">
-                    <Icon
-                      size={25}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {strategy.number}
+                      </span>
+                    </div>
 
-                    <span className="text-[12px] font-bold text-[#625C51]">
-                      {strategy.number}
-                    </span>
-                  </div>
+                    <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.14em] text-[#8755A6]">
+                      {strategy.subtitle}
+                    </p>
 
-                  <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.14em] text-[#625C51]">
-                    {strategy.subtitle}
-                  </p>
+                    <h3 className="mt-3 text-[23px] font-semibold leading-[1.25] tracking-[-0.035em] text-[#30213B]">
+                      {strategy.title}
+                    </h3>
 
-                  <h3 className="mt-3 text-[23px] font-semibold tracking-[-0.035em]">
-                    {strategy.title}
-                  </h3>
-
-                  <p className="mt-4 text-[15px] leading-[1.75]">
-                    {strategy.description}
-                  </p>
-
-                </article>
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {strategy.description}
+                    </p>
+                  </article>
+                </Reveal>
               );
             })}
-
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          CLOUD OPERATIONS FRAMEWORK
-      =================================== */}
+      {/* ======================================
+          09 — CLOUD OPERATIONS FRAMEWORK
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="cloud-framework"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="cloud-framework"
+            eyebrow="Cloud Operations Framework"
+            title="A stronger foundation"
+            highlight="for daily operations."
+            description="Once workloads are deployed, ongoing operations become essential. These four areas support an organized approach to monitoring, security, resilience, and efficiency."
+          />
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Cloud Operations Framework
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                A stronger foundation
-
-                <span className="block text-[#514C43]">
-                  for daily operations.
-                </span>
-              </h2>
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Once workloads are deployed,
-              ongoing operations become
-              essential. These four areas
-              support an organized approach
-              to monitoring, security,
-              resilience, and efficiency.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-
-            {operationalPillars.map((pillar) => {
+          <div className="grid gap-5 md:grid-cols-2">
+            {operationalPillars.map((pillar, index) => {
               const Icon = pillar.icon;
 
               return (
-                <article
+                <Reveal
                   key={pillar.title}
-                  className="border border-[#181818]/20 bg-[#D8D2C8] p-6 sm:p-7"
+                  delay={(index % 2) * 0.07}
+                  className="h-full"
                 >
+                  <article className={`${cardStyle} min-h-[225px]`}>
 
-                  <Icon
-                    size={26}
-                    strokeWidth={1.5}
-                    aria-hidden="true"
-                  />
+                    <span className={iconStyle}>
+                      <Icon
+                        size={26}
+                        strokeWidth={1.7}
+                        aria-hidden="true"
+                      />
+                    </span>
 
-                  <h3 className="mt-5 text-[22px] font-semibold tracking-[-0.035em]">
-                    {pillar.title}
-                  </h3>
+                    <h3 className="mt-5 text-[22px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {pillar.title}
+                    </h3>
 
-                  <p className="mt-3 max-w-[570px] text-[15px] leading-[1.75]">
-                    {pillar.description}
-                  </p>
-
-                </article>
+                    <p className="mt-3 max-w-[570px] text-[15px] leading-[1.75] text-[#665A70]">
+                      {pillar.description}
+                    </p>
+                  </article>
+                </Reveal>
               );
             })}
-
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {/* SUPPORTING OPERATIONAL AREAS */}
 
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-              <Network size={21} className="shrink-0" />
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                label: "Networking & Connectivity",
+                icon: Network,
+              },
+              {
+                label: "Access & Security",
+                icon: ShieldCheck,
+              },
+              {
+                label: "Automation & Improvement",
+                icon: RefreshCw,
+              },
+            ].map((item) => {
+              const Icon = item.icon;
 
-              <span className="text-[14px] font-semibold">
-                Networking & Connectivity
-              </span>
-            </div>
+              return (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-[12px] border border-[#E3D4ED] bg-white px-5 py-4 text-[#493456]"
+                >
+                  <Icon
+                    size={21}
+                    aria-hidden="true"
+                    className="shrink-0 text-[#8755A6]"
+                  />
 
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-              <ShieldCheck size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Access & Security
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-              <RefreshCw size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Automation & Improvement
-              </span>
-            </div>
-
+                  <span className="text-[14px] font-semibold">
+                    {item.label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          CLOUD IMPLEMENTATION PROCESS
-      =================================== */}
+      {/* ======================================
+          10 — CLOUD IMPLEMENTATION PROCESS
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="cloud-approach"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <Reveal>
+            <Eyebrow>
+              Our Cloud Migration Approach
+            </Eyebrow>
 
-            <motion.div {...reveal}>
+            <h2
+              id="cloud-approach"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              A clear path
+              <span className="block text-[#8B57AB]">
+                from planning to operations.
+              </span>
+            </h2>
 
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              Cloud migration requires careful planning
+              and controlled execution. Our approach
+              emphasizes discovery, appropriate architecture,
+              pilot validation, change management, and
+              operational readiness before considering
+              the transition complete.
+            </p>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  Our Cloud Migration Approach
-                </p>
-              </div>
-
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                A clear path
-
-                <span className="block text-[#625C51]">
-                  from planning to operations.
-                </span>
-              </h2>
-
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
-                Cloud migration requires
-                careful planning and controlled
-                execution. Our approach
-                emphasizes discovery,
-                appropriate architecture,
-                pilot validation, change
-                management, and operational
-                readiness before considering
-                the transition complete.
-              </p>
-
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
-
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-[#F8F3FC] p-5">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
                 <ClipboardCheck
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
+              </span>
 
-                <p className="text-[15px] leading-[1.75]">
-                  Migration plans should
-                  include measurable
-                  validation criteria,
-                  clear ownership, and
-                  an appropriate rollback
-                  or recovery strategy.
-                </p>
-              </div>
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                Migration plans should include measurable
+                validation criteria, clear ownership, and
+                an appropriate rollback or recovery strategy.
+              </p>
+            </div>
+          </Reveal>
 
-            </motion.div>
+          {/* SIX-STEP TIMELINE */}
 
-            <div className="border-t border-[#181818]/20">
+          <ol className="relative border-l border-[#E6D8EF] pl-8 sm:pl-10">
+            {approach.map((step, index) => (
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[42px] top-0 flex h-5 w-5 items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[50px]"
+                />
 
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
-                >
+                <Reveal delay={(index % 3) * 0.04}>
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-[#FBF9FD] p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#F7F0FC] motion-safe:hover:translate-x-1 sm:p-6">
 
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
+                    <p className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </p>
 
-                  <div>
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
                   </div>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
 
-                </div>
-              ))}
-
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          11 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="cloud-audiences"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
+          <Reveal>
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-            <div>
+            <h2
+              id="cloud-audiences"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Cloud services for
+              <span className="block text-[#8B57AB]">
+                evolving organizations.
+              </span>
+            </h2>
 
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Who We Help
-              </p>
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Cloud Operations &amp; Migration supports
+              organizations at different stages of cloud
+              adoption, from initial assessments to
+              improvements in established environments.
+            </p>
+          </Reveal>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+          {/* AUDIENCE CARDS */}
 
-                Cloud services for
+          <div className="grid gap-4 sm:grid-cols-2">
+            {audiences.map((item, index) => (
+              <Reveal
+                key={item}
+                delay={(index % 2) * 0.07}
+                className="h-full"
+              >
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-white p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
 
-                <span className="block text-[#514C43]">
-                  evolving organizations.
-                </span>
-              </h2>
-
-            </div>
-
-            <div>
-
-              <p className="text-[17px] font-medium leading-[1.75]">
-                Cloud Operations & Migration
-                supports organizations at
-                different stages of cloud
-                adoption, from initial
-                assessments to improvements
-                in established environments.
-              </p>
-
-              <div className="mt-5 space-y-3">
-
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
-
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
+                  </span>
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
-
-                  </div>
-                ))}
-
-              </div>
-            </div>
-
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===================================
-          FINAL CALL TO ACTION
-      =================================== */}
-
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
-
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-
-            <div>
-
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-
-                Ready for your
-
-                <span className="block text-[#625C51]">
-                  next cloud move?
-                </span>
-              </h2>
-
-            </div>
-
-            <div className="lg:justify-self-end">
-
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-                Tell us about your existing
-                infrastructure, applications,
-                migration goals, or cloud
-                operational challenges.
-                We can discuss your
-                requirements and explore
-                a practical direction
-                for your environment.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Your Cloud Project
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </button>
-
-            </div>
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+      {/* ======================================
+          12 — FINAL CLOUD CTA
+      ====================================== */}
+
+      <section
+        aria-labelledby="cloud-cta"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          <Reveal>
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="cloud-cta"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready for your
+              <span className="block text-[#F0D9FA]">
+                next cloud move?
+              </span>
+            </h2>
+          </Reveal>
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your existing infrastructure,
+              applications, migration goals, or cloud
+              operational challenges. We can discuss your
+              requirements and explore a practical
+              direction for your environment.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Discuss Your Cloud Project
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+            </button>
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* EXISTING SUPABASE INQUIRY MODAL */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}

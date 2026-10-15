@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   Activity,
@@ -32,12 +32,11 @@ import {
 import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
 // ==========================================
-// CLOUDLEM — CLOUD MANAGED SERVICES
+// CLOUDLEM — MANAGED SERVICES
+// PREMIUM SOFT LAVENDER & WHITE
 // ==========================================
 
 const SERVICE_TITLE = "Managed Services";
-
-// VERIFIED EXISTING CLOUDLEM IMAGE PATHS
 
 const images = {
   hero: "/images/backgrounds/section-1-3.jpg",
@@ -45,20 +44,6 @@ const images = {
   operations: "/images/backgrounds/section-3-1.jpg",
   security: "/images/backgrounds/section-2-2.jpg",
   feature: "/images/backgrounds/section-3-2.jpg",
-};
-
-// ==========================================
-// ANIMATIONS
-// ==========================================
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
 };
 
 // ==========================================
@@ -75,9 +60,7 @@ const editorialSections = [
     alt: "Cloud technology representing application management",
     paragraphs: [
       "Applications play an essential role in everyday business operations. Customer portals, e-commerce platforms, internal applications, APIs, and cloud-hosted services must remain dependable as users, technology dependencies, and operational requirements change.",
-
       "Managing these applications involves more than responding when something fails. Regular maintenance, software updates, configuration reviews, testing, performance analysis, and reliable release practices all contribute to keeping applications operational and maintainable.",
-
       "Cloudlem approaches application support by understanding the application architecture, operational dependencies, business priorities, and existing support processes. Our focus is on identifying recurring issues, improving visibility, and establishing structured maintenance and change-management practices.",
     ],
     points: [
@@ -95,9 +78,7 @@ const editorialSections = [
     alt: "Connected cloud infrastructure representing CloudOps",
     paragraphs: [
       "Cloud environments include virtual machines, networking services, databases, containers, storage, managed services, and numerous configuration settings. As infrastructure grows, managing these resources consistently becomes more challenging without appropriate operational processes.",
-
       "CloudOps combines monitoring, infrastructure management, automation, incident handling, and ongoing optimization. Repeatable workflows can help teams provision resources consistently, review infrastructure changes, manage configuration drift, and respond more effectively to operational events.",
-
       "Cloudlem considers infrastructure automation, observability, deployment workflows, resource utilization, and financial visibility as connected parts of cloud operations. The objective is to reduce unnecessary manual work while maintaining appropriate review, control, and accountability.",
     ],
     points: [
@@ -115,9 +96,7 @@ const editorialSections = [
     alt: "Digital infrastructure representing cloud security operations",
     paragraphs: [
       "Cloud security requires ongoing attention as applications change, infrastructure is deployed, users gain access, and new vulnerabilities are discovered. Security configurations that were appropriate during an initial deployment may need to be revisited as the environment evolves.",
-
       "Security operations help organizations monitor important events, review configurations, manage access, respond to potential threats, and maintain reliable records of changes. Depending on the environment, these activities may involve centralized logging, security alerts, vulnerability management, and incident-response procedures.",
-
       "Cloudlem approaches cloud security operations through risk-based assessment, clear responsibilities, appropriate technical controls, and documented response processes. We emphasize practical security improvements aligned with the organization's infrastructure, available tools, and operational requirements.",
     ],
     points: [
@@ -129,7 +108,7 @@ const editorialSections = [
 ];
 
 // ==========================================
-// CLOUD MANAGED SERVICE CAPABILITIES
+// MANAGED SERVICES CAPABILITIES
 // ==========================================
 
 const capabilities = [
@@ -361,10 +340,6 @@ const approach = [
   },
 ];
 
-// ==========================================
-// RELEVANT BUSINESS USE CASES
-// ==========================================
-
 const audiences = [
   "Organizations running business-critical applications across cloud infrastructure and managed services.",
   "Businesses looking to improve monitoring, maintenance, and operational support processes.",
@@ -373,1034 +348,1268 @@ const audiences = [
 ];
 
 // ==========================================
-// MAIN PAGE COMPONENT
+// REUSABLE SCROLL ANIMATION
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={
+        reduceMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 24 : 0,
+              x:
+                direction === "left"
+                  ? -24
+                  : direction === "right"
+                    ? 24
+                    : 0,
+            }
+      }
+      whileInView={{
+        opacity: 1,
+        x: 0,
+        y: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.12,
+      }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.66,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION LABEL
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#A477C0]"
+      />
+
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#80519F]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION HEADER
+// ==========================================
+
+function SectionHeader({
+  id,
+  eyebrow,
+  title,
+  highlight,
+  description,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+
+      <Reveal>
+        <Eyebrow>{eyebrow}</Eyebrow>
+
+        <h2
+          id={id}
+          className="text-[clamp(2.35rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em] text-[#30243B]"
+        >
+          {title}
+
+          <span className="block text-[#8855A9]">
+            {highlight}
+          </span>
+        </h2>
+      </Reveal>
+
+      <Reveal delay={0.08}>
+        <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70]">
+          {description}
+        </p>
+      </Reveal>
+
+    </div>
+  );
+}
+
+// ==========================================
+// SHARED CARD STYLING
+// ==========================================
+
+const cardStyle =
+  "group flex h-full flex-col rounded-[18px] border border-[#E8DDEF] bg-white p-6 shadow-[0_10px_30px_rgba(75,38,103,0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D0B3E1] hover:shadow-[0_22px_48px_rgba(75,38,103,0.11)] motion-safe:hover:-translate-y-1 sm:p-7";
+
+const iconStyle =
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-[15px] border border-[#E7D6F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EBDBF5] motion-safe:group-hover:scale-105";
+
+// ==========================================
+// MAIN MANAGED SERVICES PAGE
 // ==========================================
 
 export default function ManagedServicesPage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#30243B]">
 
-      {/* ===================================
-          HERO SECTION
-      =================================== */}
+      {/* ======================================
+          01 — PREMIUM LAVENDER HERO
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
+      <section
+        aria-labelledby="managed-title"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pb-20 pt-32 sm:pt-36 lg:pb-28 lg:pt-40"
+      >
 
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-28 h-96 w-96 rounded-full bg-[#DDC9ED]/35 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-[430px] w-[430px] rounded-full bg-white/70 blur-3xl"
+        />
 
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/65 to-transparent" />
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
 
-        <div className="container-systems relative z-10 w-full">
+          {/* HERO CONTENT */}
 
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[900px]"
-          >
+          <Reveal className="min-w-0">
 
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 rounded-sm text-[11px] font-bold uppercase tracking-[0.14em] text-[#80519F] transition-colors hover:text-[#4B2B65] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#80519F]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
 
               All Services
             </Link>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
+            <Eyebrow>
+              Cloud / Managed Services
+            </Eyebrow>
 
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                Cloud / Managed Services
-              </p>
-            </div>
-
-            <h1 className="max-w-[880px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em]">
-
+            <h1
+              id="managed-title"
+              className="max-w-[760px] text-[clamp(2.65rem,5.1vw,5.35rem)] font-semibold leading-[1.06] tracking-[-0.06em] text-[#291D34]"
+            >
               Keep your cloud
 
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 running with
               </span>
 
               confidence.
             </h1>
 
-            <p className="mt-7 max-w-[700px] text-[16px] leading-[1.8] sm:text-[17px]">
-              Simplify cloud operations with
-              structured monitoring, application
-              support, infrastructure management,
-              security practices, and continuous
-              optimization. Help your teams focus
-              on business priorities while
-              maintaining operational visibility.
+            <p className="mt-7 max-w-[650px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
+              Simplify cloud operations with structured
+              monitoring, application support, infrastructure
+              management, security practices, and continuous
+              optimization. Help your teams focus on business
+              priorities while maintaining operational
+              visibility.
             </p>
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Managed Services
+            {/* HERO ACTIONS */}
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
-              />
-            </button>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
 
-          </motion.div>
-        </div>
-      </section>
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Managed Services
 
-      {/* ===================================
-          SERVICE INTRODUCTION
-      =================================== */}
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
 
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-[border-color,background-color] duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+
+            </div>
+
+          </Reveal>
+
+          {/* HERO PHOTOGRAPHY */}
+
+          <Reveal
+            className="relative min-w-0 lg:pl-4"
+            direction="right"
+            delay={0.12}
           >
 
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Managed Services Perspective
-                </p>
-              </div>
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
+              />
 
-                Reliable operations.
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
 
-                <span className="block text-[#625C51]">
-                  Greater business focus.
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[310px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Managed Cloud Operations
                 </span>
-              </h2>
-            </div>
 
-            <div className="lg:pt-3">
-
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Managed cloud services help
-                organizations maintain a
-                structured approach to
-                operating applications,
-                infrastructure, and
-                supporting cloud technologies.
-              </p>
-
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
-
-                <p>
-                  After cloud workloads are deployed,
-                  they require continuous attention
-                  to availability, system health,
-                  configuration, security,
-                  performance, and changing
-                  application requirements.
-                  These responsibilities can
-                  become increasingly complex
-                  as environments grow.
-                </p>
-
-                <p>
-                  A managed services approach
-                  helps establish clear processes
-                  for monitoring, maintenance,
-                  incident response, controlled
-                  changes, and operational reviews.
-                  It can complement internal
-                  technical teams by defining
-                  which responsibilities are
-                  handled internally and which
-                  are included in an agreed
-                  service arrangement.
-                </p>
-
-                <p>
-                  Cloudlem focuses on combining
-                  cloud engineering practices
-                  with practical service
-                  management. We consider
-                  reliability, security,
-                  automation, infrastructure
-                  visibility, and cost management
-                  to help organizations maintain
-                  an understandable and
-                  manageable cloud environment.
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Monitor. Maintain. Improve.
                 </p>
 
               </div>
+
             </div>
 
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          THREE EDITORIAL SECTIONS
-      =================================== */}
+      {/* ======================================
+          02 — MANAGED SERVICES INTRODUCTION
+      ====================================== */}
+
+      <section
+        aria-labelledby="managed-intro"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
+
+          <Reveal>
+
+            <Eyebrow>
+              Our Managed Services Perspective
+            </Eyebrow>
+
+            <h2
+              id="managed-intro"
+              className="max-w-[570px] text-[clamp(2.3rem,3.6vw,3.65rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Reliable operations.
+
+              <span className="block text-[#8B58AC]">
+                Greater business focus.
+              </span>
+            </h2>
+
+            <div
+              aria-hidden="true"
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+            />
+
+          </Reveal>
+
+          <Reveal delay={0.1}>
+
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Managed cloud services help organizations
+              maintain a structured approach to operating
+              applications, infrastructure, and supporting
+              cloud technologies.
+            </p>
+
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+
+              <p>
+                After cloud workloads are deployed, they
+                require continuous attention to availability,
+                system health, configuration, security,
+                performance, and changing application
+                requirements. These responsibilities can
+                become increasingly complex as environments
+                grow.
+              </p>
+
+              <p>
+                A managed services approach helps establish
+                clear processes for monitoring, maintenance,
+                incident response, controlled changes, and
+                operational reviews. It can complement
+                internal technical teams by defining which
+                responsibilities are handled internally and
+                which are included in an agreed service
+                arrangement.
+              </p>
+
+              <p>
+                Cloudlem focuses on combining cloud
+                engineering practices with practical service
+                management. We consider reliability,
+                security, automation, infrastructure
+                visibility, and cost management to help
+                organizations maintain an understandable
+                and manageable cloud environment.
+              </p>
+
+            </div>
+
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* ======================================
+          03–05 — EDITORIAL SERVICE SECTIONS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-[72px] ${
+            aria-labelledby={`managed-pillar-${section.number}`}
+            className={`py-20 sm:py-24 lg:py-28 ${
               index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+                ? "bg-[#F7F2FB]"
+                : "bg-white"
             }`}
           >
-            <div className="container-systems">
 
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-                {/* TEXT */}
+              {/* EDITORIAL TEXT */}
 
-                <motion.div
-                  {...reveal}
-                  className={reverse ? "lg:order-2" : ""}
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+                direction={reversed ? "right" : "left"}
+              >
+
+                <div className="mb-5 flex items-center gap-4">
+
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+
+                </div>
+
+                <h2
+                  id={`managed-pillar-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
+                  {section.title}
 
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
+                </h2>
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
+
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
+
+                  {section.paragraphs.map((paragraph, pIndex) => (
+                    <p
+                      key={pIndex}
+                      className={
+                        pIndex === 0
+                          ? "font-medium text-[#43354D]"
+                          : ""
+                      }
+                    >
+                      {paragraph}
                     </p>
-                  </div>
+                  ))}
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+                </div>
 
-                    {section.title}
+                {/* FOCUS AREA CARD */}
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/85 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
 
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
 
-                  <div className="mt-5 space-y-4">
+                  <ul className="space-y-3">
 
-                    {section.paragraphs.map(
-                      (paragraph, paragraphIndex) => (
-                        <p
-                          key={paragraphIndex}
-                          className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                            paragraphIndex === 0
-                              ? "font-medium"
-                              : ""
-                          }`}
-                        >
-                          {paragraph}
-                        </p>
-                      )
-                    )}
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
+                      >
 
-                  </div>
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
 
-                  {/* FOCUS AREAS */}
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
+                        </span>
 
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
 
-                    <ul className="space-y-3">
+                      </li>
+                    ))}
 
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
+                  </ul>
 
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
+                </div>
 
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
+              </Reveal>
 
-                        </li>
-                      ))}
+              {/* EDITORIAL PHOTOGRAPH */}
 
-                    </ul>
-                  </div>
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+              >
 
-                </motion.div>
-
-                {/* IMAGE */}
-
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65 }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
 
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
 
-                </motion.div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
 
-              </div>
+                  <div className="absolute bottom-6 left-6 right-6 flex w-fit max-w-[calc(100%-3rem)] items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#653D82] backdrop-blur-md">
+
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#A572C3]" />
+
+                    <span>{section.eyebrow}</span>
+
+                  </div>
+
+                </div>
+
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE PHOTOGRAPHIC FEATURE
-      =================================== */}
+      {/* ======================================
+          06 — PHOTOGRAPHIC FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-[72px] text-[#D8D2C8] lg:min-h-[480px]">
+      <section
+        aria-labelledby="managed-feature"
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+      >
 
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/85" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
 
-        <div className="container-systems relative z-10">
+        <div className="container-systems relative z-20">
 
-          <motion.div
-            {...reveal}
-            className="max-w-[830px]"
-          >
+          <Reveal className="max-w-[870px]">
 
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               Managed Cloud Operations
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
-
+            <h2
+              id="managed-feature"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Less complexity.
 
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 More operational clarity.
               </span>
             </h2>
 
-            <p className="mt-6 max-w-[700px] text-[16px] leading-[1.8]">
-              Structured cloud management
-              helps teams understand service
-              health, coordinate maintenance,
-              improve security practices,
-              and respond more effectively
-              to changing operational needs.
+            <p className="mt-7 max-w-[700px] text-[16px] leading-[1.85] text-[#F0E7F6]">
+              Structured cloud management helps teams
+              understand service health, coordinate
+              maintenance, improve security practices, and
+              respond more effectively to changing
+              operational needs.
             </p>
 
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          MANAGED SERVICES CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — MANAGED SERVICES CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        aria-labelledby="managed-capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
+
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="managed-capabilities"
+            eyebrow="Our Managed Cloud Offerings"
+            title="Cloud managed"
+            highlight="service capabilities."
+            description="From cloud infrastructure monitoring and application maintenance to security operations, automation, and cost optimization, these capabilities support ongoing cloud management."
+          />
 
-            <div>
-
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Our Managed Cloud Offerings
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                Cloud managed
-
-                <span className="block text-[#B7B09F]">
-                  service capabilities.
-                </span>
-              </h2>
-
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              From cloud infrastructure
-              monitoring and application
-              maintenance to security
-              operations, automation,
-              and cost optimization,
-              these capabilities support
-              ongoing cloud management.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.06}
+                  className="h-full"
                 >
 
-                  <div className="mb-6 flex items-center justify-between">
+                  <article className={`${cardStyle} min-h-[285px]`}>
 
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45">
+                    <div className="mb-7 flex items-start justify-between">
 
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+                      <span className={iconStyle}>
+
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+
+                      </span>
+
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
 
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {item.title}
-                  </h3>
+                    <span
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
 
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
+                  </article>
 
-                </motion.article>
+                </Reveal>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          THREE MANAGED SERVICE FAMILIES
-      =================================== */}
+      {/* ======================================
+          08 — THREE MANAGED SERVICE FAMILIES
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="managed-families"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="managed-families"
+            eyebrow="Managed Service Areas"
+            title="Three areas of"
+            highlight="cloud management."
+            description="Managed cloud support can be organized around applications, security, and infrastructure operations. The specific responsibilities and coverage are defined by each service engagement."
+          />
 
-            <div>
+          {/* SERVICE FAMILY CARDS */}
 
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Managed Service Areas
-              </p>
+          <div className="grid gap-5 lg:grid-cols-3">
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                Three areas of
-
-                <span className="block text-[#625C51]">
-                  cloud management.
-                </span>
-              </h2>
-
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Managed cloud support
-              can be organized around
-              applications, security,
-              and infrastructure operations.
-              The specific responsibilities
-              and coverage are defined
-              by each service engagement.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 lg:grid-cols-3">
-
-            {serviceFamilies.map((service) => {
+            {serviceFamilies.map((service, index) => {
               const Icon = service.icon;
 
               return (
-                <article
+                <Reveal
                   key={service.number}
-                  className="flex h-full flex-col border border-[#181818]/20 bg-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={index * 0.06}
+                  className="h-full"
                 >
 
-                  <div className="flex items-center justify-between">
+                  <article
+                    className={`${cardStyle} min-h-[490px] bg-[#FCFAFE]`}
+                  >
 
-                    <Icon
-                      size={27}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                    <div className="flex items-start justify-between">
 
-                    <span className="text-[12px] font-bold text-[#625C51]">
-                      {service.number}
-                    </span>
-                  </div>
+                      <span className={iconStyle}>
 
-                  <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.13em] text-[#625C51]">
-                    {service.subtitle}
-                  </p>
+                        <Icon
+                          size={26}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
 
-                  <h3 className="mt-3 text-[23px] font-semibold leading-[1.25] tracking-[-0.035em]">
-                    {service.title}
-                  </h3>
+                      </span>
 
-                  <p className="mt-4 text-[15px] leading-[1.75]">
-                    {service.description}
-                  </p>
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {service.number}
+                      </span>
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
+                    </div>
 
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.13em]">
-                      Areas of Support
+                    <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.13em] text-[#8755A6]">
+                      {service.subtitle}
                     </p>
 
-                    <ul className="space-y-3">
+                    <h3 className="mt-3 text-[23px] font-semibold leading-[1.26] tracking-[-0.035em] text-[#30213B]">
+                      {service.title}
+                    </h3>
 
-                      {service.offerings.map((offering) => (
-                        <li
-                          key={offering}
-                          className="flex items-start gap-3"
-                        >
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {service.description}
+                    </p>
 
-                          <Check
-                            size={17}
-                            className="mt-1 shrink-0"
-                            aria-hidden="true"
-                          />
+                    <div className="mt-6 border-t border-[#E9DDF1] pt-5">
 
-                          <span className="text-[14px] leading-[1.7]">
-                            {offering}
-                          </span>
+                      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.14em] text-[#80519F]">
+                        Areas of Support
+                      </p>
 
-                        </li>
-                      ))}
+                      <ul className="space-y-3">
 
-                    </ul>
-                  </div>
+                        {service.offerings.map((offering) => (
+                          <li
+                            key={offering}
+                            className="flex items-start gap-3"
+                          >
 
-                </article>
+                            <Check
+                              size={17}
+                              strokeWidth={2}
+                              aria-hidden="true"
+                              className="mt-0.5 shrink-0 text-[#8755A6]"
+                            />
+
+                            <span className="text-[14px] leading-[1.7] text-[#51465C]">
+                              {offering}
+                            </span>
+
+                          </li>
+                        ))}
+
+                      </ul>
+
+                    </div>
+
+                  </article>
+
+                </Reveal>
               );
             })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          MANAGED OPERATIONS PRINCIPLES
-      =================================== */}
+      {/* ======================================
+          09 — OPERATING PRINCIPLES
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
+      <section
+        aria-labelledby="managed-principles"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
+
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="managed-principles"
+            eyebrow="Operational Management Principles"
+            title="Operations guided"
+            highlight="by clear processes."
+            description="Dependable service management requires visibility, documented responsibilities, controlled changes, and regular review. These practices help teams coordinate ongoing cloud operations."
+          />
 
-            <div>
+          <div className="grid gap-5 md:grid-cols-2">
 
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Operational Management Principles
-              </p>
-
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                Operations guided
-
-                <span className="block text-[#514C43]">
-                  by clear processes.
-                </span>
-              </h2>
-
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] lg:justify-self-end">
-              Dependable service management
-              requires visibility, documented
-              responsibilities, controlled
-              changes, and regular review.
-              These practices help teams
-              coordinate ongoing cloud
-              operations.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-
-            {operatingPrinciples.map((item) => {
+            {operatingPrinciples.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <article
+                <Reveal
                   key={item.title}
-                  className="border border-[#181818]/20 bg-[#D8D2C8] p-6 sm:p-7"
+                  delay={(index % 2) * 0.07}
+                  className="h-full"
                 >
 
-                  <Icon
-                    size={26}
-                    strokeWidth={1.5}
-                    aria-hidden="true"
-                  />
+                  <article className={`${cardStyle} min-h-[220px]`}>
 
-                  <h3 className="mt-5 text-[22px] font-semibold tracking-[-0.035em]">
-                    {item.title}
-                  </h3>
+                    <span className={iconStyle}>
 
-                  <p className="mt-3 text-[15px] leading-[1.75]">
-                    {item.description}
-                  </p>
+                      <Icon
+                        size={26}
+                        strokeWidth={1.7}
+                        aria-hidden="true"
+                      />
 
-                </article>
+                    </span>
+
+                    <h3 className="mt-5 text-[22px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
+
+                    <p className="mt-3 max-w-[570px] text-[15px] leading-[1.75] text-[#665A70]">
+                      {item.description}
+                    </p>
+
+                  </article>
+
+                </Reveal>
               );
             })}
 
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {/* OPERATIONAL HIGHLIGHTS */}
 
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
 
-              <BellRing size={21} className="shrink-0" />
+            {[
+              {
+                label: "Alerts & Escalation",
+                icon: BellRing,
+              },
+              {
+                label: "Infrastructure Health",
+                icon: Server,
+              },
+              {
+                label: "Security & Accountability",
+                icon: ShieldCheck,
+              },
+            ].map((item) => {
+              const Icon = item.icon;
 
-              <span className="text-[14px] font-semibold">
-                Alerts & Escalation
-              </span>
+              return (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-[12px] border border-[#E3D4ED] bg-white px-5 py-4 text-[#493456]"
+                >
 
-            </div>
+                  <Icon
+                    size={21}
+                    aria-hidden="true"
+                    className="shrink-0 text-[#8755A6]"
+                  />
 
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
+                  <span className="text-[14px] font-semibold">
+                    {item.label}
+                  </span>
 
-              <Server size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Infrastructure Health
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#181818]/25 p-4">
-
-              <ShieldCheck size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Security & Accountability
-              </span>
-
-            </div>
+                </div>
+              );
+            })}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          OPERATIONAL LIFECYCLE
-      =================================== */}
+      {/* ======================================
+          10 — MANAGED OPERATIONS LIFECYCLE
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        aria-labelledby="managed-lifecycle"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-9 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          <SectionHeader
+            id="managed-lifecycle"
+            eyebrow="Managed Operations Lifecycle"
+            title="A repeatable cycle"
+            highlight="of service improvement."
+            description="Managed cloud operations benefit from a structured cycle that connects monitoring, prioritization, response, maintenance, and learning."
+          />
 
-            <div>
+          {/* FIVE-STAGE LIFECYCLE */}
 
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
-                Managed Operations Lifecycle
-              </p>
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-
-                A repeatable cycle
-
-                <span className="block text-[#B7B09F]">
-                  of service improvement.
-                </span>
-              </h2>
-
-            </div>
-
-            <p className="max-w-[550px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              Managed cloud operations
-              benefit from a structured
-              cycle that connects monitoring,
-              prioritization, response,
-              maintenance, and learning.
-            </p>
-
-          </motion.div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-
-            {lifecycle.map((stage) => (
-              <article
+            {lifecycle.map((stage, index) => (
+              <li
                 key={stage.number}
-                className="flex flex-col border border-[#B7B09F]/35 p-5"
+                className="min-w-0"
               >
 
-                <span className="text-[12px] font-bold text-[#B7B09F]">
-                  {stage.number}
-                </span>
+                <Reveal
+                  delay={(index % 5) * 0.045}
+                  className="h-full"
+                >
 
-                <h3 className="mt-5 text-[19px] font-semibold tracking-[-0.03em]">
-                  {stage.title}
-                </h3>
+                  <div className="flex h-full min-h-[235px] flex-col rounded-[16px] border border-[#E1D1EA] bg-[#FCFAFE] p-5 shadow-[0_8px_24px_rgba(75,38,103,0.035)] transition-[transform,border-color,box-shadow] duration-300 hover:border-[#C8A6DC] hover:shadow-[0_14px_32px_rgba(75,38,103,0.09)] motion-safe:hover:-translate-y-1">
 
-                <p className="mt-3 flex-1 text-[14px] leading-[1.75] text-[#D8D2C8]/85">
-                  {stage.description}
-                </p>
+                    <span className="text-[11px] font-bold tracking-[0.13em] text-[#9464B3]">
+                      STAGE {stage.number}
+                    </span>
 
-                <ArrowRight
-                  size={18}
-                  className="mt-5 text-[#B7B09F]"
-                  aria-hidden="true"
-                />
+                    <span className="mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#F1E5F8] text-[#8250A4]">
 
-              </article>
+                      {index < lifecycle.length - 1 ? (
+                        <ArrowRight
+                          size={19}
+                          strokeWidth={1.8}
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <RefreshCw
+                          size={19}
+                          strokeWidth={1.8}
+                          aria-hidden="true"
+                        />
+                      )}
+
+                    </span>
+
+                    <h3 className="mt-5 text-[19px] font-semibold leading-[1.3] text-[#32223E]">
+                      {stage.title}
+                    </h3>
+
+                    <p className="mt-3 flex-1 text-[14px] leading-[1.75] text-[#665A70]">
+                      {stage.description}
+                    </p>
+
+                  </div>
+
+                </Reveal>
+
+              </li>
             ))}
 
+          </ol>
+
+          {/* LIFECYCLE SUPPORTING AREAS */}
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+
+            {[
+              {
+                label: "Service Health Validation",
+                icon: SearchCheck,
+              },
+              {
+                label: "Incident & Change Procedures",
+                icon: Workflow,
+              },
+              {
+                label: "Cost & Resource Review",
+                icon: CircleDollarSign,
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-[12px] border border-[#E3D4ED] bg-[#F7F2FB] px-5 py-4 text-[#493456]"
+                >
+
+                  <Icon
+                    size={21}
+                    aria-hidden="true"
+                    className="shrink-0 text-[#8755A6]"
+                  />
+
+                  <span className="text-[14px] font-semibold">
+                    {item.label}
+                  </span>
+
+                </div>
+              );
+            })}
+
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-
-            <div className="flex items-center gap-3 border border-[#B7B09F]/30 p-4">
-
-              <SearchCheck size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Service Health Validation
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#B7B09F]/30 p-4">
-
-              <Workflow size={21} className="shrink-0" />
-
-              <span className="text-[14px] font-semibold">
-                Incident & Change Procedures
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-3 border border-[#B7B09F]/30 p-4">
-
-              <CircleDollarSign
-                size={21}
-                className="shrink-0"
-              />
-
-              <span className="text-[14px] font-semibold">
-                Cost & Resource Review
-              </span>
-
-            </div>
-
-          </div>
         </div>
       </section>
 
-      {/* ===================================
-          MANAGED SERVICES IMPLEMENTATION
-      =================================== */}
+      {/* ======================================
+          11 — MANAGED SERVICES IMPLEMENTATION
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="managed-approach"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
 
-            <motion.div {...reveal}>
+          {/* IMPLEMENTATION INTRODUCTION */}
 
-              <div className="mb-5 flex items-center gap-3">
+          <Reveal>
 
-                <span className="h-px w-8 bg-[#181818]" />
+            <Eyebrow>
+              Our Managed Services Approach
+            </Eyebrow>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  Our Managed Services Approach
-                </p>
+            <h2
+              id="managed-approach"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              From onboarding
 
-              </div>
+              <span className="block text-[#8B57AB]">
+                to ongoing operations.
+              </span>
+            </h2>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              Introducing managed services begins with
+              understanding the existing environment,
+              current responsibilities, and operational
+              expectations. A structured transition helps
+              establish visibility, ownership, and suitable
+              service procedures.
+            </p>
 
-                From onboarding
+            {/* OPERATIONAL AGREEMENT HIGHLIGHT */}
 
-                <span className="block text-[#625C51]">
-                  to ongoing operations.
-                </span>
-              </h2>
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-white p-5">
 
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
-                Introducing managed services
-                begins with understanding
-                the existing environment,
-                current responsibilities,
-                and operational expectations.
-                A structured transition
-                helps establish visibility,
-                ownership, and suitable
-                service procedures.
-              </p>
-
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
 
                 <ShieldCheck
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
 
-                <p className="text-[15px] leading-[1.75]">
-                  Service scope, support hours,
-                  response targets, security
-                  responsibilities, and any
-                  service-level commitments
-                  should be agreed and
-                  documented before delivery.
-                </p>
+              </span>
 
-              </div>
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                Service scope, support hours, response
+                targets, security responsibilities, and
+                any service-level commitments should be
+                agreed and documented before delivery.
+              </p>
 
-            </motion.div>
+            </div>
 
-            <div className="border-t border-[#181818]/20">
+          </Reveal>
 
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
-                >
+          {/* SIX-STEP IMPLEMENTATION TIMELINE */}
 
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
+          <ol className="relative border-l border-[#E6D8EF] pl-8 sm:pl-10">
 
-                  <div>
+            {approach.map((step, index) => (
 
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[42px] top-0 flex h-5 w-5 items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[50px]"
+                />
+
+                <Reveal delay={(index % 3) * 0.04}>
+
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-white p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#FDFCFF] motion-safe:hover:translate-x-1 sm:p-6">
+
+                    <div className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </div>
+
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
 
                   </div>
-                </div>
-              ))}
 
-            </div>
+                </Reveal>
 
-          </div>
+              </li>
+
+            ))}
+
+          </ol>
+
         </div>
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          12 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="managed-audiences"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-            <div>
+          <Reveal>
 
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Who We Help
-              </p>
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+            <h2
+              id="managed-audiences"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Managed cloud services
 
-                Managed cloud services
+              <span className="block text-[#8B57AB]">
+                for evolving businesses.
+              </span>
+            </h2>
 
-                <span className="block text-[#514C43]">
-                  for evolving businesses.
-                </span>
-              </h2>
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Managed Services can support organizations
+              seeking clearer operational processes,
+              stronger cloud visibility, and more
+              consistent management of applications
+              and infrastructure.
+            </p>
 
-            </div>
+          </Reveal>
 
-            <div>
+          {/* FOUR AUDIENCE CARDS */}
 
-              <p className="text-[17px] font-medium leading-[1.75]">
-                Managed Services can support
-                organizations seeking
-                clearer operational processes,
-                stronger cloud visibility,
-                and more consistent management
-                of applications and infrastructure.
-              </p>
+          <div className="grid gap-4 sm:grid-cols-2">
 
-              <div className="mt-5 space-y-3">
+            {audiences.map((item, index) => (
 
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
+              <Reveal
+                key={item}
+                delay={(index % 2) * 0.07}
+                className="h-full"
+              >
+
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-[#FCFAFE] p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
+
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
 
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
+                  </span>
 
-                  </div>
-                ))}
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
 
-              </div>
+                </div>
 
-            </div>
+              </Reveal>
 
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===================================
-          FINAL CTA
-      =================================== */}
-
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
-
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-
-            <div>
-
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-
-                Ready to simplify
-
-                <span className="block text-[#625C51]">
-                  your cloud operations?
-                </span>
-              </h2>
-
-            </div>
-
-            <div className="lg:justify-self-end">
-
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-                Tell us about your cloud
-                infrastructure, applications,
-                support challenges, monitoring
-                needs, and operational goals.
-                We can discuss an appropriate
-                managed services approach
-                for your environment.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Managed Services
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-
-              </button>
-
-            </div>
+            ))}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
+      {/* ======================================
+          13 — FINAL CALL TO ACTION
+      ====================================== */}
+
+      <section
+        aria-labelledby="managed-cta"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+      >
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          <Reveal>
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="managed-cta"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready to simplify
+
+              <span className="block text-[#F0D9FA]">
+                your cloud operations?
+              </span>
+            </h2>
+
+          </Reveal>
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your cloud infrastructure,
+              applications, support challenges, monitoring
+              needs, and operational goals. We can discuss
+              an appropriate managed services approach
+              for your environment.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Discuss Managed Services
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+            </button>
+
+          </Reveal>
+
+        </div>
+      </section>
+
+      {/* ======================================
           EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+      ====================================== */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}

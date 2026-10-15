@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   ArrowLeft,
@@ -24,11 +24,12 @@ import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
 // ==========================================
 // CLOUDLEM — DIGITAL CONSULTING & STRATEGY
+// Premium Soft Lavender & White
 // ==========================================
 
 const SERVICE_TITLE = "Digital Consulting & Strategy";
 
-// EXISTING VERIFIED IMAGE FILES
+// ORIGINAL IMAGE ASSETS PRESERVED
 
 const images = {
   hero: "/images/backgrounds/section-1-3.jpg",
@@ -38,20 +39,8 @@ const images = {
   feature: "/images/backgrounds/section-3-1.jpg",
 };
 
-// ANIMATION SETTINGS
-
-const reveal = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: {
-    duration: 0.6,
-    ease: [0.22, 1, 0.36, 1] as const,
-  },
-};
-
 // ==========================================
-// EDITORIAL CONTENT — PRESERVED
+// ORIGINAL EDITORIAL CONTENT
 // ==========================================
 
 const editorialSections = [
@@ -64,9 +53,7 @@ const editorialSections = [
     alt: "Technology visualization for digital strategy",
     paragraphs: [
       "A successful digital strategy is more than adopting new software or moving infrastructure to the cloud. It is about understanding where your organization stands today, defining where it needs to go, and creating a realistic plan to get there.",
-
       "Cloudlem helps businesses examine their current technology environment, assess existing processes, and identify the opportunities that can deliver meaningful operational improvements. We consider business priorities, available resources, technical requirements, and long-term growth objectives when developing a digital roadmap.",
-
       "Our approach emphasizes practical recommendations, clear priorities, and technologies that align with your organization's needs. Whether you are modernizing existing systems or planning new digital capabilities, the objective is to make every technology decision purposeful.",
     ],
     points: [
@@ -84,9 +71,7 @@ const editorialSections = [
     alt: "Infrastructure and connected technology systems",
     paragraphs: [
       "Organizations often operate with disconnected applications, repetitive manual tasks, and technology that no longer supports changing business demands. Addressing these challenges requires an approach that connects business processes with the right digital solutions.",
-
       "We help identify opportunities to simplify workflows, improve information sharing, modernize applications, and introduce automation where it can make a practical difference. This may include reviewing existing tools, planning integrations, evaluating cloud platforms, or identifying areas where intelligent systems can support operations.",
-
       "By connecting digital planning with implementation, businesses can move beyond isolated technology initiatives and develop more consistent, scalable, and maintainable ways of working.",
     ],
     points: [
@@ -104,9 +89,7 @@ const editorialSections = [
     alt: "Visual representing connected digital operations",
     paragraphs: [
       "Digital transformation becomes more valuable when technology, people, and processes work together. A disconnected technology environment can make reporting difficult, slow down collaboration, and create unnecessary operational complexity.",
-
       "Cloudlem supports organizations in evaluating how their systems exchange information, where important data is managed, and how different business functions can benefit from better digital coordination. We focus on identifying practical improvements rather than recommending technology for its own sake.",
-
       "From customer-facing applications and internal workflows to cloud services and data platforms, a connected digital approach helps create the foundation for informed decision-making and future modernization.",
     ],
     points: [
@@ -118,7 +101,7 @@ const editorialSections = [
 ];
 
 // ==========================================
-// CONSULTING CAPABILITIES — PRESERVED
+// CONSULTING CAPABILITIES
 // ==========================================
 
 const capabilities = [
@@ -167,7 +150,7 @@ const capabilities = [
 ];
 
 // ==========================================
-// CONSULTING APPROACH — PRESERVED
+// CONSULTING DELIVERY APPROACH
 // ==========================================
 
 const approach = [
@@ -211,357 +194,542 @@ const audiences = [
 ];
 
 // ==========================================
-// PAGE COMPONENT
+// REUSABLE ANIMATED REVEAL
+// Respects reduced-motion preferences
+// ==========================================
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "left" | "right";
+}) {
+  const reducedMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={
+        reducedMotion
+          ? false
+          : {
+              opacity: 0,
+              y: direction === "up" ? 22 : 0,
+              x:
+                direction === "left"
+                  ? -22
+                  : direction === "right"
+                    ? 22
+                    : 0,
+            }
+      }
+      whileInView={{
+        opacity: 1,
+        x: 0,
+        y: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.12,
+      }}
+      transition={{
+        duration: reducedMotion ? 0 : 0.68,
+        delay: reducedMotion ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// REUSABLE SECTION EYEBROW
+// ==========================================
+
+function Eyebrow({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="h-px w-8 shrink-0 bg-[#A477C0]"
+      />
+
+      <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-[#80519F]">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// ==========================================
+// MAIN DIGITAL CONSULTING PAGE
 // ==========================================
 
 export default function DigitalConsultingStrategyPage() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen overflow-x-clip bg-white text-[#30243B]">
 
-      {/* ===================================
-          HERO — REFINED HEIGHT
-      =================================== */}
+      {/* ======================================
+          01 — BRIGHT EDITORIAL HERO
+      ====================================== */}
 
-      <section className="relative flex min-h-[550px] items-center overflow-hidden bg-[#181818] py-28 text-[#D8D2C8] sm:min-h-[580px] lg:min-h-[640px] lg:py-32">
+      <section
+        aria-labelledby="consulting-title"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#FFFEFF_0%,#FAF7FD_48%,#F0E8F7_100%)] pb-20 pt-32 sm:pt-36 lg:pb-28 lg:pt-40"
+      >
+        {/* AMBIENT LAVENDER LIGHTING */}
 
-        <Image
-          src={images.hero}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 top-28 h-96 w-96 rounded-full bg-[#DDC9ED]/35 blur-3xl"
         />
 
-        <div className="absolute inset-0 bg-linear-to-r from-[#181818]/95 via-[#181818]/85 to-[#181818]/50" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-[430px] w-[430px] rounded-full bg-white/70 blur-3xl"
+        />
 
-        <div className="absolute inset-0 bg-linear-to-t from-[#181818]/60 to-transparent" />
+        <div className="container-systems relative z-10 grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
 
-        <div className="container-systems relative z-10 w-full">
+          {/* HERO TEXT */}
 
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="max-w-[880px]"
-          >
+          <Reveal className="min-w-0">
 
             {/* BREADCRUMB */}
 
             <Link
               href="/services"
-              className="group mb-10 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:text-[#B7B09F]"
+              className="group mb-10 inline-flex min-h-8 items-center gap-2 rounded-sm text-[11px] font-bold uppercase tracking-[0.14em] text-[#80519F] transition-colors hover:text-[#4B2B65] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#80519F]"
             >
               <ArrowLeft
                 size={17}
-                className="transition-transform group-hover:-translate-x-1"
                 aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:-translate-x-1"
               />
+
               All Services
             </Link>
 
-            {/* EYEBROW */}
+            <Eyebrow>
+              Digital Consulting &amp; Strategy
+            </Eyebrow>
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-9 bg-[#B7B09F]" />
+            {/* HERO HEADING */}
 
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D8D2C8]">
-                Digital Consulting & Strategy
-              </p>
-            </div>
-
-            {/* HERO TITLE */}
-
-            <h1 className="max-w-[850px] text-[clamp(3rem,5.6vw,5.75rem)] font-semibold leading-[1.04] tracking-[-0.06em] text-[#D8D2C8]">
+            <h1
+              id="consulting-title"
+              className="max-w-[760px] text-[clamp(2.45rem,3.8vw,4.3rem)] font-semibold leading-[1.17] tracking-[-0.035em] text-[#291D34]"
+            >
               From vision
 
-              <span className="block text-[#B7B09F]">
+              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
                 to meaningful
               </span>
 
               transformation.
             </h1>
 
-            {/* INTRODUCTION */}
+            {/* DESCRIPTION */}
 
-            <p className="mt-7 max-w-[650px] text-[16px] leading-[1.8] text-[#D8D2C8] sm:text-[17px]">
+            <p className="mt-7 max-w-[640px] text-[15px] leading-[1.85] text-[#62576C] sm:text-[17px]">
               Turn ambitious business goals into a
               practical digital strategy. Cloudlem helps
               organizations evaluate technology,
-              modernize operations, and plan
-              sustainable digital transformation.
+              modernize operations, and plan sustainable
+              digital transformation.
             </p>
 
-            {/* ACTION */}
+            {/* ACTIONS */}
 
-            <button
-              type="button"
-              onClick={() => setInquiryOpen(true)}
-              className="group mt-8 inline-flex min-h-12 items-center justify-between gap-7 border border-[#D8D2C8] bg-[#D8D2C8] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#181818] transition-colors hover:bg-[#B7B09F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D8D2C8]"
-            >
-              Discuss Your Strategy
+            <div className="mt-9 flex flex-wrap items-center gap-3">
 
-              <ArrowUpRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                aria-hidden="true"
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className="group inline-flex min-h-[52px] items-center justify-center gap-4 rounded-[9px] bg-[#713F96] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_12px_28px_rgba(113,63,150,0.19)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#5D317F] hover:shadow-[0_16px_33px_rgba(113,63,150,0.25)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Discuss Your Strategy
+
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                />
+              </button>
+
+              <a
+                href="#capabilities"
+                className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-[border-color,background-color] duration-300 hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
+              >
+                Explore Capabilities
+
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="transition-transform motion-safe:group-hover:translate-x-1"
+                />
+              </a>
+
+            </div>
+
+          </Reveal>
+
+          {/* HERO IMAGE */}
+
+          <Reveal
+            className="relative min-w-0 lg:pl-4"
+            direction="right"
+            delay={0.12}
+          >
+            <div
+              aria-hidden="true"
+              className="absolute -inset-5 rounded-[36px] bg-[#DCC5EC]/35 blur-2xl"
+            />
+
+            <div className="group relative h-[360px] overflow-hidden rounded-[22px] border-[6px] border-white bg-[#E9DEF1] shadow-[0_30px_70px_rgba(75,40,98,0.16)] sm:h-[465px] lg:h-[555px]">
+
+              <Image
+                src={images.hero}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.04]"
               />
-            </button>
-          </motion.div>
+
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#251531]/55 via-transparent to-transparent"
+              />
+
+              {/* IMAGE OVERLAY CARD */}
+
+              <div className="absolute bottom-6 left-6 right-6 rounded-[12px] border border-white/30 bg-white/90 px-5 py-4 shadow-lg backdrop-blur-md sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[310px]">
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8B57A9]">
+                  Digital Consulting
+                </span>
+
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#32223F]">
+                  Business goals. Technology direction.
+                </p>
+
+              </div>
+
+            </div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          INTRODUCTION — MORE COMPACT
-      =================================== */}
+      {/* ======================================
+          02 — CONSULTING PERSPECTIVE
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="consulting-intro"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-9 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16"
-          >
+          <Reveal>
 
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <Eyebrow>
+              Our Consulting Perspective
+            </Eyebrow>
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                  Our Consulting Perspective
-                </p>
-              </div>
+            <h2
+              id="consulting-intro"
+              className="max-w-[570px] text-[clamp(2.3rem,3.6vw,3.65rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Technology decisions
 
-              <h2 className="max-w-[550px] text-[clamp(2.3rem,3.5vw,3.35rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Technology decisions
+              <span className="block text-[#8B58AC]">
+                guided by purpose.
+              </span>
+            </h2>
 
-                <span className="block text-[#625C51]">
-                  guided by purpose.
-                </span>
-              </h2>
-            </div>
+            <div
+              aria-hidden="true"
+              className="mt-7 h-1 w-14 rounded-full bg-[#AA7BC8]"
+            />
 
-            <div className="lg:pt-3">
+          </Reveal>
 
-              <p className="text-[17px] font-semibold leading-[1.75]">
-                Effective digital transformation starts
-                with a clear understanding of the
-                business—not with a technology purchase.
+          <Reveal delay={0.1}>
+
+            <p className="text-[18px] font-semibold leading-[1.75] text-[#382A45]">
+              Effective digital transformation starts
+              with a clear understanding of the
+              business—not with a technology purchase.
+            </p>
+
+            <div className="mt-5 space-y-4 text-[15px] leading-[1.9] text-[#645A6C] sm:text-[16px]">
+
+              <p>
+                Organizations face constant pressure to
+                improve efficiency, respond to changing
+                customer needs, and modernize existing
+                operations. Without a clear strategy,
+                technology initiatives can become
+                disconnected, expensive, or difficult
+                to maintain.
               </p>
 
-              <div className="mt-4 space-y-4 text-[16px] leading-[1.8] text-[#181818]/90">
-                <p>
-                  Organizations face constant pressure
-                  to improve efficiency, respond to
-                  changing customer needs, and modernize
-                  existing operations. Without a clear
-                  strategy, technology initiatives can
-                  become disconnected, expensive, or
-                  difficult to maintain.
-                </p>
+              <p>
+                Cloudlem approaches digital consulting by
+                connecting business objectives with
+                technical planning. We consider the
+                current environment, identify practical
+                opportunities for improvement, and help
+                define a direction that supports both
+                immediate priorities and future growth.
+              </p>
 
-                <p>
-                  Cloudlem approaches digital consulting
-                  by connecting business objectives with
-                  technical planning. We consider the
-                  current environment, identify practical
-                  opportunities for improvement, and
-                  help define a direction that supports
-                  both immediate priorities and
-                  future growth.
-                </p>
+              <p>
+                The goal is to create clarity: what should
+                change, why it matters, how implementation
+                can be approached, and which results are
+                worth measuring.
+              </p>
 
-                <p>
-                  The goal is to create clarity:
-                  what should change, why it matters,
-                  how implementation can be approached,
-                  and which results are worth measuring.
-                </p>
-              </div>
             </div>
-          </motion.div>
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          EDITORIAL SECTIONS
-          COMPACT, BALANCED IMAGE/TEXT
-      =================================== */}
+      {/* ======================================
+          03–05 — CONSULTING EDITORIAL SECTIONS
+      ====================================== */}
 
       {editorialSections.map((section, index) => {
-        const reverse = index % 2 === 1;
+        const reversed = index % 2 === 1;
 
         return (
           <section
             key={section.number}
-            className={`py-14 text-[#181818] lg:py-18 ${
+            aria-labelledby={`consulting-pillar-${section.number}`}
+            className={`py-20 sm:py-24 lg:py-28 ${
               index % 2 === 0
-                ? "bg-[#B7B09F]"
-                : "bg-[#D8D2C8]"
+                ? "bg-[#F7F2FB]"
+                : "bg-white"
             }`}
           >
-            <div className="container-systems">
+            <div className="container-systems grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
 
-              <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+              {/* TEXT COLUMN */}
 
-                {/* TEXT */}
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-2" : ""
+                }`}
+                direction={reversed ? "right" : "left"}
+              >
 
-                <motion.div
-                  {...reveal}
-                  className={
-                    reverse ? "lg:order-2" : ""
-                  }
+                <div className="mb-5 flex items-center gap-4">
+
+                  <span className="text-[13px] font-bold tabular-nums text-[#AD86C6]">
+                    {section.number}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-8 bg-[#AA80C4]"
+                  />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#8552A6]">
+                    {section.eyebrow}
+                  </p>
+
+                </div>
+
+                {/* EDITORIAL HEADING */}
+
+                <h2
+                  id={`consulting-pillar-${section.number}`}
+                  className="max-w-[630px] text-[clamp(2.25rem,3.2vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.05em] text-[#2C2037]"
                 >
+                  {section.title}
 
-                  {/* EYEBROW */}
+                  <span className="block text-[#8A55AA]">
+                    {section.highlight}
+                  </span>
+                </h2>
 
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#181818]" />
+                <div
+                  aria-hidden="true"
+                  className="mt-6 h-1 w-12 rounded-full bg-[#A879C5]"
+                />
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em]">
-                      {section.eyebrow}
-                    </p>
-                  </div>
+                {/* ORIGINAL DESCRIPTION */}
 
-                  {/* TITLE */}
+                <div className="mt-6 space-y-4 text-[15px] leading-[1.85] text-[#645B6A] sm:text-[16px]">
 
-                  <h2 className="max-w-[620px] text-[clamp(2.3rem,3.2vw,3.2rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                    {section.title}
+                  {section.paragraphs.map(
+                    (paragraph, paragraphIndex) => (
+                      <p
+                        key={paragraphIndex}
+                        className={
+                          paragraphIndex === 0
+                            ? "font-medium text-[#43354D]"
+                            : ""
+                        }
+                      >
+                        {paragraph}
+                      </p>
+                    )
+                  )}
 
-                    <span className="block text-[#514C43]">
-                      {section.highlight}
-                    </span>
-                  </h2>
+                </div>
 
-                  <div className="mt-5 h-[2px] w-12 bg-[#181818]" />
+                {/* FOCUS AREAS */}
 
-                  {/* DETAILED CONTENT */}
+                <div className="mt-7 rounded-[15px] border border-[#E7DCEF] bg-white/80 p-5 shadow-[0_9px_28px_rgba(83,48,112,0.035)] sm:p-6">
 
-                  <div className="mt-5 space-y-4">
+                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8150A0]">
+                    Key Focus Areas
+                  </p>
 
-                    {section.paragraphs.map(
-                      (paragraph, paragraphIndex) => (
-                        <p
-                          key={paragraphIndex}
-                          className={`text-[15px] leading-[1.8] text-[#181818]/90 sm:text-[16px] ${
-                            paragraphIndex === 0
-                              ? "font-medium"
-                              : ""
-                          }`}
-                        >
-                          {paragraph}
-                        </p>
-                      )
-                    )}
-                  </div>
+                  <ul className="space-y-3">
 
-                  {/* FOCUS AREAS */}
+                    {section.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3"
+                      >
 
-                  <div className="mt-6 border-t border-[#181818]/20 pt-5">
+                        <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#F0E3F7] text-[#7B479D]">
 
-                    <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">
-                      Key Focus Areas
-                    </p>
+                          <Check
+                            size={13}
+                            strokeWidth={2.3}
+                            aria-hidden="true"
+                          />
 
-                    <ul className="space-y-3">
-                      {section.points.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-start gap-3"
-                        >
-                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#181818] text-[#D8D2C8]">
-                            <Check
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </span>
+                        </span>
 
-                          <span className="text-[14px] font-medium leading-6 sm:text-[15px]">
-                            {point}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
+                        <span className="text-[14px] font-medium leading-6 text-[#4E405B]">
+                          {point}
+                        </span>
 
-                {/* IMAGE — REDUCED HEIGHT */}
+                      </li>
+                    ))}
 
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    x: reverse ? -18 : 18,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                  }}
-                  transition={{
-                    duration: 0.65,
-                  }}
-                  className={`relative h-[300px] min-w-0 overflow-hidden bg-[#181818] sm:h-[380px] lg:h-[440px] ${
-                    reverse ? "lg:order-1" : ""
-                  }`}
-                >
+                  </ul>
+
+                </div>
+
+              </Reveal>
+
+              {/* IMAGE COLUMN */}
+
+              <Reveal
+                className={`min-w-0 ${
+                  reversed ? "lg:order-1" : ""
+                }`}
+                direction={reversed ? "left" : "right"}
+                delay={0.08}
+              >
+
+                <div className="group relative h-[340px] overflow-hidden rounded-[20px] bg-[#E5DAED] shadow-[0_20px_55px_rgba(60,28,87,0.12)] sm:h-[450px] lg:h-[550px]">
+
                   <Image
                     src={section.image}
                     alt={section.alt}
                     fill
-                    sizes="(max-width: 1023px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1023px) 100vw, 48vw"
+                    className="object-cover transition-transform duration-1000 motion-safe:group-hover:scale-[1.045]"
                   />
-                </motion.div>
 
-              </div>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#21142D]/35 via-transparent to-transparent"
+                  />
+
+                  {/* IMAGE CATEGORY LABEL */}
+
+                  <div className="absolute bottom-6 left-6 right-6 flex w-fit max-w-[calc(100%-3rem)] items-center gap-3 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[#653D82] backdrop-blur-md">
+
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#A572C3]" />
+
+                    <span>{section.eyebrow}</span>
+
+                  </div>
+
+                </div>
+
+              </Reveal>
+
             </div>
           </section>
         );
       })}
 
-      {/* ===================================
-          WIDE IMAGE FEATURE — SHORTER
-      =================================== */}
+      {/* ======================================
+          06 — IMMERSIVE STRATEGY FEATURE
+      ====================================== */}
 
-      <section className="relative flex min-h-[410px] items-center overflow-hidden bg-[#181818] py-18 text-[#D8D2C8] lg:min-h-[480px]">
+      <section
+        aria-labelledby="consulting-feature"
+        className="relative isolate flex min-h-[470px] items-center overflow-hidden bg-[#352142] py-24 text-white lg:min-h-[540px]"
+      >
+
+        {/* BACKGROUND IMAGE */}
 
         <Image
           src={images.feature}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#181818]/80" />
+        {/* PURPLE OVERLAY */}
 
-        <div className="container-systems relative z-10">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(37,21,52,0.94)_0%,rgba(46,27,62,0.80)_56%,rgba(65,40,77,0.45)_100%)]"
+        />
 
-          <motion.div
-            {...reveal}
-            className="max-w-[830px]"
-          >
-            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-[radial-gradient(ellipse_at_80%_30%,rgba(217,181,237,0.18),transparent_60%)]"
+        />
+
+        <div className="container-systems relative z-20">
+
+          <Reveal className="max-w-[870px]">
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#DFC5F0]">
               Transforming Strategy into Action
             </p>
 
-            <h2 className="text-[clamp(2.7rem,4.4vw,4.5rem)] font-semibold leading-[1.09] tracking-[-0.055em]">
+            <h2
+              id="consulting-feature"
+              className="text-[clamp(2.6rem,4.5vw,4.7rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
               Make every digital
 
-              <span className="block text-[#B7B09F]">
+              <span className="block text-[#DDB8F1]">
                 decision count.
               </span>
+
             </h2>
 
-            <p className="mt-6 max-w-[670px] text-[16px] leading-[1.8] text-[#D8D2C8]">
+            <p className="mt-7 max-w-[680px] text-[16px] leading-[1.85] text-[#F0E7F6]">
               A practical digital strategy should
               provide more than direction. It should
               help organizations understand priorities,
@@ -569,302 +737,393 @@ export default function DigitalConsultingStrategyPage() {
               modernization, and make informed
               technology investments.
             </p>
-          </motion.div>
+
+          </Reveal>
+
         </div>
       </section>
 
-      {/* ===================================
-          CONSULTING CAPABILITIES
-      =================================== */}
+      {/* ======================================
+          07 — CONSULTING CAPABILITIES
+      ====================================== */}
 
-      <section className="bg-[#181818] py-16 text-[#D8D2C8] lg:py-20">
+      <section
+        id="capabilities"
+        aria-labelledby="consulting-capabilities"
+        className="scroll-mt-24 bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
         <div className="container-systems">
 
-          <motion.div
-            {...reveal}
-            className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"
-          >
+          {/* HEADER */}
 
-            <div>
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B7B09F]">
+          <div className="mb-11 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+
+            <Reveal>
+
+              <Eyebrow>
                 Our Areas of Focus
-              </p>
+              </Eyebrow>
 
-              <h2 className="text-[clamp(2.4rem,3.5vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
+              <h2
+                id="consulting-capabilities"
+                className="text-[clamp(2.4rem,3.6vw,3.8rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+              >
                 Digital consulting
 
-                <span className="block text-[#B7B09F]">
+                <span className="block text-[#8855A9]">
                   capabilities.
                 </span>
+
               </h2>
-            </div>
 
-            <p className="max-w-[540px] text-[16px] leading-[1.8] text-[#D8D2C8]/85 lg:justify-self-end">
-              From technology assessments and digital
-              roadmaps to cloud planning and workflow
-              improvement, these capabilities support
-              different stages of an organization&apos;s
-              transformation journey.
-            </p>
-          </motion.div>
+            </Reveal>
 
-          {/* COMPACT CARDS */}
+            <Reveal delay={0.08}>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <p className="max-w-[550px] text-[16px] leading-[1.85] text-[#665A70] lg:justify-self-end">
+                From technology assessments and digital
+                roadmaps to cloud planning and workflow
+                improvement, these capabilities support
+                different stages of an organization&apos;s
+                transformation journey.
+              </p>
+
+            </Reveal>
+
+          </div>
+
+          {/* CAPABILITY CARDS */}
+
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
             {capabilities.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <motion.article
+                <Reveal
                   key={item.number}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 3) * 0.06,
-                  }}
-                  className="flex h-full flex-col border border-[#B7B09F]/30 p-6 sm:p-7"
+                  delay={(index % 3) * 0.07}
+                  className="h-full"
                 >
 
-                  {/* ICON AND NUMBER */}
+                  <article className="group flex h-full min-h-[300px] flex-col rounded-[17px] border border-[#E9DDF1] bg-white p-6 shadow-[0_10px_28px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#D3B8E4] hover:shadow-[0_20px_46px_rgba(70,34,99,0.105)] motion-safe:hover:-translate-y-1.5 sm:p-7">
 
-                  <div className="mb-6 flex items-center justify-between">
+                    <div className="mb-7 flex items-start justify-between">
 
-                    <div className="flex h-12 w-12 items-center justify-center border border-[#B7B09F]/45 text-[#D8D2C8]">
-                      <Icon
-                        size={22}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
+                      {/* ICON */}
+
+                      <span className="flex h-14 w-14 items-center justify-center rounded-[14px] border border-[#E6D5F0] bg-[#F5ECFA] text-[#8450A5] transition-[background-color,transform] duration-300 group-hover:bg-[#EEDDF7] motion-safe:group-hover:scale-105">
+
+                        <Icon
+                          size={25}
+                          strokeWidth={1.7}
+                          aria-hidden="true"
+                        />
+
+                      </span>
+
+                      <span className="text-[11px] font-bold tabular-nums text-[#B394C7]">
+                        {item.number}
+                      </span>
+
                     </div>
 
-                    <span className="text-[11px] text-[#B7B09F]">
-                      {item.number}
-                    </span>
-                  </div>
+                    <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#30213B]">
+                      {item.title}
+                    </h3>
 
-                  <h3 className="text-[21px] font-semibold leading-[1.25] tracking-[-0.035em] text-[#D8D2C8]">
-                    {item.title}
-                  </h3>
+                    <div
+                      aria-hidden="true"
+                      className="mt-4 h-0.5 w-10 rounded-full bg-[#B489CD]"
+                    />
 
-                  <div className="mt-4 h-[2px] w-9 bg-[#B7B09F]" />
+                    <p className="mt-4 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
+                      {item.description}
+                    </p>
 
-                  <p className="mt-4 text-[15px] leading-[1.75] text-[#D8D2C8]/85">
-                    {item.description}
-                  </p>
-                </motion.article>
+                  </article>
+
+                </Reveal>
               );
             })}
+
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          CONSULTING APPROACH
-      =================================== */}
+      {/* ======================================
+          08 — CONSULTING DELIVERY APPROACH
+      ====================================== */}
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="consulting-approach"
+        className="bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
 
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          {/* APPROACH INTRODUCTION */}
 
-            {/* INTRO */}
+          <Reveal>
 
-            <motion.div {...reveal}>
+            <Eyebrow>
+              How We Approach Consulting
+            </Eyebrow>
 
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#181818]" />
+            <h2
+              id="consulting-approach"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em]"
+            >
+              A clear path
 
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
-                  How We Approach Consulting
-                </p>
-              </div>
+              <span className="block text-[#8B57AB]">
+                from ideas to action.
+              </span>
+            </h2>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                A clear path
+            <p className="mt-6 max-w-[490px] text-[16px] leading-[1.85] text-[#665A70]">
+              We believe digital transformation should
+              be understandable, practical, and aligned
+              with business priorities. Our approach
+              helps turn broad ambitions into structured
+              initiatives with clear next steps.
+            </p>
 
-                <span className="block text-[#625C51]">
-                  from ideas to action.
-                </span>
-              </h2>
+            {/* SUPPORTING HIGHLIGHT */}
 
-              <p className="mt-6 max-w-[490px] text-[16px] leading-[1.8]">
-                We believe digital transformation
-                should be understandable, practical,
-                and aligned with business priorities.
-                Our approach helps turn broad
-                ambitions into structured initiatives
-                with clear next steps.
-              </p>
+            <div className="mt-8 flex items-start gap-4 rounded-[15px] border border-[#E7DAEF] bg-[#F8F3FC] p-5">
 
-              <div className="mt-6 flex items-start gap-3 border-t border-[#181818]/20 pt-5">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EDDEF6] text-[#8150A4]">
 
                 <BarChart3
                   size={22}
-                  strokeWidth={1.6}
-                  className="mt-1 shrink-0"
+                  strokeWidth={1.7}
                   aria-hidden="true"
                 />
 
-                <p className="text-[15px] leading-[1.75]">
-                  The right strategy balances business
-                  value, technical feasibility, and
-                  long-term operational needs.
-                </p>
-              </div>
-            </motion.div>
+              </span>
 
-            {/* PROCESS STEPS */}
+              <p className="text-[15px] leading-[1.75] text-[#55465F]">
+                The right strategy balances business
+                value, technical feasibility, and
+                long-term operational needs.
+              </p>
 
-            <div className="border-t border-[#181818]/20">
+            </div>
 
-              {approach.map((step) => (
-                <div
-                  key={step.number}
-                  className="grid grid-cols-[38px_1fr] gap-4 border-b border-[#181818]/20 py-5"
-                >
+          </Reveal>
 
-                  <span className="pt-1 text-[12px] font-bold text-[#625C51]">
-                    {step.number}
-                  </span>
+          {/* PROCESS TIMELINE */}
 
-                  <div>
+          <ol className="relative space-y-0 border-l border-[#E6D8EF] pl-7 sm:pl-9">
 
-                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] sm:text-[21px]">
+            {approach.map((step, index) => (
+
+              <li
+                key={step.number}
+                className="relative pb-8 last:pb-0"
+              >
+
+                {/* TIMELINE INDICATOR */}
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[39px] top-0 flex h-[22px] w-[22px] items-center justify-center rounded-full border-[5px] border-white bg-[#A56EC3] shadow-[0_0_0_1px_#DDC8EA] sm:-left-[47px]"
+                />
+
+                <Reveal delay={(index % 3) * 0.04}>
+
+                  <div className="rounded-[14px] border border-[#ECE2F2] bg-[#FBF9FD] p-5 transition-[border-color,background-color,transform] duration-300 hover:border-[#D7BCE6] hover:bg-[#F7F0FC] motion-safe:hover:translate-x-1 sm:p-6">
+
+                    <div className="mb-2 text-[11px] font-bold tracking-[0.16em] text-[#9867B7]">
+                      STEP {step.number}
+                    </div>
+
+                    <h3 className="text-[19px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#32223E] sm:text-[21px]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2.5 text-[15px] leading-[1.75]">
+                    <p className="mt-2 text-[14px] leading-[1.8] text-[#665A70] sm:text-[15px]">
                       {step.description}
                     </p>
-                  </div>
-                </div>
-              ))}
-            </div>
 
-          </div>
+                  </div>
+
+                </Reveal>
+
+              </li>
+
+            ))}
+
+          </ol>
+
         </div>
       </section>
 
-      {/* ===================================
-          WHO THIS SERVICE IS FOR
-      =================================== */}
+      {/* ======================================
+          09 — WHO WE HELP
+      ====================================== */}
 
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+      <section
+        aria-labelledby="consulting-audiences"
+        className="bg-[#F7F2FB] py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems grid gap-10 lg:grid-cols-[0.87fr_1.13fr] lg:gap-20">
 
-          <motion.div
-            {...reveal}
-            className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16"
-          >
+          {/* AUDIENCE INTRODUCTION */}
 
-            <div>
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em]">
-                Who We Help
-              </p>
+          <Reveal>
 
-              <h2 className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.4rem)] font-semibold leading-[1.1] tracking-[-0.05em]">
-                Designed for
+            <Eyebrow>
+              Who We Help
+            </Eyebrow>
 
-                <span className="block text-[#514C43]">
-                  changing businesses.
-                </span>
-              </h2>
-            </div>
+            <h2
+              id="consulting-audiences"
+              className="max-w-[540px] text-[clamp(2.4rem,3.4vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.05em]"
+            >
+              Designed for
 
-            <div>
+              <span className="block text-[#8B57AB]">
+                changing businesses.
+              </span>
+            </h2>
 
-              <p className="text-[17px] font-medium leading-[1.75]">
-                Digital Consulting & Strategy can be
-                valuable for organizations planning
-                growth, improving existing operations,
-                or evaluating new technology.
-              </p>
+            <p className="mt-6 max-w-[480px] text-[16px] leading-[1.85] text-[#665A70]">
+              Digital Consulting &amp; Strategy can be
+              valuable for organizations planning growth,
+              improving existing operations, or evaluating
+              new technology.
+            </p>
 
-              <div className="mt-5 space-y-3">
+          </Reveal>
 
-                {audiences.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-3 border-b border-[#181818]/20 pb-3"
-                  >
+          {/* AUDIENCE CARDS */}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+
+            {audiences.map((item, index) => (
+
+              <Reveal
+                key={item}
+                delay={(index % 2) * 0.08}
+                className="h-full"
+              >
+
+                <div className="group flex h-full min-h-[168px] flex-col rounded-[15px] border border-[#E8DCF0] bg-white p-6 shadow-[0_8px_22px_rgba(70,34,99,0.035)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[#CBA9DF] hover:shadow-[0_16px_36px_rgba(70,34,99,0.08)] motion-safe:hover:-translate-y-1">
+
+                  <span className="mb-5 flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#EFE3F7] text-[#8251A0]">
+
                     <Check
-                      size={19}
-                      className="mt-1 shrink-0"
-                      strokeWidth={1.8}
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
-                    <p className="text-[15px] leading-[1.75]">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+                  </span>
 
-          </motion.div>
-        </div>
-      </section>
+                  <p className="text-[15px] font-medium leading-[1.7] text-[#44374F]">
+                    {item}
+                  </p>
 
-      {/* ===================================
-          FINAL CTA
-      =================================== */}
+                </div>
 
-      <section className="bg-[#D8D2C8] py-16 text-[#181818] lg:py-20">
-        <div className="container-systems">
+              </Reveal>
 
-          <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-
-            <div>
-
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#625C51]">
-                Work With Cloudlem
-              </p>
-
-              <h2 className="max-w-[730px] text-[clamp(2.5rem,4vw,4rem)] font-semibold leading-[1.1] tracking-[-0.055em]">
-                Ready to shape your
-
-                <span className="block text-[#625C51]">
-                  digital future?
-                </span>
-              </h2>
-            </div>
-
-            <div className="lg:justify-self-end">
-
-              <p className="max-w-[420px] text-[16px] leading-[1.8]">
-                Tell us about your organization,
-                existing technology challenges,
-                and digital goals. We can discuss
-                your requirements and explore
-                appropriate next steps.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setInquiryOpen(true)}
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Discuss Your Project
-
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
+            ))}
 
           </div>
+
         </div>
       </section>
 
-      {/* ===================================
-          EXISTING SUPABASE INQUIRY MODAL
-      =================================== */}
+      {/* ======================================
+          10 — FINAL CONSULTING CTA
+      ====================================== */}
+
+      <section
+        aria-labelledby="consulting-cta"
+        className="relative isolate overflow-hidden bg-[linear-gradient(120deg,#553173_0%,#76459C_52%,#9668B5_100%)] py-20 text-white sm:py-24 lg:py-28"
+      >
+
+        {/* DECORATIVE ELEMENTS */}
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-32 h-[470px] w-[470px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-[350px] w-[350px] rounded-full border border-white/15"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-60 w-96 rounded-full bg-[#CFA7EA]/15 blur-[90px]"
+        />
+
+        <div className="container-systems relative z-10 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+
+          {/* HEADING */}
+
+          <Reveal>
+
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E7D1F3]">
+              Work With Cloudlem
+            </p>
+
+            <h2
+              id="consulting-cta"
+              className="max-w-[760px] text-[clamp(2.55rem,4vw,4.25rem)] font-semibold leading-[1.1] tracking-[-0.055em]"
+            >
+              Ready to shape your
+
+              <span className="block text-[#F0D9FA]">
+                digital future?
+              </span>
+            </h2>
+
+          </Reveal>
+
+          {/* INQUIRY BUTTON */}
+
+          <Reveal
+            delay={0.1}
+            className="lg:justify-self-end"
+          >
+
+            <p className="max-w-[460px] text-[16px] leading-[1.85] text-[#F2EAF6]">
+              Tell us about your organization, existing
+              technology challenges, and digital goals.
+              We can discuss your requirements and
+              explore appropriate next steps.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setInquiryOpen(true)}
+              className="group mt-8 inline-flex min-h-[52px] items-center justify-center gap-5 rounded-[9px] border border-white bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5C347D] shadow-[0_10px_30px_rgba(35,14,55,0.14)] transition-[background-color,box-shadow,transform] duration-300 hover:bg-[#FCF6FF] hover:shadow-[0_16px_36px_rgba(35,14,55,0.2)] motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Discuss Your Project
+
+              <ArrowRight
+                size={18}
+                aria-hidden="true"
+                className="transition-transform motion-safe:group-hover:translate-x-1"
+              />
+            </button>
+
+          </Reveal>
+
+        </div>
+
+      </section>
+
+      {/* ======================================
+          ORIGINAL SERVICE INQUIRY MODAL
+          PRESERVED
+      ====================================== */}
 
       <ServiceInquiryModal
         serviceTitle={SERVICE_TITLE}
