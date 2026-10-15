@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, CheckCircle, AlertCircle, Upload, Briefcase } from 'lucide-react';
+import { X, Send, CheckCircle, AlertCircle, Briefcase } from 'lucide-react';
 import { useForm, ValidationError } from '@formspree/react';
 
 interface JobApplicationModalProps {
@@ -54,7 +54,7 @@ const JobApplicationModal = ({ isOpen, onClose, jobTitle }: JobApplicationModalP
                 Thank you for applying to the <span className="font-semibold">{jobTitle}</span> position.
               </p>
               <p className="text-gray-500 text-sm mb-8">
-                We'll review your application and get back to you within 5 business days.
+                We&apos;ll review your application and get back to you within 5 business days.
               </p>
               
               <button 

@@ -1,257 +1,147 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, TrendingUp, Zap, Shield, Sparkles } from "lucide-react";
-import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
-
-const Slideshow = ({
-  images,
-  alt = "Background",
-}: {
-  images: string[];
-  alt?: string;
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [images.length]);
-
-  return (
-    <AnimatePresence mode="popLayout">
-      <motion.div
-        key={currentIndex}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1.5 }}
-        className="absolute inset-0"
-      >
-        <Image
-          src={images[currentIndex]}
-          alt={alt}
-          fill
-          className="object-cover"
-          priority
-        />
-      </motion.div>
-    </AnimatePresence>
-  );
-};
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const projects = [
   {
-    title: "AWS Migration for E-commerce",
-    category: "Cloud Migration",
-    icon: Zap,
-    gradient: "from-blue-500 to-cyan-500",
+    category: "Cloud & DevOps",
+    title: "Scaled Infrastructure for 5x Growth",
     description:
-      "Migrated a legacy e-commerce platform serving 1M+ customers to AWS, achieving 99.9% uptime and 40% infrastructure cost reduction.",
-    tags: ["AWS", "Terraform", "Kubernetes", "Redis"],
-    results: [
-      { label: "40%", desc: "Cost reduction" },
-      { label: "99.9%", desc: "Uptime achieved" },
-      { label: "15min", desc: "Deployment time" },
+      "Built a high-availability cloud infrastructure to support rapid growth and peak season demand.",
+    image: "/images/backgrounds/section-2-21.jpg",
+    alt: "Cloud infrastructure monitoring and operations",
+    stats: [
+      { value: "99.9%", label: "Uptime" },
+      { value: "5x", label: "Traffic Growth" },
+      { value: "60%", label: "Lower Infra Costs" },
     ],
-
-    highlight: "Featured Case Study",
-    link: "#",
   },
   {
-    title: "GCP AI Platform for Healthcare",
-    category: "AI/ML",
-    icon: Sparkles,
-    gradient: "from-purple-500 to-pink-500",
+    category: "AI & Automation",
+    title: "Automated 200+ Hours of Manual Work Monthly",
     description:
-      "Built a predictive analytics platform on GCP for processing healthcare data and optimizing insights for patient care optimization.",
-    tags: ["GCP", "AI/ML", "BigQuery", "TensorFlow"],
-    results: [
-      { label: "85%", desc: "Prediction accuracy" },
-      { label: "10x", desc: "Faster processing" },
-      { label: "HIPAA", desc: "Compliant" },
+      "Implemented custom automation workflows across multiple departments.",
+    image: "/images/backgrounds/section-1-4.jpg",
+    alt: "Business team working on workflow automation",
+    stats: [
+      { value: "200+", label: "Hours Saved" },
+      { value: "80%", label: "Faster Processing" },
+      { value: "3x", label: "Team Productivity" },
     ],
-
-    highlight: "Award Winner",
-    link: "#",
   },
   {
-    title: "Azure DevOps for Financial Services",
-    category: "DevOps & CI/CD",
-    icon: Shield,
-    gradient: "from-emerald-500 to-teal-500",
+    category: "Web Development",
+    title: "Modern Website for a Growing Brand",
     description:
-      "Implemented Azure DevOps pipelines for a financial services company, enabling faster and more reliable software deployments.",
-    tags: ["Azure", "DevOps", "CI/CD", "Docker"],
-    results: [
-      { label: "70%", desc: "Faster deployments" },
-      { label: "0", desc: "Downtime" },
-      { label: "100%", desc: "Compliant" },
+      "Designed and developed a conversion-focused website with modern UX/UI.",
+    image: "/images/backgrounds/section-1-3.jpg",
+    alt: "Modern website design and development",
+    stats: [
+      { value: "3x", label: "Higher Conversions" },
+      { value: "50%", label: "Lower Bounce Rate" },
+      { value: "2x", label: "Revenue Growth" },
     ],
-
-    highlight: "Enterprise Solution",
-    link: "#",
   },
 ];
 
 const Projects = () => {
   return (
     <section
-      id="projects"
-      className="py-[120px] bg-linear-to-b from-brand-black via-[#0F1629] to-brand-black text-white relative overflow-hidden"
+      id="work"
+      className="bg-[#D8D2C8] py-11 text-[#181817] lg:py-14"
     >
-      {/* Background Slideshow */}
-      <div className="absolute inset-0 z-0">
-        <Slideshow
-          images={[
-            "/images/backgrounds/section-3-1.jpg",
-            "/images/backgrounds/section-3-2.jpg",
-          ]}
-          alt="Projects Section Background"
-        />
-        <div className="absolute inset-0 bg-linear-to-b from-brand-black/20 via-brand-black/50 to-brand-black" />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-transparent to-brand-black z-10" />
-      </div>
-
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-20 left-0 w-96 h-96 bg-accent-blue/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-0 w-96 h-96 bg-accent-purple/10 rounded-full blur-3xl" />
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 194, 255, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 194, 255, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: "100px 100px",
-          }}
-        />
-      </div>
-
-      <div className="container-systems relative z-10">
+      <div className="container-systems">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          className="text-center mb-20 max-w-4xl mx-auto bg-brand-black/50 backdrop-blur-md rounded-3xl p-10 shadow-2xl border border-white/10"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-6 border border-white/10">
-            <TrendingUp size={16} className="text-accent-cyan" />
-            <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">
-              Success Stories
-            </span>
+        <div className="mb-7 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:gap-12">
+            <div className="shrink-0">
+              <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.28em] text-[#6F4D34]">
+                Real Businesses. Real Results.
+              </p>
+
+              <h2 className="text-[2.15rem] font-semibold leading-none tracking-[-0.045em] text-[#181817] sm:text-[2.35rem]">
+                Selected Work
+              </h2>
+            </div>
+
+            <p className="max-w-[440px] pb-1 text-[13px] leading-5 text-[#47443F]">
+              A look at some of the businesses we&apos;ve helped transform.
+            </p>
           </div>
 
-          <h2 className="text-[3.6rem] lg:text-[4.8rem] font-bold leading-[0.95] tracking-tighter mb-6">
-            Featured <span className="text-gradient-vibrant">Case Studies</span>
-          </h2>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto">
-            Real-world results from enterprise clients. See how we deliver
-            measurable impact.
-          </p>
-        </motion.div>
+          <Link
+            href="/solutions"
+            className="group inline-flex w-fit items-center gap-3 border-b border-[#181817]/45 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#181817] transition-colors duration-200 hover:border-[#8B5E3C] hover:text-[#8B5E3C]"
+          >
+            View All Case Studies
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              className="group cursor-pointer h-full"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ delay: index * 0.15, duration: 0.6 }}
+            <ArrowRight
+              size={13}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+              aria-hidden="true"
+            />
+          </Link>
+        </div>
+
+        {/* Projects */}
+        <div className="grid gap-4 lg:grid-cols-3">
+          {projects.map((project) => (
+            <article
+              key={project.title}
+              className="group relative min-h-[400px] overflow-hidden rounded-[4px] bg-[#1A1A18]"
             >
-              <Link href={project.link || "#"} className="block h-full">
-                <div className="relative h-full bg-linear-to-br from-white/5 via-white/2 to-transparent rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-2xl hover:shadow-accent-cyan/10 overflow-hidden">
-                  {/* Gradient accent line */}
-                  <div
-                    className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-                  />
+              {/* Image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={project.image}
+                  alt={project.alt}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, 100vw"
+                  className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                />
 
-                  {/* Hover background effect */}
-                  <div
-                    className={`absolute inset-0 bg-linear-to-br ${project.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`}
-                  />
+                {/* Stronger cinematic fade for readability */}
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,8,8,0.05)_0%,rgba(10,10,9,0.16)_32%,rgba(15,15,13,0.82)_58%,rgba(12,12,11,0.99)_100%)]" />
+              </div>
 
-                  <div className="relative z-10">
-                    {/* Badge & Icon */}
-                    <div className="flex items-start justify-between mb-6">
-                      <div
-                        className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br ${project.gradient} group-hover:scale-110 transition-transform duration-300`}
-                      >
-                        <project.icon
-                          size={26}
-                          className="text-white"
-                          strokeWidth={2.5}
-                        />
-                      </div>
-                      <span className="text-accent-cyan font-bold text-xs uppercase tracking-widest px-3 py-1 bg-accent-cyan/10 rounded-full border border-accent-cyan/20">
-                        {project.highlight}
-                      </span>
+              {/* Content */}
+              <div className="relative z-10 flex min-h-[400px] flex-col justify-end p-5">
+                {/* Category */}
+                <span className="mb-3 w-fit border border-white/20 bg-black/35 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+                  {project.category}
+                </span>
+
+                {/* Title */}
+                <h3 className="max-w-[350px] text-[18px] font-semibold leading-[1.3] tracking-[-0.025em] text-white sm:text-[19px]">
+                  {project.title}
+                </h3>
+
+                {/* Description */}
+                <p className="mt-2 max-w-[380px] min-h-[42px] text-[12.5px] leading-[1.55] text-white/80">
+                  {project.description}
+                </p>
+
+                {/* Stats */}
+                <div className="mt-5 grid grid-cols-3 gap-4 border-t border-white/15 pt-4">
+                  {project.stats.map((stat) => (
+                    <div key={stat.label}>
+                      <p className="text-[20px] font-semibold leading-none tracking-[-0.03em] text-white transition-colors duration-200 group-hover:text-[#E3B48D]">
+                        {stat.value}
+                      </p>
+
+                      <p className="mt-1.5 text-[9px] leading-3 text-white/65">
+                        {stat.label}
+                      </p>
                     </div>
-
-                    {/* Category */}
-                    <span className="text-white/50 font-semibold text-xs uppercase tracking-widest mb-3 block">
-                      {project.category}
-                    </span>
-
-                    {/* Title */}
-                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-white group-hover:to-accent-cyan transition-all">
-                      {project.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-white/60 text-[15px] leading-relaxed mb-6">
-                      {project.description}
-                    </p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-white/5">
-                      {project.tags.map((tag, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-md text-xs text-white/70 border border-white/10 hover:border-white/20 transition-colors"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Results */}
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                      {project.results.map((result, i) => (
-                        <div key={i} className="text-center">
-                          <div
-                            className={`text-2xl font-bold mb-1 text-transparent bg-clip-text bg-linear-to-r ${project.gradient}`}
-                          >
-                            {result.label}
-                          </div>
-                          <div className="text-white/50 text-xs">
-                            {result.desc}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* CTA */}
-                    <div className="flex items-center gap-2 text-white font-semibold text-sm group-hover:gap-3 transition-all">
-                      View Case Study
-                      <ArrowUpRight
-                        size={16}
-                        className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
-                      />
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              </Link>
-            </motion.div>
+              </div>
+
+              {/* Subtle hover line */}
+              <div className="absolute inset-x-0 bottom-0 h-[2px] scale-x-0 bg-[#A66F45] transition-transform duration-300 group-hover:scale-x-100" />
+            </article>
           ))}
         </div>
       </div>

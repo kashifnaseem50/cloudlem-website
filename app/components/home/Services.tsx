@@ -1,299 +1,551 @@
 "use client";
 
-import {
-  ArrowRight,
-  Brain,
-  Code2,
-  Workflow,
-  Palette,
-  TrendingUp,
-  Sparkles,
-  Zap,
-  Shield,
-} from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
-const Slideshow = ({
-  images,
-  alt = "Background",
-}: {
-  images: string[];
-  alt?: string;
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+type Category =
+  | "All Services"
+  | "Digital"
+  | "Data & Analytics"
+  | "Cloud"
+  | "Infrastructure & Security"
+  | "Emerging Technologies"
+  | "Business Process Services";
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [images.length]);
-
-  return (
-    <AnimatePresence mode="popLayout">
-      <motion.div
-        key={currentIndex}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1.5 }}
-        className="absolute inset-0"
-      >
-        <img
-          src={images[currentIndex]}
-          alt={alt}
-          className="w-full h-full object-cover"
-        />
-      </motion.div>
-    </AnimatePresence>
-  );
+type Service = {
+  title: string;
+  category: Exclude<Category, "All Services">;
+  description: string;
+  image: string;
+  href: string;
+  comingSoon?: boolean;
 };
 
-const services = [
+const categories: Category[] = [
+  "All Services",
+  "Digital",
+  "Data & Analytics",
+  "Cloud",
+  "Infrastructure & Security",
+  "Emerging Technologies",
+  "Business Process Services",
+];
+
+// All 20 existing services, descriptions and destinations are preserved.
+const services: Service[] = [
   {
-    title: "AI & Machine Learning",
-    desc: "Transform your business with intelligent automation and predictive analytics. Custom ML models tailored to your specific needs.",
-    icon: Brain,
-    features: [
-      "Predictive Analytics",
-      "AI Workflow Automation",
-      "Custom Model Development",
-      "Data Pipeline Integration",
-    ],
-    gradient: "from-purple-500 to-pink-500",
-    stats: "40% efficiency gain",
+    title: "Digital Consulting & Strategy",
+    category: "Digital",
+    description: "Align technology with your business goals through expert digital consulting, transformation roadmaps, and strategies that create meaningful long-term value.",
+    image: "/images/services/business-growth.webp",
+    href: "/services/digital-consulting-strategy",
   },
   {
-    title: "Web Development",
-    desc: "Lightning-fast, scalable web applications built with cutting-edge frameworks. Optimized for performance and growth.",
-    icon: Code2,
-    features: [
-      "React & Next.js",
-      "Performance Optimization",
-      "API Development",
-      "Progressive Web Apps",
-    ],
-    gradient: "from-blue-500 to-cyan-500",
-    stats: "3x faster load times",
+    title: "Digital Commerce",
+    category: "Digital",
+    description: "Create connected commerce experiences that bring together modern platforms, intuitive customer journeys, and reliable technology to support digital growth.",
+    image: "/images/services/web-development.webp",
+    href: "/services/digital-commerce",
   },
   {
-    title: "DevOps & Cloud",
-    desc: "Automate deployments and scale infrastructure with confidence. CI/CD pipelines that deliver faster, more reliable releases.",
-    icon: Workflow,
-    features: [
-      "CI/CD Pipelines",
-      "Cloud Architecture",
-      "Kubernetes & Docker",
-      "Infrastructure as Code",
-    ],
-    gradient: "from-emerald-500 to-teal-500",
-    stats: "99.9% uptime",
+    title: "Business Applications",
+    category: "Digital",
+    description: "Modernize business operations through connected applications, integrated workflows, and scalable digital solutions designed around your organization.",
+    image: "/images/services/design-branding.webp",
+    href: "/services/business-applications",
   },
   {
-    title: "Design & Branding",
-    desc: "Create memorable brand experiences with sophisticated design systems. From visual identity to marketing campaigns.",
-    icon: Palette,
-    features: [
-      "Brand Identity",
-      "UI/UX Design",
-      "Design Systems",
-      "Marketing Campaigns",
-    ],
-    gradient: "from-orange-500 to-red-500",
-    stats: "2x engagement",
+    title: "Data Modernization",
+    category: "Data & Analytics",
+    description: "Transform disconnected data into a modern, reliable foundation that improves accessibility, strengthens governance, and enables smarter business decisions.",
+    image: "/images/services/cloud-devops.webp",
+    href: "/services/data-modernization",
   },
   {
-    title: "Business Growth",
-    desc: "Strategic roadmaps to scale your operations and enter new markets. Data-driven insights that fuel sustainable growth.",
-    icon: TrendingUp,
-    features: [
-      "Market Analysis",
-      "Growth Strategy",
-      "Partnership Development",
-      "Revenue Optimization",
-    ],
-    gradient: "from-indigo-500 to-purple-500",
-    stats: "5x ROI potential",
+    title: "Advanced Analytics",
+    category: "Data & Analytics",
+    description: "Unlock deeper business intelligence through advanced reporting, predictive insights, and analytical solutions that turn complex data into actionable information.",
+    image: "/images/services/ai-automation.webp",
+    href: "/services/advanced-analytics",
+  },
+  {
+    title: "Connected Intelligence",
+    category: "Data & Analytics",
+    description: "Connect people, systems, and information to improve visibility, accelerate decision-making, and build more intelligent business operations.",
+    image: "/images/services/business-growth.webp",
+    href: "/services/connected-intelligence",
+  },
+  {
+    title: "Data Management",
+    category: "Data & Analytics",
+    description: "Build trusted information foundations with data integration, quality management, governance, and secure processes for business-critical information.",
+    image: "/images/services/cloud-devops.webp",
+    href: "/services/data-management",
+  },
+  {
+    title: "Generative AI",
+    category: "Data & Analytics",
+    description: "Explore new possibilities with generative AI, intelligent assistants, automated workflows, and practical AI solutions built for real business challenges.",
+    image: "/images/services/ai-automation.webp",
+    href: "/services/generative-ai",
+  },
+  {
+    title: "Cloud Operations & Migration",
+    category: "Cloud",
+    description: "Move to the cloud with confidence through secure migration strategies, reliable infrastructure, continuous monitoring, and operational optimization.",
+    image: "/images/services/cloud-devops.webp",
+    href: "/services/cloud-operations-migration",
+  },
+  {
+    title: "Cloud Application Development & Integration",
+    category: "Cloud",
+    description: "Develop modern cloud-native applications and connect business systems through scalable architectures, secure integrations, and efficient engineering practices.",
+    image: "/images/services/web-development.webp",
+    href: "/services/cloud-application-development-integration",
+  },
+  {
+    title: "Managed Services",
+    category: "Cloud",
+    description: "Keep technology running smoothly with infrastructure management, monitoring, ongoing support, performance optimization, and proactive operational care.",
+    image: "/images/services/business-growth.webp",
+    href: "/services/managed-services",
+  },
+  {
+    title: "Digital Infrastructure Services",
+    category: "Infrastructure & Security",
+    description: "Build dependable technology foundations with infrastructure engineering, modern networking, system integration, and reliable operational environments.",
+    image: "/images/services/cloud-devops.webp",
+    href: "/services/digital-infrastructure-services",
+  },
+  {
+    title: "Security",
+    category: "Infrastructure & Security",
+    description: "Strengthen your digital environment through security assessments, practical safeguards, risk reduction, and resilient infrastructure practices.",
+    image: "/images/services/ai-automation.webp",
+    href: "/services/security",
+  },
+  {
+    title: "Emerging Technologies",
+    category: "Emerging Technologies",
+    description: "Explore the next generation of technology through emerging digital capabilities, intelligent solutions, and innovation-focused business transformation.",
+    image: "/images/services/design-branding.webp",
+    href: "/services",
+    comingSoon: true,
+  },
+  {
+    title: "Contact Center",
+    category: "Business Process Services",
+    description: "Improve customer communication with responsive support workflows, organized service operations, and scalable customer engagement processes.",
+    image: "/images/services/business-growth.webp",
+    href: "/services",
+    comingSoon: true,
+  },
+  {
+    title: "Digital Marketing",
+    category: "Business Process Services",
+    description: "Connect with the right audiences through digital campaigns, content strategies, brand communication, and performance-focused marketing initiatives.",
+    image: "/images/services/design-branding.webp",
+    href: "/services",
+    comingSoon: true,
+  },
+  {
+    title: "Finance & Accounting",
+    category: "Business Process Services",
+    description: "Simplify financial operations with organized accounting processes, bookkeeping support, accurate records, and dependable financial reporting.",
+    image: "/images/services/bookkeeping.webp",
+    href: "/services",
+    comingSoon: true,
+  },
+  {
+    title: "Staff Augmentation",
+    category: "Business Process Services",
+    description: "Extend your team's capabilities with specialized professionals, flexible staffing support, and resources aligned with changing business needs.",
+    image: "/images/services/business-growth.webp",
+    href: "/services",
+    comingSoon: true,
+  },
+  {
+    title: "Legal Process Outsourcing",
+    category: "Business Process Services",
+    description: "Support legal operations with organized documentation, administrative assistance, structured workflows, and efficient process coordination.",
+    image: "/images/services/bookkeeping.webp",
+    href: "/services",
+    comingSoon: true,
+  },
+  {
+    title: "Recruitment Process Outsourcing",
+    category: "Business Process Services",
+    description: "Streamline recruitment processes with candidate coordination, hiring workflow support, talent sourcing assistance, and organized recruitment operations.",
+    image: "/images/services/business-growth.webp",
+    href: "/services",
+    comingSoon: true,
   },
 ];
 
-const Services = () => {
+const AUTOPLAY_INTERVAL_MS = 3500;
+const MANUAL_PAUSE_MS = 5000;
+
+export default function Services() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const directionRef = useRef<1 | -1>(1);
+  const manualPauseUntilRef = useRef(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  const [activeCategory, setActiveCategory] = useState<Category>("All Services");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(1);
+  const [canPrevious, setCanPrevious] = useState(false);
+  const [canNext, setCanNext] = useState(true);
+  const [inView, setInView] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [touching, setTouching] = useState(false);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+
+  const filteredServices =
+    activeCategory === "All Services"
+      ? services
+      : services.filter((service) => service.category === activeCategory);
+
+  const pauseAfterInteraction = () => {
+    manualPauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+  };
+
+  const updateCarouselState = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const card = carousel.querySelector<HTMLElement>("[data-service-card]");
+    if (!card) {
+      setActiveIndex(0);
+      setVisibleCount(1);
+      setCanPrevious(false);
+      setCanNext(false);
+      return;
+    }
+
+    const gap = Number.parseFloat(window.getComputedStyle(carousel).columnGap) || 20;
+    const step = card.offsetWidth + gap;
+    const index = step > 0 ? Math.round(carousel.scrollLeft / step) : 0;
+    const count = Math.max(1, Math.floor((carousel.clientWidth + gap) / step + 0.001));
+    const maxScroll = Math.max(0, carousel.scrollWidth - carousel.clientWidth);
+
+    setActiveIndex(index);
+    setVisibleCount(count);
+    setCanPrevious(carousel.scrollLeft > 4);
+    setCanNext(carousel.scrollLeft < maxScroll - 4);
+  }, []);
+
+  // Observe the whole section so off-screen carousels do not keep moving.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.12 }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  // Reset the carousel when a filter is selected; keep responsive arrow state.
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    carousel.scrollLeft = 0;
+    directionRef.current = 1;
+    manualPauseUntilRef.current = Date.now() + 3500;
+
+    const frame = requestAnimationFrame(updateCarouselState);
+    window.addEventListener("resize", updateCarouselState);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateCarouselState);
+    };
+  }, [activeCategory, updateCarouselState]);
+
+  // Gentle auto-scroll. At the end, travel back through cards instead of jumping.
+  useEffect(() => {
+    if (!autoplayEnabled || !inView || hovered || focused || touching || prefersReducedMotion) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() < manualPauseUntilRef.current) return;
+
+      const carousel = carouselRef.current;
+      const card = carousel?.querySelector<HTMLElement>("[data-service-card]");
+      if (!carousel || !card) return;
+
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      if (maxScroll <= 4) return;
+
+      const gap = Number.parseFloat(window.getComputedStyle(carousel).columnGap) || 20;
+      const step = card.offsetWidth + gap;
+
+      if (carousel.scrollLeft >= maxScroll - 5) directionRef.current = -1;
+      if (carousel.scrollLeft <= 5) directionRef.current = 1;
+
+      carousel.scrollBy({ left: step * directionRef.current, behavior: "smooth" });
+    }, AUTOPLAY_INTERVAL_MS);
+
+    return () => window.clearInterval(interval);
+  }, [activeCategory, autoplayEnabled, inView, hovered, focused, touching, prefersReducedMotion]);
+
+  const scrollCarousel = (direction: -1 | 1) => {
+    const carousel = carouselRef.current;
+    const card = carousel?.querySelector<HTMLElement>("[data-service-card]");
+    if (!carousel || !card) return;
+
+    pauseAfterInteraction();
+    directionRef.current = direction;
+    const gap = Number.parseFloat(window.getComputedStyle(carousel).columnGap) || 20;
+    carousel.scrollBy({
+      left: (card.offsetWidth + gap) * direction,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  };
+
+  const selectCategory = (category: Category) => {
+    pauseAfterInteraction();
+    setActiveCategory(category);
+    setActiveIndex(0);
+    setCanPrevious(false);
+  };
+
+  const displayStart = filteredServices.length ? Math.min(activeIndex + 1, filteredServices.length) : 0;
+  const displayEnd = Math.min(activeIndex + visibleCount, filteredServices.length);
+  const progress = filteredServices.length ? (displayEnd / filteredServices.length) * 100 : 0;
+
   return (
-    <section className="py-[120px] bg-brand-black text-white relative overflow-hidden">
-      {/* Background Slideshow */}
-      <div className="absolute inset-0 z-0">
-        <Slideshow
-          images={["/images/backgrounds/section-2-2.jpg"]}
-          alt="Services Section Background"
-        />
-        <div className="absolute inset-0 bg-brand-black/50" />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-transparent to-brand-black z-10" />
-      </div>
+    <section
+      ref={sectionRef}
+      id="services"
+      aria-labelledby="services-heading"
+      className="relative isolate overflow-hidden bg-[#F7F1F8] py-20 text-[#171717] sm:py-24 lg:py-28"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,#FFFFFF_0%,#F4E7F5_30%,#E5CEE9_65%,#FCF9FD_100%)]"
+      />
 
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-20 right-0 w-96 h-96 bg-accent-blue/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-0 w-96 h-96 bg-accent-teal/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container-systems relative z-10">
-        {/* Header Section */}
+      <div className="container-systems">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-4xl mx-auto mb-20 bg-brand-black/60 backdrop-blur-md rounded-3xl p-10 shadow-2xl border border-white/10"
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-9 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-6 border border-white/10">
-            <Sparkles size={16} className="text-accent-blue" />
-            <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">
-              Enterprise Solutions
-            </span>
+          <div className="max-w-[760px]">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8D4BB0]">
+              Technology &amp; Business Expertise
+            </p>
+            <h2
+              id="services-heading"
+              className="text-[clamp(2.7rem,4.5vw,4.5rem)] font-semibold leading-[1.07] tracking-[-0.06em] text-[#141414]"
+            >
+              Our services
+            </h2>
+            <p className="mt-4 max-w-[630px] text-[15px] leading-[1.8] text-[#5E5263]">
+              Explore our technology, data, cloud, infrastructure, and business process
+              services designed to support modern organizations.
+            </p>
           </div>
-
-          <h2 className="text-[3.6rem] lg:text-[4.8rem] font-bold leading-[0.95] tracking-tighter mb-6 text-white">
-            Services Built for <br />
-            <span className="text-gradient-vibrant">Scale & Performance</span>
-          </h2>
-
-          <p className="text-lg lg:text-xl text-white/60 leading-relaxed mb-8">
-            Enterprise-grade solutions trusted by forward-thinking teams. From
-            intelligent automation to cloud-native infrastructure.
-          </p>
-
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-brand-dark text-white font-semibold rounded-lg hover:bg-brand-dark/90 transition-all hover:gap-3 group"
+            className="group inline-flex w-fit items-center gap-3 text-[12px] font-bold uppercase tracking-[0.035em] text-[#211828] transition-colors hover:text-[#7C38A1]"
           >
-            View All Services
+            Discover our full capabilities
             <ArrowRight
-              size={18}
-              className="group-hover:translate-x-1 transition-transform"
+              size={21}
+              strokeWidth={1.7}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+              aria-hidden="true"
             />
           </Link>
         </motion.div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group relative"
+        <div aria-label="Filter services by category" className="mb-7 flex flex-wrap gap-2">
+          {categories.map((category) => {
+            const selected = activeCategory === category;
+            return (
+              <motion.button
+                key={category}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => selectCategory(category)}
+                whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                className={`rounded-full border px-4 py-2.5 text-[12px] font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#813AA5] ${
+                  selected
+                    ? "border-[#34213E] bg-[#34213E] text-white shadow-[0_6px_18px_rgba(78,35,107,0.16)]"
+                    : "border-[#DCCBDF] bg-white/65 text-[#594C5F] hover:border-[#B990CB] hover:bg-white"
+                }`}
+              >
+                {category}
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[12px] text-[#76657D]">
+            {autoplayEnabled && !prefersReducedMotion
+              ? "Browse the cards or let them glide automatically."
+              : "Browse services using the arrows or swipe."}
+          </p>
+          {prefersReducedMotion ? (
+            <span className="text-[11px] text-[#6E3C89]">Automatic motion disabled in your device settings</span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAutoplayEnabled((value) => !value)}
+              aria-pressed={!autoplayEnabled}
+              className="inline-flex items-center gap-2 rounded-full border border-[#DCCBDF] bg-white/70 px-3.5 py-2 text-[11px] font-semibold text-[#6E3C89] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#813AA5]"
             >
-              <Link href="/services" className="block h-full">
-                <div className="relative h-full bg-brand-black/60 backdrop-blur-md rounded-2xl p-8 border border-white/10 hover:border-white/30 hover:shadow-2xl hover:shadow-accent-blue/10 transition-all duration-300 overflow-hidden">
-                  {/* Gradient accent line */}
+              {autoplayEnabled ? <Pause size={13} aria-hidden="true" /> : <Play size={13} aria-hidden="true" />}
+              {autoplayEnabled ? "Pause auto-scroll" : "Resume auto-scroll"}
+            </button>
+          )}
+        </div>
+
+        <div
+          ref={carouselRef}
+          onScroll={updateCarouselState}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onFocusCapture={() => setFocused(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+              setFocused(false);
+            }
+          }}
+          onTouchStart={() => { setTouching(true); pauseAfterInteraction(); }}
+          onTouchEnd={() => setTouching(false)}
+          onTouchCancel={() => setTouching(false)}
+          onWheel={pauseAfterInteraction}
+          onKeyDown={(event) => {
+            if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) pauseAfterInteraction();
+          }}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label={`${activeCategory} service cards`}
+          tabIndex={0}
+          className={`flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain scroll-smooth py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+            filteredServices.length < 4 ? "lg:justify-center" : ""
+          }`}
+        >
+          {filteredServices.map((service, index) => (
+            <motion.article
+              key={service.title}
+              data-service-card
+              aria-label={`${service.title}, service ${index + 1} of ${filteredServices.length}`}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 26, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.18 }}
+              transition={{ duration: 0.48, delay: (index % 4) * 0.065, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-0 h-[570px] min-w-0 basis-[86%] shrink-0 snap-start hover:z-20 focus-within:z-20 sm:h-[550px] sm:basis-[calc(50%-10px)] lg:basis-[calc(25%-15px)]"
+            >
+              <motion.div
+                className="h-full w-full"
+                whileHover={prefersReducedMotion ? undefined : { y: -10, scale: 1.025 }}
+                transition={{ type: "spring", stiffness: 270, damping: 21 }}
+              >
+                <Link
+                  href={service.href}
+                  aria-label={`Explore ${service.title}`}
+                  className={`group relative flex h-full w-full flex-col overflow-hidden rounded-[15px] border border-white/80 p-6 shadow-[0_5px_18px_rgba(85,41,104,0.055)] transition-[box-shadow,border-color] duration-300 hover:border-[#C7A2DD] hover:shadow-[0_24px_55px_rgba(85,41,104,0.24)] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#8645AE] sm:p-7 ${
+                    index % 4 === 1 ? "bg-[#F4EBF8]" : "bg-white"
+                  }`}
+                >
                   <div
-                    className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#DDB8F5]/0 blur-[40px] transition-colors duration-500 group-hover:bg-[#DDB8F5]/30"
                   />
 
-                  {/* Hover background effect */}
+                  <p className="relative z-10 mb-4 text-[10px] font-bold uppercase tracking-[0.15em] text-[#8D64A2]">
+                    {service.category}
+                  </p>
+                  <h3 className="relative z-10 text-[clamp(1.5rem,2vw,2.05rem)] font-semibold leading-[1.14] tracking-[-0.045em] text-[#18151B]">
+                    {service.title}
+                  </h3>
+                  <p className="relative z-10 mt-5 text-[14px] leading-[1.65] text-[#514A56]">
+                    {service.description}
+                  </p>
+
+                  <span className="relative z-10 mt-5 inline-flex w-fit items-center gap-2 text-[11px] font-bold uppercase tracking-[0.06em] text-[#201A24] transition-colors group-hover:text-[#813DA8]">
+                    {service.comingSoon ? "View service overview" : "Learn more"}
+                    <ArrowRight
+                      size={17}
+                      strokeWidth={1.7}
+                      className="transition-transform duration-300 group-hover:translate-x-1.5"
+                      aria-hidden="true"
+                    />
+                  </span>
+
                   <div
-                    className={`absolute inset-0 bg-linear-to-br ${service.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300`}
-                  />
-
-                  <div className="relative z-10">
-                    {/* Icon */}
-                    <div
-                      className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br ${service.gradient} mb-6 group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      <service.icon
-                        size={26}
-                        className="text-white"
-                        strokeWidth={2.5}
-                      />
-                    </div>
-
-                    {/* Title & Stats */}
-                    <div className="mb-4">
-                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-white group-hover:to-gray-300 transition-all">
-                        {service.title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <Zap
-                          size={14}
-                          className={`text-transparent bg-clip-text bg-linear-to-r ${service.gradient}`}
-                        />
-                        <span
-                          className={`text-sm font-semibold text-transparent bg-clip-text bg-linear-to-r ${service.gradient}`}
-                        >
-                          {service.stats}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-white/60 leading-relaxed mb-6 text-[15px]">
-                      {service.desc}
-                    </p>
-
-                    {/* Features */}
-                    <div className="space-y-2 mb-6 pb-6 border-b border-white/10">
-                      {service.features.map((feature) => (
-                        <div
-                          key={feature}
-                          className="flex items-center gap-2 text-sm text-white/50"
-                        >
-                          <Shield
-                            size={14}
-                            className="text-white/30 shrink-0"
-                          />
-                          <span>{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* CTA */}
-                    <div className="flex items-center gap-2 text-white font-semibold text-sm group-hover:gap-3 transition-all">
-                      Learn More
-                      <ArrowRight
-                        size={16}
-                        className="group-hover:translate-x-1 transition-transform"
-                      />
-                    </div>
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-[185px] overflow-hidden sm:h-[195px]"
+                  >
+                    <Image
+                      src={service.image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 86vw"
+                      className="object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-[1.12] motion-reduce:transform-none"
+                    />
+                    <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/50 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   </div>
-                </div>
-              </Link>
-            </motion.div>
+                </Link>
+              </motion.div>
+            </motion.article>
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ delay: 0.6 }}
-          className="mt-20 text-center"
-        >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-8 bg-linear-to-r from-brand-dark to-gray-900 rounded-2xl text-white">
-            <div className="text-left">
-              <h3 className="text-2xl font-bold mb-2">
-                Need a custom solution?
-              </h3>
-              <p className="text-white/70">
-                Let's discuss your specific requirements and build something
-                exceptional.
-              </p>
-            </div>
-            <Link
-              href="/contact"
-              className="shrink-0 px-8 py-4 bg-white text-brand-dark font-bold rounded-lg hover:bg-gray-100 transition-all whitespace-nowrap"
-            >
-              Get in Touch
-            </Link>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-5">
+          <p aria-live="polite" className="text-[12px] font-medium text-[#6D5775]">
+            Showing {displayStart}–{displayEnd} of {filteredServices.length} services
+          </p>
+
+          <div
+            aria-hidden="true"
+            className="hidden h-[3px] max-w-[220px] flex-1 overflow-hidden rounded-full bg-[#D7C6E1] sm:block"
+          >
+            <div
+              className="h-full rounded-full bg-[#863EAA] transition-[width] duration-500"
+              style={{ width: `${progress}%` }}
+            />
           </div>
-        </motion.div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => scrollCarousel(-1)}
+              disabled={!canPrevious}
+              aria-label="Previous services"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#D5BBDD] bg-white/70 text-[#753A97] transition-[background-color,transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#9B66B6] hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8645AE]"
+            >
+              <ChevronLeft size={21} strokeWidth={1.7} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollCarousel(1)}
+              disabled={!canNext}
+              aria-label="Next services"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#D5BBDD] bg-white/70 text-[#753A97] transition-[background-color,transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#9B66B6] hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8645AE]"
+            >
+              <ChevronRight size={21} strokeWidth={1.7} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );
-};
-
-export default Services;
+}

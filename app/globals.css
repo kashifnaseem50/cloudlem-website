@@ -1,47 +1,138 @@
+
 @import "tailwindcss";
 
+/* =========================================
+   CLOUDLEM — ENTERPRISE DESIGN SYSTEM
+   Warm Cream / Stone Beige / Charcoal
+========================================= */
+
 @theme {
+  /* Typography */
   --font-plus: "Plus Jakarta Sans", sans-serif;
 
-  /* Brand Palette */
-  --color-brand-black: #050505;
-  --color-brand-dark: #0A0A0A;
-  --color-brand-gray: #1F1F1F;
-  --color-brand-light: #F0F4FA;
-  --color-brand-muted: #F5F7FA;
+  /* Primary Cloudlem Palette */
+  --color-cloudlem-cream: #D8D2C8;
+  --color-cloudlem-stone: #B7B09F;
+  --color-cloudlem-charcoal: #181818;
 
-  /* Accent Colors */
-  --color-accent-pink: #FF0080;
-  --color-accent-magenta: #E91E90;
-  --color-accent-cyan: #00C2FF;
-  --color-accent-blue: #2563EB;
-  --color-accent-teal: #0D9488;
-  --color-accent-purple: #7928CA;
-  --color-accent-yellow: #FFD700;
+  /* Existing Brand Token Compatibility */
+  --color-brand-black: #181818;
+  --color-brand-dark: #181818;
+  --color-brand-gray: #B7B09F;
+  --color-brand-light: #D8D2C8;
+  --color-brand-muted: #B7B09F;
 
+  /* Legacy Accent Names
+     Remapped to the new neutral palette.
+     Kept so existing Tailwind classes still work.
+  */
+  --color-accent-pink: #B7B09F;
+  --color-accent-magenta: #D8D2C8;
+  --color-accent-cyan: #D8D2C8;
+  --color-accent-blue: #B7B09F;
+  --color-accent-teal: #B7B09F;
+  --color-accent-purple: #B7B09F;
+  --color-accent-yellow: #D8D2C8;
+
+  /* Layout */
   --spacing-section: 80px;
   --width-container: 1320px;
 }
+
+/* =========================================
+   GLOBAL PAGE STYLING
+========================================= */
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  font-family: var(--font-plus);
+  background-color: #181818;
+  color: #D8D2C8;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+/* =========================================
+   SHARED LAYOUT UTILITIES
+========================================= */
 
 @layer utilities {
   .container-systems {
     @apply max-w-[1320px] mx-auto px-4 lg:px-8;
   }
 
-  /* Gradient Text Utility */
+  /* Background Surfaces */
+
+  .surface-cream {
+    background-color: #D8D2C8;
+    color: #181818;
+  }
+
+  .surface-stone {
+    background-color: #B7B09F;
+    color: #181818;
+  }
+
+  .surface-charcoal {
+    background-color: #181818;
+    color: #D8D2C8;
+  }
+
+  /* Text Colors */
+
+  .text-on-light {
+    color: #181818;
+  }
+
+  .text-on-dark {
+    color: #D8D2C8;
+  }
+
+  /* =====================================
+     GRADIENT TEXT
+     Retains existing utility names
+  ===================================== */
+
   .text-gradient-vibrant {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-pink via-accent-purple to-accent-cyan;
+    @apply bg-clip-text text-transparent;
+
+    background-image: linear-gradient(
+      90deg,
+      #D8D2C8 0%,
+      #B7B09F 50%,
+      #D8D2C8 100%
+    );
   }
 
   .text-gradient-cyan {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-cyan to-blue-500;
+    @apply bg-clip-text text-transparent;
+
+    background-image: linear-gradient(
+      90deg,
+      #D8D2C8 0%,
+      #B7B09F 100%
+    );
   }
 
   .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-yellow via-orange-400 to-accent-pink;
+    @apply bg-clip-text text-transparent;
+
+    background-image: linear-gradient(
+      90deg,
+      #B7B09F 0%,
+      #D8D2C8 50%,
+      #B7B09F 100%
+    );
   }
 
-  /* Hero Text - Professional corporate style */
+  /* =====================================
+     TYPOGRAPHY
+  ===================================== */
+
   .text-hero {
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     line-height: 1.15;
@@ -52,22 +143,92 @@
   .text-section-title {
     font-size: clamp(2.5rem, 4vw, 3.5rem);
     font-weight: 700;
-    color: white;
+    color: #D8D2C8;
   }
 
   .text-section-title-light {
     font-size: clamp(2.5rem, 4vw, 3.5rem);
     font-weight: 700;
-    color: white;
+    color: #181818;
   }
 
-  /* "LEARN MORE →" link style — Systems Limited pattern */
+  /* =====================================
+     LINKS
+  ===================================== */
+
   .link-learn-more {
-    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-accent-blue hover:text-accent-purple transition-colors;
+    @apply inline-flex items-center gap-2
+           text-xs font-bold uppercase
+           tracking-[0.15em] transition-opacity;
+
+    color: inherit;
+  }
+
+  .link-learn-more:hover {
+    opacity: 0.7;
+  }
+
+  /* =====================================
+     SHARED BUTTON COLORS
+  ===================================== */
+
+  .button-cloudlem-dark {
+    background-color: #181818;
+    color: #D8D2C8;
+    border: 1px solid #181818;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .button-cloudlem-dark:hover {
+    background-color: #B7B09F;
+    color: #181818;
+  }
+
+  .button-cloudlem-light {
+    background-color: #D8D2C8;
+    color: #181818;
+    border: 1px solid #D8D2C8;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .button-cloudlem-light:hover {
+    background-color: #B7B09F;
+    color: #181818;
   }
 }
 
-body {
-  font-family: var(--font-plus);
-  @apply bg-brand-black text-white antialiased;
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+::selection {
+  background: #B7B09F;
+  color: #181818;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

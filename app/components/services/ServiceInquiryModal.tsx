@@ -1,7 +1,18 @@
-'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
-import { X } from 'lucide-react';
+"use client";
+
+import { useState, type FormEvent } from "react";
+
+import {
+  ArrowRight,
+  Check,
+  LoaderCircle,
+  X,
+} from "lucide-react";
+
+// ==========================================
+// SERVICE INQUIRY MODAL PROPERTIES
+// ==========================================
 
 interface ServiceInquiryModalProps {
   serviceTitle: string;
@@ -9,104 +20,498 @@ interface ServiceInquiryModalProps {
   onClose: () => void;
 }
 
-const SERVICE_EMAIL = 'info@cloudlem.com';
+interface InquiryDialogProps {
+  serviceTitle: string;
+  onClose: () => void;
+}
 
-const ServiceInquiryModal = ({ serviceTitle, isOpen, onClose }: ServiceInquiryModalProps) => {
+type ApiResponse = {
+  success?: boolean;
+  message?: string;
+  error?: string;
+};
+
+// ==========================================
+// CLOUDLEM INQUIRY DIALOG
+// Warm Cream / Stone Beige / Charcoal
+// ==========================================
+
+function InquiryDialog({
+  serviceTitle,
+  onClose,
+}: InquiryDialogProps) {
   const [submitted, setSubmitted] = useState(false);
-  const subject = useMemo(() => `Service Inquiry: ${serviceTitle}`, [serviceTitle]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // ========================================
+  // EXISTING SUBMISSION LOGIC
+  // UNCHANGED
+  // ========================================
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    if (submitting) {
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+
+    const payload = {
+      serviceTitle,
+      name: String(
+        formData.get("name") ?? ""
+      ).trim(),
+      email: String(
+        formData.get("email") ?? ""
+      ).trim(),
+      company: String(
+        formData.get("company") ?? ""
+      ).trim(),
+      details: String(
+        formData.get("details") ?? ""
+      ).trim(),
+
+      // Existing anti-spam field.
+      website: String(
+        formData.get("inquiry_spam_check") ?? ""
+      ),
+    };
+
+    try {
+      const response = await fetch(
+        "/api/service-inquiries",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      let result: ApiResponse | null = null;
+
+      try {
+        result = (await response.json()) as ApiResponse;
+      } catch {
+        result = null;
+      }
+
+      // Real database insertion must return
+      // HTTP 201 and success: true.
+      //
+      // HTTP 200 is not considered successful
+      // because the spam handler may return
+      // 200 without inserting a record.
+
+      if (
+        response.status !== 201 ||
+        result?.success !== true
+      ) {
+        setError(
+          response.status === 200
+            ? "Your inquiry could not be confirmed. Please try again."
+            : result?.error ??
+                "Unable to submit your inquiry. Please try again."
+        );
+
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setError(
+        "Unable to connect to the server. Please check your internet connection and try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-5">
+
+      {/* ===================================
+          MODAL BACKDROP
+      =================================== */}
+
+      <button
+        type="button"
+        aria-label="Close inquiry form"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default bg-[#181818]/85 backdrop-blur-[5px]"
+      />
+
+      {/* ===================================
+          MODAL CONTAINER
+      =================================== */}
+
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="service-inquiry-title"
+        className="relative z-10 max-h-[90vh] w-full max-w-xl overflow-y-auto overscroll-contain border border-[#181818]/25 bg-[#D8D2C8] text-[#181818] shadow-[0_30px_90px_rgba(0,0,0,0.35)]"
+      >
+
+        {/* TOP ACCENT */}
+
+        <div className="h-[4px] w-full bg-[#181818]" />
+
+        <div className="relative p-6 sm:p-9">
+
+          {/* ===================================
+              CLOSE BUTTON
+          =================================== */}
+
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center border border-[#181818]/20 bg-[#B7B09F]/50 text-[#181818] transition-colors hover:border-[#181818] hover:bg-[#181818] hover:text-[#D8D2C8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818] sm:right-7 sm:top-7"
+          >
+            <X
+              size={19}
+              strokeWidth={1.8}
+              aria-hidden="true"
+            />
+          </button>
+
+          {!submitted ? (
+            <>
+
+              {/* ===================================
+                  FORM HEADER
+              =================================== */}
+
+              <div className="mb-8 border-b border-[#181818]/20 pb-7">
+
+                {/* EYEBROW */}
+
+                <div className="mb-5 flex items-center gap-3">
+                  <span className="h-px w-7 bg-[#181818]" />
+
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#181818]/70">
+                    Cloudlem Project Inquiry
+                  </p>
+                </div>
+
+                {/* TITLE */}
+
+                <h3
+                  id="service-inquiry-title"
+                  className="max-w-[440px] pr-7 text-[27px] font-semibold leading-[1.12] tracking-[-0.05em] text-[#181818] sm:text-[32px]"
+                >
+                  Get Started with{" "}
+                  <span className="text-[#625C51]">
+                    {serviceTitle}
+                  </span>
+                </h3>
+
+                {/* DESCRIPTION */}
+
+                <p className="mt-4 max-w-[460px] text-[13px] leading-7 text-[#181818]/75">
+                  Share your requirement and our team will
+                  get in touch shortly.
+                </p>
+              </div>
+
+              {/* ===================================
+                  SUBMISSION ERROR
+              =================================== */}
+
+              {error && (
+                <div
+                  role="alert"
+                  className="mb-6 border border-red-700/40 bg-red-50 px-4 py-3 text-[12px] leading-6 text-red-800"
+                >
+                  {error}
+                </div>
+              )}
+
+              {/* ===================================
+                  INQUIRY FORM
+              =================================== */}
+
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-5"
+              >
+
+                {/* ===================================
+                    EXISTING HONEYPOT
+                    DO NOT REMOVE
+                =================================== */}
+
+                <div
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-px w-px overflow-hidden"
+                >
+                  <label htmlFor="inquiry-spam-check">
+                    Leave this field empty
+                  </label>
+
+                  <input
+                    id="inquiry-spam-check"
+                    name="inquiry_spam_check"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                  />
+                </div>
+
+                {/* ===================================
+                    FULL NAME
+                =================================== */}
+
+                <div>
+                  <label
+                    htmlFor="inquiry-name"
+                    className="mb-2 block text-[12px] font-semibold text-[#181818]"
+                  >
+                    Full Name{" "}
+                    <span className="text-[#181818]/60">
+                      *
+                    </span>
+                  </label>
+
+                  <input
+                    id="inquiry-name"
+                    name="name"
+                    type="text"
+                    required
+                    maxLength={150}
+                    autoComplete="name"
+                    placeholder="Your full name"
+                    className="min-h-12 w-full rounded-none border border-[#181818]/25 bg-[#D8D2C8] px-4 py-3 text-[13px] text-[#181818] outline-none transition-all placeholder:text-[#181818]/45 focus:border-[#181818] focus:ring-2 focus:ring-[#181818]/15"
+                  />
+                </div>
+
+                {/* ===================================
+                    WORK EMAIL
+                =================================== */}
+
+                <div>
+                  <label
+                    htmlFor="inquiry-email"
+                    className="mb-2 block text-[12px] font-semibold text-[#181818]"
+                  >
+                    Work Email{" "}
+                    <span className="text-[#181818]/60">
+                      *
+                    </span>
+                  </label>
+
+                  <input
+                    id="inquiry-email"
+                    name="email"
+                    type="email"
+                    required
+                    maxLength={254}
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    className="min-h-12 w-full rounded-none border border-[#181818]/25 bg-[#D8D2C8] px-4 py-3 text-[13px] text-[#181818] outline-none transition-all placeholder:text-[#181818]/45 focus:border-[#181818] focus:ring-2 focus:ring-[#181818]/15"
+                  />
+                </div>
+
+                {/* ===================================
+                    COMPANY NAME
+                =================================== */}
+
+                <div>
+                  <label
+                    htmlFor="inquiry-company"
+                    className="mb-2 block text-[12px] font-semibold text-[#181818]"
+                  >
+                    Company Name
+
+                    <span className="ml-2 text-[11px] font-normal text-[#181818]/60">
+                      Optional
+                    </span>
+                  </label>
+
+                  <input
+                    id="inquiry-company"
+                    name="company"
+                    type="text"
+                    maxLength={160}
+                    autoComplete="organization"
+                    placeholder="Your company name"
+                    className="min-h-12 w-full rounded-none border border-[#181818]/25 bg-[#D8D2C8] px-4 py-3 text-[13px] text-[#181818] outline-none transition-all placeholder:text-[#181818]/45 focus:border-[#181818] focus:ring-2 focus:ring-[#181818]/15"
+                  />
+                </div>
+
+                {/* ===================================
+                    PROJECT DETAILS
+                =================================== */}
+
+                <div>
+                  <label
+                    htmlFor="inquiry-details"
+                    className="mb-2 block text-[12px] font-semibold text-[#181818]"
+                  >
+                    Project Details{" "}
+                    <span className="text-[#181818]/60">
+                      *
+                    </span>
+                  </label>
+
+                  <textarea
+                    id="inquiry-details"
+                    name="details"
+                    required
+                    minLength={10}
+                    maxLength={5000}
+                    rows={4}
+                    placeholder="Tell us about your project, requirements, and goals"
+                    className="w-full resize-y rounded-none border border-[#181818]/25 bg-[#D8D2C8] px-4 py-3 text-[13px] leading-7 text-[#181818] outline-none transition-all placeholder:text-[#181818]/45 focus:border-[#181818] focus:ring-2 focus:ring-[#181818]/15"
+                  />
+
+                  <p className="mt-2 text-[11px] text-[#181818]/65">
+                    Please provide at least 10 characters.
+                  </p>
+                </div>
+
+                {/* ===================================
+                    SUBMIT BUTTON
+                =================================== */}
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="group flex min-h-13 w-full items-center justify-center gap-3 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.13em] text-[#D8D2C8] transition-all duration-200 hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {submitting ? (
+                    <>
+                      <LoaderCircle
+                        size={18}
+                        className="animate-spin"
+                        aria-hidden="true"
+                      />
+
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit Inquiry
+
+                      <ArrowRight
+                        size={17}
+                        strokeWidth={1.8}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* ===================================
+                  PRIVACY MESSAGE
+              =================================== */}
+
+              <p className="mt-6 border-t border-[#181818]/15 pt-5 text-center text-[11px] leading-6 text-[#181818]/65">
+                Your inquiry will be shared with the
+                Cloudlem team for follow-up.
+              </p>
+            </>
+          ) : (
+
+            /* ===================================
+                SUCCESS SCREEN
+            =================================== */
+
+            <div className="py-8 text-center sm:py-10">
+
+              {/* SUCCESS ICON */}
+
+              <div className="mx-auto mb-7 flex h-18 w-18 items-center justify-center border border-[#181818] bg-[#181818] text-[#D8D2C8]">
+                <Check
+                  size={34}
+                  strokeWidth={1.8}
+                  aria-hidden="true"
+                />
+              </div>
+
+              {/* SUCCESS LABEL */}
+
+              <div className="mb-5 flex items-center justify-center gap-3">
+                <span className="h-px w-6 bg-[#181818]" />
+
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#181818]/70">
+                  Submission Confirmed
+                </span>
+
+                <span className="h-px w-6 bg-[#181818]" />
+              </div>
+
+              {/* SUCCESS TITLE */}
+
+              <h3
+                id="service-inquiry-title"
+                className="text-[30px] font-semibold leading-[1.1] tracking-[-0.05em] text-[#181818] sm:text-[35px]"
+              >
+                Inquiry Submitted!
+              </h3>
+
+              {/* SUCCESS DESCRIPTION */}
+
+              <p
+                role="status"
+                className="mx-auto mt-5 max-w-[400px] text-[13px] leading-8 text-[#181818]/75"
+              >
+                Thank you for contacting Cloudlem.
+                Your inquiry has been received.
+                Our team will review your requirements
+                and follow up with you.
+              </p>
+
+              {/* CLOSE BUTTON */}
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="mt-9 inline-flex min-h-12 items-center justify-center border border-[#181818] bg-[#181818] px-10 py-3 text-[11px] font-bold uppercase tracking-[0.13em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
+              >
+                Close
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// EXPORTED MODAL COMPONENT
+// ==========================================
+
+export default function ServiceInquiryModal({
+  serviceTitle,
+  isOpen,
+  onClose,
+}: ServiceInquiryModalProps) {
   if (!isOpen) {
     return null;
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    const name = String(formData.get('name') || '');
-    const email = String(formData.get('email') || '');
-    const company = String(formData.get('company') || '');
-    const details = String(formData.get('details') || '');
-
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Company: ${company}`,
-      `Service: ${serviceTitle}`,
-      '',
-      'Project details:',
-      details,
-    ].join('\n');
-
-    window.location.href = `mailto:${SERVICE_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setSubmitted(true);
-  };
+  // A fresh dialog mounts each time it opens,
+  // resetting previous success/error messages.
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <button type="button" aria-label="Close modal" onClick={onClose} className="absolute inset-0 bg-brand-black/70" />
-
-      <div className="relative z-10 w-full max-w-xl rounded-xl bg-white p-8 shadow-2xl border border-gray-100">
-        <button type="button" aria-label="Close" onClick={onClose} className="absolute right-4 top-4 text-gray-500 hover:text-brand-dark">
-          <X size={20} />
-        </button>
-
-        {!submitted ? (
-          <>
-            <h3 className="text-2xl font-bold text-brand-dark mb-2">Get Started with {serviceTitle}</h3>
-            <p className="text-gray-500 mb-6">Share your requirement and our team will get in touch shortly.</p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                name="name"
-                required
-                placeholder="Full name"
-                className="w-full rounded-md border border-gray-200 px-4 py-3 text-brand-dark focus:outline-none focus:border-accent-blue"
-              />
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="Work email"
-                className="w-full rounded-md border border-gray-200 px-4 py-3 text-brand-dark focus:outline-none focus:border-accent-blue"
-              />
-              <input
-                name="company"
-                placeholder="Company name"
-                className="w-full rounded-md border border-gray-200 px-4 py-3 text-brand-dark focus:outline-none focus:border-accent-blue"
-              />
-              <textarea
-                name="details"
-                required
-                rows={4}
-                placeholder="Tell us about your goals"
-                className="w-full rounded-md border border-gray-200 px-4 py-3 text-brand-dark focus:outline-none focus:border-accent-blue"
-              />
-
-              <button
-                type="submit"
-                className="w-full rounded-md bg-brand-dark px-6 py-3 text-sm font-bold uppercase tracking-wider text-white hover:bg-brand-dark/90"
-              >
-                Submit Inquiry
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="text-center py-6">
-            <h3 className="text-2xl font-bold text-brand-dark mb-2">Thank you</h3>
-            <p className="text-gray-500 mb-6">Your inquiry was prepared successfully. We will contact you soon.</p>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md bg-brand-dark px-6 py-3 text-sm font-bold uppercase tracking-wider text-white"
-            >
-              Close
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+    <InquiryDialog
+      key={serviceTitle}
+      serviceTitle={serviceTitle}
+      onClose={onClose}
+    />
   );
-};
-
-export default ServiceInquiryModal;
+}

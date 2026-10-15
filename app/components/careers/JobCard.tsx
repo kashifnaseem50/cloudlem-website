@@ -1,6 +1,16 @@
-'use client';
 
-import { ArrowUpRight, MapPin, Clock, Briefcase, Zap } from 'lucide-react';
+"use client";
+
+import {
+  ArrowUpRight,
+  BriefcaseBusiness,
+  Clock3,
+  MapPin,
+} from "lucide-react";
+
+// ==========================================
+// CLOUDLEM JOB CARD PROPERTIES
+// ==========================================
 
 interface JobCardProps {
   title: string;
@@ -9,80 +19,211 @@ interface JobCardProps {
   level: string;
   description: string;
   tags: string[];
-  gradient: string;
+
+  // Retained for compatibility with
+  // the existing Careers page.
+  gradient?: string;
+
   onApply?: () => void;
 }
 
-const JobCard = ({ title, location, type, level, description, tags, gradient, onApply }: JobCardProps) => {
+// ==========================================
+// CLOUDLEM CAREER JOB CARD
+// Warm Cream / Stone Beige / Charcoal
+// ==========================================
+
+export default function JobCard({
+  title,
+  location,
+  type,
+  level,
+  description,
+  tags,
+  onApply,
+}: JobCardProps) {
   return (
-    <div className="group relative bg-white border border-gray-200/60 rounded-2xl p-8 hover:border-gray-300 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300">
-      {/* Gradient accent line */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl`} />
-      
-      {/* Hover background effect */}
-      <div className={`absolute inset-0 bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-[0.02] transition-opacity duration-300 rounded-2xl`} />
-      
-      <div className="relative z-10">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-          <div className="grow">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-linear-to-r from-accent-blue/10 to-accent-purple/10 rounded-full mb-3">
-              <Zap size={12} className="text-accent-blue" />
-              <span className="text-xs font-semibold text-brand-dark/70">Hiring Now</span>
+    <article className="group relative overflow-hidden border border-[#181818]/20 bg-[#B7B09F] text-[#181818] transition-all duration-300 hover:-translate-y-1 hover:border-[#181818]/60 hover:shadow-[0_20px_45px_rgba(24,24,24,0.12)]">
+
+      {/* ===================================
+          TOP ACCENT
+      =================================== */}
+
+      <div className="h-[3px] w-full bg-[#181818] transition-all duration-300 group-hover:h-[5px]" />
+
+      <div className="p-6 sm:p-8 lg:p-9">
+
+        {/* ===================================
+            JOB HEADER
+        =================================== */}
+
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+
+          <div className="min-w-0 flex-1">
+
+            {/* CATEGORY */}
+
+            <div className="mb-6 flex items-center gap-4">
+
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-[#181818] bg-[#181818] text-[#D8D2C8] transition-colors duration-300 group-hover:bg-[#33312D]">
+                <BriefcaseBusiness
+                  size={21}
+                  strokeWidth={1.6}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#181818]/75">
+                Career Opportunity
+              </span>
             </div>
 
-            <h3 className="text-2xl font-bold text-brand-dark mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-brand-dark group-hover:to-gray-600 transition-all">
+            {/* JOB TITLE */}
+
+            <h3 className="max-w-[650px] text-[26px] font-semibold leading-tight tracking-[-0.045em] text-[#181818] sm:text-[32px]">
               {title}
             </h3>
-            
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-               <span className="flex items-center gap-2">
-                 <MapPin size={16} className="text-gray-400" /> 
-                 <span className="font-medium">{location}</span>
-               </span>
-               <span className="flex items-center gap-2">
-                 <Clock size={16} className="text-gray-400" /> 
-                 <span className="font-medium">{type}</span>
-               </span>
-               <span className="flex items-center gap-2">
-                 <Briefcase size={16} className="text-gray-400" /> 
-                 <span className="font-medium">{level}</span>
-               </span>
-            </div>
+
+            {/* ACCENT LINE */}
+
+            <div className="mt-6 h-[2px] w-11 bg-[#181818]" />
           </div>
-          
-          <div className={`shrink-0 px-4 py-2 rounded-lg bg-linear-to-r ${gradient} text-white shadow-lg`}>
-            <span className="text-xs font-bold uppercase tracking-wider">
+
+          {/* ===================================
+              EXPERIENCE LEVEL
+          =================================== */}
+
+          <div className="shrink-0 self-start border border-[#181818]/30 bg-[#D8D2C8] px-4 py-2.5">
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#181818]">
               {level}
             </span>
           </div>
         </div>
 
-        <p className="text-gray-600 mb-6 leading-relaxed text-[15px]">
-          {description}
-        </p>
+        {/* ===================================
+            JOB INFORMATION
+        =================================== */}
 
-        <div className="flex flex-wrap gap-2 mb-8 pb-6 border-b border-gray-100">
-          {tags.map((tag, index) => (
-            <span 
-              key={index} 
-              className="px-3 py-1.5 rounded-lg bg-gray-50 text-xs text-gray-600 border border-gray-200 font-medium hover:border-gray-300 transition-colors"
-            >
-              {tag}
+        <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4 border-b border-[#181818]/20 pb-7">
+
+          {/* LOCATION */}
+
+          <div className="flex items-center gap-3">
+            <MapPin
+              size={16}
+              className="shrink-0 text-[#181818]"
+              strokeWidth={1.7}
+              aria-hidden="true"
+            />
+
+            <span className="text-[12px] font-medium text-[#181818]/80">
+              {location}
             </span>
-          ))}
+          </div>
+
+          {/* EMPLOYMENT TYPE */}
+
+          <div className="flex items-center gap-3">
+            <Clock3
+              size={16}
+              className="shrink-0 text-[#181818]"
+              strokeWidth={1.7}
+              aria-hidden="true"
+            />
+
+            <span className="text-[12px] font-medium text-[#181818]/80">
+              {type}
+            </span>
+          </div>
         </div>
 
-        <button 
-          onClick={onApply}
-          className="group/btn flex items-center gap-2 text-brand-dark font-bold hover:text-white bg-white hover:bg-brand-dark border-2 border-brand-dark px-8 py-3 rounded-lg transition-all uppercase text-sm tracking-wider hover:gap-3"
-        >
-          Apply Now 
-          <ArrowUpRight size={18} className="transition-transform group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1" />
-        </button>
-      </div>
-    </div>
-  );
-};
+        {/* ===================================
+            JOB DESCRIPTION
+        =================================== */}
 
-export default JobCard;
+        <div className="mt-8">
+
+          <div className="mb-4 flex items-center gap-3">
+            <span className="h-px w-6 bg-[#181818]" />
+
+            <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#181818]">
+              About the Role
+            </p>
+          </div>
+
+          <p className="max-w-[800px] text-[13px] leading-8 text-[#181818]/85">
+            {description}
+          </p>
+        </div>
+
+        {/* ===================================
+            SKILLS & TECHNOLOGIES
+        =================================== */}
+
+        <div className="mt-8">
+
+          <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.17em] text-[#181818]">
+            Key Skills & Technologies
+          </p>
+
+          <ul className="flex flex-wrap gap-2.5">
+            {tags.map((tag) => (
+              <li
+                key={tag}
+                className="border border-[#181818]/25 bg-[#D8D2C8] px-3 py-2 text-[11px] font-medium text-[#181818] transition-all duration-200 hover:border-[#181818] hover:bg-[#181818] hover:text-[#D8D2C8]"
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* ===================================
+            BOTTOM ACTION AREA
+        =================================== */}
+
+        <div className="mt-9 flex flex-col gap-6 border-t border-[#181818]/20 pt-7 sm:flex-row sm:items-center sm:justify-between">
+
+          {/* SUPPORTING TEXT */}
+
+          <div>
+            <p className="text-[13px] font-semibold text-[#181818]">
+              Interested in this opportunity?
+            </p>
+
+            <p className="mt-2 max-w-[390px] text-[11px] leading-6 text-[#181818]/70">
+              Share your experience and application
+              with our team.
+            </p>
+          </div>
+
+          {/* ===================================
+              APPLY BUTTON
+          =================================== */}
+
+          <button
+            type="button"
+            onClick={onApply}
+            disabled={!onApply}
+            aria-label={`Apply for ${title}`}
+            className="group/btn inline-flex min-h-12 w-full shrink-0 items-center justify-between gap-8 border border-[#181818] bg-[#181818] px-7 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-all duration-200 hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          >
+            Apply Now
+
+            <ArrowUpRight
+              size={18}
+              strokeWidth={1.8}
+              className="shrink-0 transition-transform duration-300 group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* ===================================
+          DECORATIVE BOTTOM HOVER LINE
+      =================================== */}
+
+      <div className="pointer-events-none absolute bottom-0 left-0 h-[3px] w-0 bg-[#181818] transition-all duration-500 group-hover:w-full" />
+    </article>
+  );
+}

@@ -1,197 +1,130 @@
+
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, Users, Globe2, Target } from "lucide-react";
-import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
-const Slideshow = ({
-  images,
-  alt = "Background",
-}: {
-  images: string[];
-  alt?: string;
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+// ==========================================
+// CLOUDLEM — BUSINESS IMPACT
+// Reference-inspired editorial design
+// ==========================================
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [images.length]);
+const stats = [
+  {
+    value: "100+",
+    label: "Projects Completed",
+  },
+  {
+    value: "50+",
+    label: "Happy Clients",
+  },
+  {
+    value: "99%",
+    label: "Client Satisfaction",
+  },
+  {
+    value: "15+",
+    label: "Years of Experience",
+  },
+];
 
+export default function Impact() {
   return (
-    <AnimatePresence mode="popLayout">
-      <motion.div
-        key={currentIndex}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1.5 }}
-        className="absolute inset-0"
-      >
-        <img
-          src={images[currentIndex]}
-          alt={alt}
-          className="w-full h-full object-cover"
-        />
-      </motion.div>
-    </AnimatePresence>
-  );
-};
+    <section
+      id="impact"
+      aria-labelledby="impact-heading"
+      className="relative w-full overflow-hidden bg-white py-24 text-[#181818] sm:py-28 lg:py-36"
+    >
+      <div className="container-systems">
 
-const Impact = () => {
-  const stats = [
-    {
-      label: "Projects Delivered",
-      value: "50+",
-      icon: Target,
-      gradient: "from-purple-500 to-pink-500",
-      description: "Successfully delivered solutions",
-    },
-    {
-      label: "Global Partners",
-      value: "15+",
-      icon: Users,
-      gradient: "from-blue-500 to-cyan-500",
-      description: "Trusted enterprise clients",
-    },
-    {
-      label: "Continents",
-      value: "3",
-      icon: Globe2,
-      gradient: "from-emerald-500 to-teal-500",
-      description: "Global reach and impact",
-    },
-    {
-      label: "Client Satisfaction",
-      value: "100%",
-      icon: TrendingUp,
-      gradient: "from-orange-500 to-red-500",
-      description: "5-star client reviews",
-    },
-  ];
+        {/* ======================================
+            SECTION INTRODUCTION
+        ====================================== */}
 
-  return (
-    <section className="py-32 bg-linear-to-b from-gray-50 to-white relative overflow-hidden">
-      {/* Background Image Slideshow */}
-      <div className="absolute inset-0 z-0">
-        <Slideshow
-          images={[
-            "/images/backgrounds/section-1-1.jpg",
-            "/images/backgrounds/section-1-2.jpg",
-            "/images/backgrounds/section-1-3.jpg",
-            "/images/backgrounds/section-1-4.jpg",
-          ]}
-          alt="Impact Section Background"
-        />
-        <div className="absolute inset-0 bg-brand-black/50" />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-transparent to-brand-black z-10" />
-      </div>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{
+            duration: 0.65,
+            ease: "easeOut",
+          }}
+          className="max-w-[720px]"
+        >
 
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 z-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent-blue/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent-purple/10 rounded-full blur-3xl" />
-      </div>
+          {/* MAIN HEADING */}
 
-      <div className="container-systems relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-20">
-          {/* Left statement */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.8 }}
-            className="bg-brand-black/60 backdrop-blur-md rounded-3xl p-8 lg:p-12 shadow-2xl border border-white/10"
+          <h2
+            id="impact-heading"
+            className="max-w-[700px] text-[clamp(2.2rem,2.5vw,3.3rem)] font-semibold leading-[1.1] tracking-[-0.055em] text-[#171717]"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-6 border border-white/10">
-              <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse" />
-              <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">
-                Our Impact
-              </span>
-            </div>
+            From digital transformation to
+            <br className="hidden sm:block" />
+            {" "}AI-powered advantage
+          </h2>
 
-            <h2 className="text-4xl lg:text-5xl font-bold text-white leading-[1.1] mb-6">
-              Translating technology into{" "}
-              <span className="text-gradient-vibrant">measurable results</span>
-            </h2>
-            <p className="text-white/70 text-lg leading-relaxed mb-8">
-              Our enterprise-grade solutions deliver proven outcomes. From
-              Fortune 500 companies to innovative startups, we help businesses
-              achieve their digital transformation goals.
-            </p>
+          {/* DESCRIPTION */}
 
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 shadow-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full" />
-                <span className="text-sm font-semibold text-white/80">
-                  99.9% Uptime SLA
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 shadow-sm">
-                <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                <span className="text-sm font-semibold text-white/80">
-                  SOC 2 Compliant
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 shadow-sm">
-                <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                <span className="text-sm font-semibold text-white/80">
-                  24/7 Support
-                </span>
-              </div>
-            </div>
-          </motion.div>
+          <p className="mt-6 max-w-[500px] text-[15px] leading-[1.85] text-[#666666] sm:text-[16px]">
+            Helping businesses move forward through
+            technology, intelligent operations, and
+            lasting partnerships.
+          </p>
 
-          {/* Right stats grid */}
-          <div className="grid grid-cols-2 gap-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-white/40 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300"
-              >
-                {/* Gradient accent on hover */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl`}
-                />
+        </motion.div>
 
-                {/* Icon */}
-                <div
-                  className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br ${stat.gradient} mb-4 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <stat.icon
-                    size={22}
-                    className="text-white"
-                    strokeWidth={2.5}
-                  />
-                </div>
+        {/* ======================================
+            COMPANY IMPACT STATISTICS
+        ====================================== */}
 
-                {/* Value */}
-                <div
-                  className={`text-4xl lg:text-5xl font-bold mb-2 tracking-tight text-transparent bg-clip-text bg-linear-to-r ${stat.gradient}`}
-                >
-                  {stat.value}
-                </div>
+        <div className="mt-16 grid grid-cols-1 gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:mt-18 lg:grid-cols-4 xl:gap-x-12">
 
-                {/* Label */}
-                <div className="text-white font-semibold text-sm mb-1">
-                  {stat.label}
-                </div>
+          {stats.map((stat, index) => (
 
-                {/* Description */}
-                <div className="text-white/60 text-xs">{stat.description}</div>
-              </motion.div>
-            ))}
-          </div>
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
+              className="group min-w-0"
+            >
+
+              {/* PURPLE HORIZONTAL RULE */}
+
+              <div className="h-px w-full bg-[#B38AD2] transition-colors duration-300 group-hover:bg-[#7925AE]" />
+
+              {/* STATISTIC VALUE */}
+
+              <p className="mt-8 text-[clamp(3rem,4.2vw,4.5rem)] font-normal leading-none tracking-[-0.065em] text-[#7925AE] sm:mt-9">
+                {stat.value}
+              </p>
+
+              {/* STATISTIC LABEL */}
+
+              <p className="mt-4 text-[14px] font-medium leading-[1.5] tracking-[-0.015em] text-[#333333] sm:text-[15px]">
+                {stat.label}
+              </p>
+
+            </motion.div>
+
+          ))}
+
         </div>
+
+        {/* ======================================
+            SECTION BOTTOM SPACING
+        ====================================== */}
+
+        <div
+          aria-hidden="true"
+          className="h-4 sm:h-8"
+        />
+
       </div>
     </section>
   );
-};
-
-export default Impact;
+}

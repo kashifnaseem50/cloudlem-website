@@ -208,7 +208,7 @@ export default function PrivacyPolicyPage() {
               </ul>
               <p className="mt-4">
                 You can control cookies through your browser settings. Note that disabling cookies may affect the functionality 
-                of our website. For more information, please refer to your browser's help documentation.
+                of our website. For more information, please refer to your browser&apos;s help documentation.
               </p>
             </section>
 
@@ -265,7 +265,7 @@ export default function PrivacyPolicyPage() {
 
             {/* Children's Privacy */}
             <section>
-              <h2 className="text-3xl font-bold text-brand-dark mb-6">11. Children's Privacy</h2>
+              <h2 className="text-3xl font-bold text-brand-dark mb-6">11. Children&apos;s Privacy</h2>
               <p>
                 Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information 
                 from children. If you are a parent or guardian and believe your child has provided us with personal information, 
@@ -300,7 +300,7 @@ export default function PrivacyPolicyPage() {
               <p>
                 We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal 
                 requirements, or other factors. We will notify you of any material changes by posting the updated policy on 
-                this page with a new "Last updated" date.
+                this page with a new &quot;Last updated&quot; date.
               </p>
               <p className="mt-3">
                 We encourage you to review this Privacy Policy periodically. Your continued use of our services after changes 

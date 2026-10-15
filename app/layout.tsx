@@ -1,74 +1,128 @@
+
 import type { Metadata } from "next";
-import Script from "next/script";
+import type { ReactNode } from "react";
+
 import "@fontsource/plus-jakarta-sans/400.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
+
 import "./globals.css";
+
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 
+// =====================================
+// SITE CONFIGURATION
+// =====================================
+
+const SITE_URL = "https://cloudlem.com";
+
+const SITE_NAME = "Cloudlem";
+
+const SITE_TITLE =
+  "Cloudlem | Technology, Operations & Financial Solutions";
+
+const SITE_DESCRIPTION =
+  "Cloudlem provides cloud and DevOps, AI automation, web development, bookkeeping, design, and business growth support.";
+
+// =====================================
+// GLOBAL WEBSITE METADATA
+// =====================================
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cloudlem.com"),
+  metadataBase: new URL(SITE_URL),
+
   title: {
-    default: "Cloudlem | Cloud, AI & DevOps Consulting Services",
+    default: SITE_TITLE,
     template: "%s | Cloudlem",
   },
-  description:
-    "Expert DevOps consulting, cloud migration, and AI implementation services. Transform your business with AWS, Azure, GCP solutions. 99.9% uptime guaranteed.",
+
+  description: SITE_DESCRIPTION,
+
+  applicationName: SITE_NAME,
+
   keywords: [
+    "Cloudlem",
     "DevOps consulting",
     "cloud migration services",
     "AWS consulting",
     "Azure DevOps",
     "GCP cloud services",
     "Kubernetes consulting",
-    "CI/CD pipeline",
+    "CI/CD pipelines",
     "cloud infrastructure",
     "AI implementation",
     "machine learning consulting",
     "cloud security",
     "infrastructure as code",
-    "terraform consulting",
+    "Terraform consulting",
     "microservices architecture",
     "DevOps automation",
+    "business automation",
+    "web development",
+    "bookkeeping services",
+    "design and branding",
+    "business growth support",
   ],
-  authors: [{ name: "Cloudlem" }],
+
+  authors: [
+    {
+      name: "Cloudlem",
+      url: SITE_URL,
+    },
+  ],
+
   creator: "Cloudlem",
-  publisher: "Cloudlem",
+  publisher: "Cloudlem (Private) Limited",
+
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
+
+  // =====================================
+  // OPEN GRAPH
+  // =====================================
+
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://cloudlem.com",
-    title: "Cloudlem | Cloud, AI & DevOps Consulting Services",
+
+    url: SITE_URL,
+
+    siteName: SITE_NAME,
+
+    title: SITE_TITLE,
+
     description:
-      "Expert DevOps consulting, cloud migration, and AI implementation services. Transform your business with AWS, Azure, GCP solutions.",
-    siteName: "Cloudlem",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Cloudlem - Cloud & DevOps Consulting",
-      },
-    ],
+      "Practical cloud, automation, web, bookkeeping, design, and growth support for growing businesses.",
   },
+
+  // =====================================
+  // SOCIAL SHARING
+  // =====================================
+
   twitter: {
-    card: "summary_large_image",
-    title: "Cloudlem | Cloud, AI & DevOps Consulting",
+    card: "summary",
+
+    title: SITE_TITLE,
+
     description:
-      "Expert DevOps consulting, cloud migration, and AI implementation services.",
+      "Practical technology, operations, and financial support for growing businesses.",
+
     creator: "@CloudlemOffical",
-    images: ["/og-image.jpg"],
   },
+
+  // =====================================
+  // SEARCH ENGINE DIRECTIVES
+  // =====================================
+
   robots: {
     index: true,
     follow: true,
+
     googleBot: {
       index: true,
       follow: true,
@@ -77,70 +131,94 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code",
-    // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
-  },
 };
+
+// =====================================
+// COMPANY STRUCTURED DATA
+// =====================================
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+
+  name: "Cloudlem",
+
+  legalName: "Cloudlem (Private) Limited",
+
+  alternateName: "Cloudlem Pvt. Ltd.",
+
+  url: SITE_URL,
+
+  logo: `${SITE_URL}/images/logo.png`,
+
+  description:
+    "Technology, operations, and financial solutions for growing businesses.",
+
+  foundingDate: "2022-04-20",
+
+  identifier: {
+    "@type": "PropertyValue",
+    name: "SECP Corporate Unique Identification Number",
+    value: "0200455",
+  },
+
+  email: "info@cloudlem.com",
+
+  telephone: "+92-355-4502615",
+
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Gilgit",
+    addressCountry: "PK",
+  },
+
+  founder: {
+    "@type": "Person",
+    name: "Kashif Naseem",
+  },
+
+  sameAs: [
+    "https://www.linkedin.com/company/cloudlem",
+    "https://x.com/CloudlemOffical",
+    "https://www.instagram.com/cloudlemoffical/",
+    "https://www.youtube.com/@cloudlem",
+  ],
+};
+
+// Escape characters that could terminate the script
+// element if structured data changes in the future.
+const structuredDataJson = JSON.stringify(
+  structuredData
+).replace(/</g, "\\u003c");
+
+// =====================================
+// ROOT LAYOUT
+// =====================================
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  // Structured Data for SEO (JSON-LD)
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Cloudlem",
-    alternateName: "Cloudlem Pvt. Ltd.",
-    url: "https://cloudlem.com",
-    logo: "https://cloudlem.com/logo.png",
-    description:
-      "Expert DevOps consulting, cloud migration, and AI implementation services for enterprises.",
-    email: "info@cloudlem.com",
-    telephone: "+92-355-4502615",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Gilgit",
-      addressCountry: "PK",
-    },
-    sameAs: [
-      "https://www.linkedin.com/company/cloudlem",
-      "https://x.com/CloudlemOffical",
-      "https://www.instagram.com/cloudlemoffical/",
-      "https://github.com/kashifnaseem50",
-      "https://www.youtube.com/@cloudlem",
-    ],
-    foundingDate: "2022",
-    founders: [
-      {
-        "@type": "Person",
-        name: "Kashif Naseem",
-      },
-    ],
-    areaServed: "Worldwide",
-    serviceType: [
-      "DevOps Consulting",
-      "Cloud Migration",
-      "AI Implementation",
-      "Cloud Security",
-      "Kubernetes Consulting",
-    ],
-  };
-
+}: Readonly<{
+  children: ReactNode;
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning>
-        <Script
-          id="structured-data"
+    <html lang="en">
+      <body>
+        {/* ORGANIZATION STRUCTURED DATA */}
+        <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: structuredDataJson,
+          }}
         />
+
+        {/* GLOBAL NAVIGATION */}
         <Navbar />
-        <main>{children}</main>
+
+        {/* PAGE CONTENT */}
+        {/* Individual public pages provide their own main element. */}
+        {children}
+
+        {/* GLOBAL FOOTER */}
         <Footer />
       </body>
     </html>

@@ -1,105 +1,1209 @@
-'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X, Search } from 'lucide-react';
+"use client";
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "framer-motion";
+
+import {
+  ArrowRight,
+  ChevronDown,
+  Menu,
+  X,
+} from "lucide-react";
+
+// ==========================================
+// CLOUDLEM — REFINED CINEMATIC NAVBAR
+//
+// THEME:
+// Charcoal / Steel Blue / Warm Silver
+//
+// FEATURES:
+// - Transparent over homepage Hero
+// - Dark glass navbar on scroll
+// - Solid navbar on interior pages
+// - Auto-hide on downward scrolling
+// - Premium frosted mega menus
+// - Hover and keyboard interactions
+// - Animated mobile accordion
+// - Original multicolor logo preserved
+// ==========================================
+
+type MenuKey =
+  | "services"
+  | "industries"
+  | "company";
+
+type MenuLink = {
+  label: string;
+  href: string;
+  description?: string;
+};
+
+type MenuGroup = {
+  title: string;
+  href?: string;
+  links?: MenuLink[];
+};
+
+type MenuConfig = {
+  eyebrow: string;
+  heading: string;
+  overview: {
+    label: string;
+    href: string;
+  };
+  columns: MenuGroup[][];
+};
+
+// ==========================================
+// ORIGINAL CLOUDLEM BRANDING
+// ==========================================
+
+const logoStyle: CSSProperties = {
+  backgroundImage:
+    "linear-gradient(100deg,#62C449 0%,#58BF4A 30%,#F47B2B 68%,#E6383C 100%)",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+};
+
+// ==========================================
+// NAVIGATION DATA
+// ALL EXISTING DESTINATIONS PRESERVED
+// ==========================================
+
+const menus: Record<MenuKey, MenuConfig> = {
+  services: {
+    eyebrow: "Our Expertise",
+    heading: "Technology & Business Services",
+    overview: {
+      label: "View All Services",
+      href: "/services",
+    },
+    columns: [
+      [
+        {
+          title: "Digital",
+          links: [
+            {
+              label: "Digital Consulting & Strategy",
+              href: "/services/digital-consulting-strategy",
+            },
+            {
+              label: "Digital Commerce",
+              href: "/services/digital-commerce",
+            },
+            {
+              label: "Business Applications",
+              href: "/services/business-applications",
+            },
+          ],
+        },
+        {
+          title: "Data & Analytics",
+          links: [
+            {
+              label: "Data Modernization",
+              href: "/services/data-modernization",
+            },
+            {
+              label: "Advanced Analytics",
+              href: "/services/advanced-analytics",
+            },
+            {
+              label: "Connected Intelligence",
+              href: "/services/connected-intelligence",
+            },
+            {
+              label: "Data Management",
+              href: "/services/data-management",
+            },
+            {
+              label: "Generative AI",
+              href: "/services/generative-ai",
+            },
+          ],
+        },
+        {
+          title: "Cloud",
+          links: [
+            {
+              label: "Cloud Operations & Migration",
+              href: "/services/cloud-operations-migration",
+            },
+            {
+              label:
+                "Cloud Application Development & Integration",
+              href:
+                "/services/cloud-application-development-integration",
+            },
+            {
+              label: "Managed Services",
+              href: "/services/managed-services",
+            },
+          ],
+        },
+      ],
+      [
+        {
+          title: "Digital Infrastructure Services",
+          href: "/services/digital-infrastructure-services",
+        },
+        {
+          title: "Security",
+          href: "/services/security",
+        },
+        {
+          title: "Emerging Technologies",
+        },
+        {
+          title: "Business Process Services",
+          links: [
+            {
+              label: "Contact Center",
+              href: "/contact",
+            },
+            {
+              label: "Digital Marketing",
+              href: "/services#business-growth",
+            },
+            {
+              label: "Finance & Accounting",
+              href: "/services#bookkeeping-accounting",
+            },
+            {
+              label: "Staff Augmentation",
+              href: "/contact",
+            },
+            {
+              label: "Legal Process Outsourcing",
+              href: "/contact",
+            },
+            {
+              label: "Recruitment Process Outsourcing",
+              href: "/contact",
+            },
+          ],
+        },
+        {
+          title: "Explore Solutions",
+          href: "/solutions",
+        },
+      ],
+    ],
+  },
+
+  industries: {
+    eyebrow: "Who We Serve",
+    heading: "Industries We Work With",
+    overview: {
+      label: "View All Industries",
+      href: "/industries",
+    },
+    columns: [
+      [
+        {
+          title: "People & Communities",
+          links: [
+            {
+              label: "Healthcare",
+              href: "/industries#healthcare",
+              description:
+                "Digital systems and operational workflows",
+            },
+            {
+              label: "Education",
+              href: "/industries#education",
+              description:
+                "Learning platforms and digital operations",
+            },
+          ],
+        },
+      ],
+      [
+        {
+          title: "Business & Commerce",
+          links: [
+            {
+              label: "Retail & E-commerce",
+              href: "/industries#retail",
+              description:
+                "Commerce platforms and customer experiences",
+            },
+            {
+              label: "Professional Services",
+              href: "/industries#professional-services",
+              description:
+                "Business workflows, reporting and automation",
+            },
+          ],
+        },
+      ],
+    ],
+  },
+
+  company: {
+    eyebrow: "Discover Cloudlem",
+    heading: "Company & Insights",
+    overview: {
+      label: "Contact Cloudlem",
+      href: "/contact",
+    },
+    columns: [
+      [
+        {
+          title: "Our Company",
+          links: [
+            {
+              label: "About Cloudlem",
+              href: "/about",
+              description:
+                "Our vision, mission and values",
+            },
+            {
+              label: "Careers",
+              href: "/careers",
+              description:
+                "Explore opportunities at Cloudlem",
+            },
+          ],
+        },
+      ],
+      [
+        {
+          title: "Explore & Connect",
+          links: [
+            {
+              label: "Blog & Insights",
+              href: "/blog",
+              description:
+                "Engineering knowledge and perspectives",
+            },
+            {
+              label: "Get in Touch",
+              href: "/contact",
+              description:
+                "Start a conversation with our team",
+            },
+          ],
+        },
+      ],
+    ],
+  },
+};
+
+const labels: Record<MenuKey, string> = {
+  services: "Services",
+  industries: "Industries",
+  company: "Company",
+};
+
+const menuKeys: MenuKey[] = [
+  "services",
+  "industries",
+  "company",
+];
+
+// ==========================================
+// PREMIUM DESKTOP MEGA MENU
+// ==========================================
+
+function MegaMenu({
+  menuKey,
+  pathname,
+  onNavigate,
+}: {
+  menuKey: MenuKey;
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const config = menus[menuKey];
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      id={`desktop-${menuKey}-menu`}
+      initial={
+        reduceMotion
+          ? false
+          : { opacity: 0, y: -10 }
+      }
+      animate={{ opacity: 1, y: 0 }}
+      exit={
+        reduceMotion
+          ? undefined
+          : { opacity: 0, y: -8 }
+      }
+      transition={{
+        duration: reduceMotion ? 0 : 0.23,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="absolute inset-x-0 top-full z-20"
+    >
+      <div className="mx-auto max-h-[calc(100dvh-90px)] w-[calc(100%-32px)] max-w-[1190px] overflow-y-auto overscroll-contain rounded-b-[16px] border border-[#D5E0E2] bg-[#F6F8F8] text-[#17252D] shadow-[0_32px_75px_rgba(9,20,27,0.28)]">
+
+        {/* MEGA MENU HEADER */}
+
+        <div className="flex flex-wrap items-center justify-between gap-5 border-b border-[#DBE4E5] px-7 py-6 sm:px-10">
+
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#557786]">
+              {config.eyebrow}
+            </p>
+
+            <p className="mt-2 text-[19px] font-semibold tracking-[-0.035em] text-[#17252D]">
+              {config.heading}
+            </p>
+          </div>
+
+          <Link
+            href={config.overview.href}
+            onClick={onNavigate}
+            className="group inline-flex min-h-10 items-center gap-2 rounded-sm text-[11px] font-bold uppercase tracking-[0.08em] text-[#355969] hover:text-[#111C23] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#537F93]"
+          >
+            {config.overview.label}
+
+            <ArrowRight
+              size={16}
+              aria-hidden="true"
+              className="transition-transform motion-safe:group-hover:translate-x-1"
+            />
+          </Link>
+
+        </div>
+
+        {/* MEGA MENU COLUMNS */}
+
+        <div className="grid grid-cols-2 gap-x-12 px-7 py-8 sm:px-10 lg:gap-x-20">
+
+          {config.columns.map((column, index) => (
+            <div
+              key={index}
+              className="min-w-0 space-y-7"
+            >
+              {column.map((group) => (
+                <section
+                  key={group.title}
+                  className="min-w-0"
+                >
+
+                  {/* CATEGORY */}
+
+                  {group.href ? (
+                    <Link
+                      href={group.href}
+                      onClick={onNavigate}
+                      className="group inline-flex items-start gap-2 rounded-sm text-[16px] font-semibold leading-6 tracking-[-0.02em] text-[#17252D] hover:text-[#46798B] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#537F93]"
+                    >
+                      {group.title}
+
+                      <ArrowRight
+                        size={15}
+                        aria-hidden="true"
+                        className="mt-1 shrink-0 text-[#668C9B] transition-transform motion-safe:group-hover:translate-x-1"
+                      />
+                    </Link>
+                  ) : (
+                    <h3 className="text-[16px] font-semibold leading-6 tracking-[-0.02em] text-[#17252D]">
+                      {group.title}
+                    </h3>
+                  )}
+
+                  {/* CATEGORY LINKS */}
+
+                  {group.links && (
+                    <ul className="mt-3 space-y-1">
+                      {group.links.map((link) => {
+                        const active =
+                          pathname === link.href;
+
+                        return (
+                          <li
+                            key={`${group.title}-${link.label}`}
+                          >
+                            <Link
+                              href={link.href}
+                              onClick={onNavigate}
+                              aria-current={
+                                active
+                                  ? "page"
+                                  : undefined
+                              }
+                              className={`group inline-flex max-w-full items-start gap-2 rounded-sm py-1.5 text-[13px] leading-[1.65] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#537F93] ${
+                                active
+                                  ? "font-semibold text-[#356A7D]"
+                                  : "text-[#53636B] hover:text-[#356A7D]"
+                              }`}
+                            >
+                              <span className="min-w-0">
+                                {link.label}
+
+                                {link.description && (
+                                  <span className="mt-0.5 block text-[11px] font-normal text-[#718089]">
+                                    {link.description}
+                                  </span>
+                                )}
+                              </span>
+
+                              <ArrowRight
+                                size={14}
+                                aria-hidden="true"
+                                className="mt-1 shrink-0 text-[#7194A0] transition-transform motion-safe:group-hover:translate-x-1"
+                              />
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+
+                </section>
+              ))}
+            </div>
+          ))}
+
+        </div>
+
+        {/* BOTTOM SIGNATURE */}
+
+        <div className="border-t border-[#DFE7E8] bg-[#EAF0F1] px-7 py-4 sm:px-10">
+          <p className="text-[11px] text-[#647680]">
+            Cloudlem — Technology, Operations &amp;
+            Financial Solutions
+          </p>
+        </div>
+
+      </div>
+    </motion.div>
+  );
+}
+
+// ==========================================
+// MAIN NAVBAR
+// ==========================================
+
+export default function Navbar() {
   const pathname = usePathname();
 
+  const navRef =
+    useRef<HTMLElement | null>(null);
+
+  const lastY = useRef(0);
+
+  const menuButtonRef =
+    useRef<HTMLButtonElement>(null);
+
+  const [scrolled, setScrolled] =
+    useState(false);
+
+  const [visible, setVisible] =
+    useState(true);
+
+  const [desktopMenu, setDesktopMenu] =
+    useState<MenuKey | null>(null);
+
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
+
+  const [mobileMenu, setMobileMenu] =
+    useState<MenuKey | null>(null);
+
+  const reduceMotion = useReducedMotion();
+
+  // ========================================
+  // MENU MANAGEMENT
+  // ========================================
+
+  const closeMenus = () => {
+    setDesktopMenu(null);
+    setMobileOpen(false);
+    setMobileMenu(null);
+  };
+
+  // ========================================
+  // NAVBAR BACKGROUND
+  //
+  // Transparent only at homepage top.
+  // Solid on all other pages.
+  // ========================================
+
+  const solid =
+    pathname !== "/" ||
+    scrolled ||
+    desktopMenu !== null ||
+    mobileOpen;
+
+  // ========================================
+  // ACTIVE ROUTE DETECTION
+  // ========================================
+
+  const activePath = (href: string) =>
+    href === "/"
+      ? pathname === "/"
+      : pathname === href ||
+        pathname.startsWith(`${href}/`);
+
+  const activeMenu = (key: MenuKey) =>
+    key === "services"
+      ? activePath("/services") ||
+        activePath("/solutions")
+      : key === "industries"
+        ? activePath("/industries")
+        : [
+            "/about",
+            "/careers",
+            "/blog",
+          ].some(activePath);
+
+  // ========================================
+  // SMART SCROLL BEHAVIOR
+  // ========================================
+
   useEffect(() => {
+    lastY.current = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const y = Math.max(
+        0,
+        window.scrollY
+      );
+
+      setScrolled(y > 32);
+
+      if (
+        y < 110 ||
+        desktopMenu ||
+        mobileOpen ||
+        navRef.current?.contains(
+          document.activeElement
+        )
+      ) {
+        setVisible(true);
+        lastY.current = y;
+        return;
+      }
+
+      // Hide on downward scrolling.
+
+      if (
+        y > 160 &&
+        y - lastY.current > 8
+      ) {
+        setVisible(false);
+        lastY.current = y;
+      }
+
+      // Show on upward scrolling.
+
+      else if (
+        lastY.current - y > 8
+      ) {
+        setVisible(true);
+        lastY.current = y;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    handleScroll();
+
+    window.addEventListener(
+      "scroll",
+      handleScroll,
+      { passive: true }
+    );
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+    };
+  }, [desktopMenu, mobileOpen]);
+
+  // ========================================
+  // CLOSE MENUS WHEN ROUTE CHANGES
+  // ========================================
+
+  useEffect(() => {
+    setDesktopMenu(null);
+    setMobileMenu(null);
+    setMobileOpen(false);
+    setVisible(true);
+  }, [pathname]);
+
+  // ========================================
+  // ESCAPE KEY SUPPORT
+  // ========================================
+
+  useEffect(() => {
+    const handleEscape = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      if (mobileOpen) {
+        menuButtonRef.current?.focus();
+      }
+
+      closeMenus();
+    };
+
+    window.addEventListener(
+      "keydown",
+      handleEscape
+    );
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+    };
+  }, [mobileOpen]);
+
+  // ========================================
+  // CLOSE DESKTOP MENU ON OUTSIDE CLICK
+  // ========================================
+
+  useEffect(() => {
+    const handleOutside = (
+      event: PointerEvent
+    ) => {
+      if (
+        navRef.current &&
+        !navRef.current.contains(
+          event.target as Node
+        )
+      ) {
+        setDesktopMenu(null);
+      }
+    };
+
+    document.addEventListener(
+      "pointerdown",
+      handleOutside
+    );
+
+    return () => {
+      document.removeEventListener(
+        "pointerdown",
+        handleOutside
+      );
+    };
   }, []);
 
-  const menuItems = [
-    { title: 'Home', href: '/' },
-    { title: 'Services', href: '/services' },
-    { title: 'About', href: '/about' },
-    { title: 'Blog', href: '/blog' },
-    { title: 'Solutions', href: '/solutions' },
-    { title: 'Careers', href: '/careers' },
-    { title: 'Contact', href: '/contact' },
-  ];
+  // ========================================
+  // LOCK PAGE SCROLL ON MOBILE
+  // ========================================
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const previous =
+      document.body.style.overflow;
+
+    document.body.style.overflow =
+      "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        previous;
+    };
+  }, [mobileOpen]);
+
+  // ========================================
+  // RENDER
+  // ========================================
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-[72px] flex items-center ${
-        isScrolled ? 'bg-brand-dark/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+      ref={navRef}
+      aria-label="Primary navigation"
+      onMouseLeave={() => {
+        setDesktopMenu(null);
+      }}
+      onBlur={(event) => {
+        if (
+          !event.currentTarget.contains(
+            event.relatedTarget as Node | null
+          )
+        ) {
+          setDesktopMenu(null);
+        }
+      }}
+      className={`fixed inset-x-0 top-0 z-50 h-[76px] border-b text-white transition-[transform,background-color,border-color,box-shadow] duration-300 motion-reduce:transition-none ${
+        visible
+          ? "translate-y-0"
+          : "-translate-y-full"
+      } ${
+        solid
+          ? "border-white/15 bg-[#16242C]/95 shadow-[0_12px_35px_rgba(7,16,23,0.22)] backdrop-blur-xl"
+          : "border-transparent bg-transparent shadow-none"
       }`}
     >
-      <div className="container-systems w-full flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-1">
-          <span className="text-[22px] font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-white via-accent-cyan to-accent-blue">
+
+      {/* ======================================
+          NAVIGATION ROW
+      ====================================== */}
+
+      <div className="container-systems relative z-30 flex h-full items-center justify-between gap-4">
+
+        {/* ==================================
+            ORIGINAL MULTICOLOR LOGO
+        ================================== */}
+
+        <Link
+          href="/"
+          onClick={closeMenus}
+          onMouseEnter={() => {
+            setDesktopMenu(null);
+          }}
+          aria-label="Cloudlem home"
+          className="flex shrink-0 items-center gap-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#E7EFF1]"
+        >
+          <Image
+            src="/images/logo.png"
+            alt=""
+            width={55}
+            height={60}
+            priority
+            className="h-[60px] w-[55px] object-contain"
+          />
+
+          <span
+            style={logoStyle}
+            className="-ml-[7px] text-[21px] font-bold tracking-[-0.045em] sm:text-[22px]"
+          >
             Cloudlem
           </span>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-1 text-[13px] font-medium tracking-wide">
-          {menuItems.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className={`px-4 py-2 rounded transition-all relative ${
-                pathname === item.href ? 'text-white font-semibold' : 'text-white/70 hover:text-white'
-              }`}
-            >
-              {item.title}
-              {pathname === item.href && (
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[2px] bg-white rounded-full" />
-              )}
-            </Link>
-          ))}
-        </div>
+        {/* ==================================
+            DESKTOP NAVIGATION
+        ================================== */}
 
-        <div className="hidden lg:flex items-center gap-3">
-          <button className="text-white/70 hover:text-white transition-colors p-2">
-            <Search size={18} />
-          </button>
+        <div className="hidden h-full items-center gap-1 xl:ml-auto xl:flex">
+
+          {/* HOME */}
+
           <Link
-            href="/contact"
-            className="px-6 py-2.5 bg-white text-brand-dark font-bold text-[13px] rounded-md hover:bg-white/90 transition-all uppercase tracking-wider"
+            href="/"
+            onClick={closeMenus}
+            onMouseEnter={() => {
+              setDesktopMenu(null);
+            }}
+            aria-current={
+              activePath("/")
+                ? "page"
+                : undefined
+            }
+            className={`group relative flex h-full items-center px-4 text-[13px] font-medium focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#E8F0F2] ${
+              activePath("/")
+                ? "text-white"
+                : "text-white/80 hover:text-white"
+            }`}
           >
-            Get in Touch
+            Home
+
+            <span
+              aria-hidden="true"
+              className={`absolute bottom-0 left-4 right-4 h-[2px] origin-left bg-[#D9E7E9] transition-transform duration-300 ${
+                activePath("/")
+                  ? "scale-x-100"
+                  : "scale-x-0 group-hover:scale-x-100"
+              }`}
+            />
           </Link>
+
+          {/* DROPDOWN TRIGGERS */}
+
+          {menuKeys.map((key) => {
+            const open =
+              desktopMenu === key;
+
+            const active =
+              activeMenu(key);
+
+            return (
+              <div
+                key={key}
+                className="flex h-full items-center"
+                onPointerEnter={(event) => {
+                  if (
+                    event.pointerType ===
+                    "mouse"
+                  ) {
+                    setDesktopMenu(key);
+                    setVisible(true);
+                  }
+                }}
+              >
+                <button
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded={open}
+                  aria-controls={
+                    open
+                      ? `desktop-${key}-menu`
+                      : undefined
+                  }
+                  onClick={() => {
+                    setDesktopMenu(
+                      open ? null : key
+                    );
+
+                    setVisible(true);
+                  }}
+                  className={`group relative flex h-full items-center gap-1.5 px-4 text-[13px] font-medium focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#E8F0F2] ${
+                    open || active
+                      ? "text-white"
+                      : "text-white/80 hover:text-white"
+                  }`}
+                >
+                  {labels[key]}
+
+                  <ChevronDown
+                    size={14}
+                    aria-hidden="true"
+                    className={`transition-transform duration-300 motion-reduce:transition-none ${
+                      open
+                        ? "rotate-180"
+                        : ""
+                    }`}
+                  />
+
+                  <span
+                    aria-hidden="true"
+                    className={`absolute bottom-0 left-4 right-4 h-[2px] origin-left bg-[#D9E7E9] transition-transform duration-300 ${
+                      open || active
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
+                </button>
+              </div>
+            );
+          })}
+
         </div>
 
-        <button className="lg:hidden text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        {/* ==================================
+            DESKTOP CONTACT BUTTON
+        ================================== */}
+
+        <Link
+          href="/contact"
+          onClick={closeMenus}
+          onMouseEnter={() => {
+            setDesktopMenu(null);
+          }}
+          className="group hidden shrink-0 items-center gap-3 rounded-[6px] border border-[#F1F3F1] bg-[#F1F3F1] px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#1B2A32] transition-[background-color,box-shadow,transform] duration-300 hover:bg-white hover:shadow-[0_10px_25px_rgba(214,231,235,0.16)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white xl:inline-flex"
+        >
+          Get in Touch
+
+          <ArrowRight
+            size={16}
+            aria-hidden="true"
+            className="transition-transform motion-safe:group-hover:translate-x-1"
+          />
+        </Link>
+
+        {/* ==================================
+            MOBILE MENU BUTTON
+        ================================== */}
+
+        <button
+          ref={menuButtonRef}
+          type="button"
+          aria-label={
+            mobileOpen
+              ? "Close navigation"
+              : "Open navigation"
+          }
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => {
+            setMobileOpen(
+              (open) => !open
+            );
+
+            setMobileMenu(null);
+            setDesktopMenu(null);
+            setVisible(true);
+          }}
+          className="flex h-11 w-11 items-center justify-center rounded-[7px] border border-white/30 bg-white/10 text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white xl:hidden"
+        >
+          {mobileOpen ? (
+            <X
+              size={23}
+              aria-hidden="true"
+            />
+          ) : (
+            <Menu
+              size={23}
+              aria-hidden="true"
+            />
+          )}
         </button>
+
       </div>
 
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-[72px] bg-brand-dark z-40 p-6 flex flex-col gap-1">
-          {menuItems.map((item) => (
+      {/* ======================================
+          DESKTOP MEGA MENU
+      ====================================== */}
+
+      <div className="hidden xl:block">
+        <AnimatePresence mode="wait">
+          {desktopMenu && (
+            <MegaMenu
+              key={desktopMenu}
+              menuKey={desktopMenu}
+              pathname={pathname}
+              onNavigate={closeMenus}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* ======================================
+          MOBILE AND TABLET NAVIGATION
+      ====================================== */}
+
+      {mobileOpen && (
+        <div
+          id="mobile-navigation"
+          className="absolute inset-x-0 top-full h-[calc(100dvh-76px)] overflow-y-auto overscroll-contain border-t border-white/15 bg-[#182832] shadow-[0_26px_65px_rgba(5,15,20,0.35)] xl:hidden"
+        >
+
+          <div className="container-systems pb-12 pt-5">
+
+            {/* HOME LINK */}
+
             <Link
-              key={item.title}
-              href={item.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`text-lg font-medium py-4 border-b border-white/5 transition-colors ${
-                pathname === item.href ? 'text-white' : 'text-white/60 hover:text-white'
-              }`}
+              href="/"
+              onClick={closeMenus}
+              className="flex min-h-14 items-center border-b border-white/10 py-4 text-[15px] font-medium text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
             >
-              {item.title}
+              Home
             </Link>
-          ))}
-          <Link
-            href="/contact"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="mt-6 px-6 py-3 bg-white text-brand-dark font-bold text-sm rounded-md text-center uppercase tracking-wider"
-          >
-            Get in Touch
-          </Link>
+
+            {/* MOBILE ACCORDIONS */}
+
+            {menuKeys.map((key) => {
+              const open =
+                mobileMenu === key;
+
+              const config =
+                menus[key];
+
+              return (
+                <div
+                  key={key}
+                  className="border-b border-white/10"
+                >
+
+                  {/* ACCORDION TRIGGER */}
+
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-controls={
+                      open
+                        ? `mobile-${key}-items`
+                        : undefined
+                    }
+                    onClick={() => {
+                      setMobileMenu(
+                        open ? null : key
+                      );
+                    }}
+                    className="flex min-h-14 w-full items-center justify-between py-4 text-left text-[15px] font-medium text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
+                  >
+                    {labels[key]}
+
+                    <ChevronDown
+                      size={18}
+                      aria-hidden="true"
+                      className={`text-[#B8D3D9] transition-transform duration-300 motion-reduce:transition-none ${
+                        open
+                          ? "rotate-180"
+                          : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* ANIMATED CONTENT */}
+
+                  <AnimatePresence initial={false}>
+                    {open && (
+                      <motion.div
+                        id={`mobile-${key}-items`}
+                        initial={
+                          reduceMotion
+                            ? false
+                            : {
+                                height: 0,
+                                opacity: 0,
+                              }
+                        }
+                        animate={{
+                          height: "auto",
+                          opacity: 1,
+                        }}
+                        exit={
+                          reduceMotion
+                            ? undefined
+                            : {
+                                height: 0,
+                                opacity: 0,
+                              }
+                        }
+                        transition={{
+                          duration:
+                            reduceMotion
+                              ? 0
+                              : 0.26,
+                        }}
+                        className="overflow-hidden"
+                      >
+
+                        <div className="space-y-6 pb-7">
+
+                          {/* OVERVIEW LINK */}
+
+                          <Link
+                            href={config.overview.href}
+                            onClick={closeMenus}
+                            className="flex min-h-11 items-center justify-between gap-3 border-b border-white/10 pb-4 text-[11px] font-bold uppercase tracking-[0.1em] text-[#CBE0E4] focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
+                          >
+                            {config.overview.label}
+
+                            <ArrowRight
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          </Link>
+
+                          {/* CATEGORY GROUPS */}
+
+                          {config.columns
+                            .flat()
+                            .map((group) => (
+                              <div
+                                key={group.title}
+                              >
+
+                                {/* CATEGORY HEADING */}
+
+                                {group.href ? (
+                                  <Link
+                                    href={group.href}
+                                    onClick={closeMenus}
+                                    className="mb-3 flex items-center gap-2 text-[15px] font-semibold text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
+                                  >
+                                    {group.title}
+
+                                    <ArrowRight
+                                      size={15}
+                                      aria-hidden="true"
+                                      className="text-[#A3C7D0]"
+                                    />
+                                  </Link>
+                                ) : (
+                                  <h3 className="mb-3 text-[15px] font-semibold text-white">
+                                    {group.title}
+                                  </h3>
+                                )}
+
+                                {/* CATEGORY LINKS */}
+
+                                {group.links && (
+                                  <ul className="space-y-1">
+
+                                    {group.links.map(
+                                      (link) => (
+                                        <li
+                                          key={`${group.title}-${link.label}`}
+                                        >
+                                          <Link
+                                            href={link.href}
+                                            onClick={closeMenus}
+                                            className="flex min-h-10 items-start justify-between gap-3 rounded-sm py-2 text-[13px] leading-6 text-white/75 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
+                                          >
+                                            <span className="min-w-0">
+
+                                              {link.label}
+
+                                              {link.description && (
+                                                <span className="block text-[11px] text-white/50">
+                                                  {link.description}
+                                                </span>
+                                              )}
+
+                                            </span>
+
+                                            <ArrowRight
+                                              size={14}
+                                              aria-hidden="true"
+                                              className="mt-1 shrink-0 text-[#A3C7D0]"
+                                            />
+
+                                          </Link>
+                                        </li>
+                                      )
+                                    )}
+
+                                  </ul>
+                                )}
+
+                              </div>
+                            ))}
+
+                        </div>
+
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                </div>
+              );
+            })}
+
+            {/* MOBILE CONTACT CTA */}
+
+            <Link
+              href="/contact"
+              onClick={closeMenus}
+              className="mt-8 flex min-h-12 items-center justify-between rounded-[6px] bg-[#F1F3F1] px-5 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1B2A32] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+            >
+              Get in Touch
+
+              <ArrowRight
+                size={16}
+                aria-hidden="true"
+              />
+            </Link>
+
+          </div>
+
         </div>
       )}
+
     </nav>
   );
-};
-
-export default Navbar;
+}

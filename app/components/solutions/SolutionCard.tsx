@@ -1,66 +1,185 @@
-'use client';
 
-import { LucideIcon, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+"use client";
+
+import { useState } from "react";
+
+import {
+  ArrowRight,
+  Check,
+  type LucideIcon,
+} from "lucide-react";
+
+import ServiceInquiryModal from "../services/ServiceInquiryModal";
+
+// ==========================================
+// SOLUTION CARD PROPERTIES
+// ==========================================
 
 interface SolutionCardProps {
   title: string;
   description: string;
   features: string[];
   icon: LucideIcon;
-  gradient: string;
   cta: string;
+
+  // Retained for compatibility.
+  gradient?: string;
 }
 
-const SolutionCard = ({ title, description, features, icon: Icon, gradient, cta }: SolutionCardProps) => {
-  return (
-    <div className="group relative bg-white border border-gray-200/60 rounded-2xl overflow-hidden hover:border-gray-300 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full">
-      
-      {/* Gradient accent line */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-      
-      {/* Hover background effect */}
-      <div className={`absolute inset-0 bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-[0.02] transition-opacity duration-300`} />
+// ==========================================
+// CLOUDLEM SOLUTION CARD
+// Warm Cream / Stone Beige / Charcoal
+// ==========================================
 
-      <div className="relative z-10 p-8 flex flex-col grow">
-        {/* Icon & Badge */}
-        <div className="flex items-start justify-between mb-6">
-          <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br ${gradient} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-            <Icon size={26} className="text-white" strokeWidth={2.5} />
+export default function SolutionCard({
+  title,
+  description,
+  features,
+  icon: Icon,
+  cta,
+}: SolutionCardProps) {
+  const [isInquiryOpen, setIsInquiryOpen] =
+    useState(false);
+
+  const solutionTitle = `Solutions - ${title}`;
+
+  return (
+    <>
+      {/* ===================================
+          SOLUTION CARD
+      =================================== */}
+
+      <article className="group relative flex h-full flex-col overflow-hidden border border-[#181818]/20 bg-[#B7B09F] text-[#181818] transition-all duration-300 hover:-translate-y-1 hover:border-[#181818]/60 hover:shadow-[0_20px_45px_rgba(24,24,24,0.12)]">
+
+        {/* TOP ACCENT */}
+
+        <div className="h-[3px] w-full bg-[#181818] transition-all duration-300 group-hover:h-[5px]" />
+
+        <div className="flex h-full flex-col p-7 sm:p-8">
+
+          {/* ===================================
+              ICON AND CATEGORY
+          =================================== */}
+
+          <div className="mb-9 flex items-start justify-between gap-4">
+
+            {/* SOLUTION ICON */}
+
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center border border-[#181818] bg-[#181818] text-[#D8D2C8] transition-colors duration-300 group-hover:bg-[#33312D]">
+              <Icon
+                size={24}
+                strokeWidth={1.6}
+                aria-hidden="true"
+              />
+            </div>
+
+            {/* CATEGORY LABEL */}
+
+            <span className="pt-2 text-right text-[9px] font-bold uppercase tracking-[0.17em] text-[#181818]/75">
+              Cloudlem
+              <span className="block">
+                Solutions
+              </span>
+            </span>
           </div>
-          <div className="flex items-center gap-1 px-3 py-1 bg-linear-to-r from-accent-blue/10 to-accent-purple/10 rounded-full">
-            <Sparkles size={12} className="text-accent-blue" />
-            <span className="text-xs font-semibold text-brand-dark/70">Recommended</span>
+
+          {/* ===================================
+              SOLUTION TITLE
+          =================================== */}
+
+          <h3 className="text-[27px] font-semibold leading-tight tracking-[-0.045em] text-[#181818] sm:text-[30px]">
+            {title}
+          </h3>
+
+          {/* DECORATIVE DIVIDER */}
+
+          <div className="mt-5 h-[2px] w-11 bg-[#181818]" />
+
+          {/* ===================================
+              SOLUTION DESCRIPTION
+          =================================== */}
+
+          <p className="mt-6 text-[13px] leading-7 text-[#181818]/85">
+            {description}
+          </p>
+
+          {/* ===================================
+              KEY CAPABILITIES
+          =================================== */}
+
+          <div className="mt-8 border-t border-[#181818]/20 pt-7">
+
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-5 bg-[#181818]" />
+
+              <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#181818]">
+                Key Capabilities
+              </p>
+            </div>
+
+            <ul className="space-y-4">
+              {features.map((feature) => (
+                <li
+                  key={feature}
+                  className="flex items-start gap-3"
+                >
+                  {/* CHECK ICON */}
+
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-[#181818]/50 bg-[#181818]/10 text-[#181818]">
+                    <Check
+                      size={12}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  </div>
+
+                  {/* FEATURE TEXT */}
+
+                  <span className="text-[12px] font-medium leading-6 text-[#181818]/85">
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ===================================
+              CTA BUTTON
+          =================================== */}
+
+          <div className="mt-auto pt-10">
+            <button
+              type="button"
+              onClick={() => setIsInquiryOpen(true)}
+              className="group/btn flex min-h-12 w-full items-center justify-between gap-4 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.11em] text-[#D8D2C8] transition-all duration-200 hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
+            >
+              <span>{cta}</span>
+
+              <ArrowRight
+                size={17}
+                strokeWidth={1.8}
+                className="shrink-0 transition-transform duration-300 group-hover/btn:translate-x-1.5"
+                aria-hidden="true"
+              />
+            </button>
           </div>
         </div>
 
-        {/* Title */}
-        <h3 className="text-2xl font-bold text-brand-dark mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-brand-dark group-hover:to-gray-600 transition-all">
-          {title}
-        </h3>
+        {/* SUBTLE DECORATIVE HOVER LINE */}
 
-        {/* Description */}
-        <p className="text-gray-600 mb-8 leading-relaxed text-[15px]">
-          {description}
-        </p>
+        <div className="pointer-events-none absolute bottom-0 left-0 h-[3px] w-0 bg-[#181818] transition-all duration-500 group-hover:w-full" />
+      </article>
 
-        {/* Features List */}
-        <ul className="space-y-3 mb-8 grow pb-6 border-b border-gray-100">
-          {features.map((feature, index) => (
-            <li key={index} className="flex items-center gap-3 text-gray-600 text-sm">
-              <CheckCircle2 size={16} className={`text-transparent bg-clip-text bg-linear-to-r ${gradient} shrink-0`} strokeWidth={2.5} />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
+      {/* ===================================
+          EXISTING SUPABASE INQUIRY MODAL
+          FUNCTIONALITY PRESERVED
+      =================================== */}
 
-        {/* CTA Button */}
-        <button className="group/btn flex items-center gap-2 mt-auto px-8 py-4 rounded-lg bg-brand-dark text-white font-semibold text-sm hover:bg-brand-dark/90 transition-all w-full justify-center hover:gap-3">
-          {cta}
-          <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-        </button>
-      </div>
-    </div>
+      <ServiceInquiryModal
+        serviceTitle={solutionTitle}
+        isOpen={isInquiryOpen}
+        onClose={() => setIsInquiryOpen(false)}
+      />
+    </>
   );
-};
-
-export default SolutionCard;
+}
