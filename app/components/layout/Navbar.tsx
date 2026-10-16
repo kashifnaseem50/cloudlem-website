@@ -40,6 +40,7 @@ import {
 // - Hover and keyboard interactions
 // - Animated mobile accordion
 // - Original multicolor logo preserved
+// - Standalone Bookkeeping navigation
 // ==========================================
 
 type MenuKey =
@@ -83,7 +84,7 @@ const logoStyle: CSSProperties = {
 
 // ==========================================
 // NAVIGATION DATA
-// ALL EXISTING DESTINATIONS PRESERVED
+// Links updated to existing routes
 // ==========================================
 
 const menus: Record<MenuKey, MenuConfig> = {
@@ -175,19 +176,15 @@ const menus: Record<MenuKey, MenuConfig> = {
           links: [
             {
               label: "Contact Center",
-              href: "/contact",
+              href: "/services/contact-center",
             },
             {
               label: "Digital Marketing",
-              href: "/services#business-growth",
-            },
-            {
-              label: "Finance & Accounting",
-              href: "/services#bookkeeping-accounting",
+              href: "/services/digital-marketing",
             },
             {
               label: "Staff Augmentation",
-              href: "/contact",
+              href: "/services/staff-augmentation",
             },
             {
               label: "Legal Process Outsourcing",
@@ -221,13 +218,13 @@ const menus: Record<MenuKey, MenuConfig> = {
           links: [
             {
               label: "Healthcare",
-              href: "/industries#healthcare",
+              href: "/industries",
               description:
                 "Digital systems and operational workflows",
             },
             {
               label: "Education",
-              href: "/industries#education",
+              href: "/industries",
               description:
                 "Learning platforms and digital operations",
             },
@@ -240,13 +237,13 @@ const menus: Record<MenuKey, MenuConfig> = {
           links: [
             {
               label: "Retail & E-commerce",
-              href: "/industries#retail",
+              href: "/industries",
               description:
                 "Commerce platforms and customer experiences",
             },
             {
               label: "Professional Services",
-              href: "/industries#professional-services",
+              href: "/industries",
               description:
                 "Business workflows, reporting and automation",
             },
@@ -320,6 +317,7 @@ const menuKeys: MenuKey[] = [
 
 // ==========================================
 // PREMIUM DESKTOP MEGA MENU
+// Existing design preserved
 // ==========================================
 
 function MegaMenu({
@@ -359,7 +357,6 @@ function MegaMenu({
         {/* MEGA MENU HEADER */}
 
         <div className="flex flex-wrap items-center justify-between gap-5 border-b border-[#DBE4E5] px-7 py-6 sm:px-10">
-
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#557786]">
               {config.eyebrow}
@@ -383,13 +380,11 @@ function MegaMenu({
               className="transition-transform motion-safe:group-hover:translate-x-1"
             />
           </Link>
-
         </div>
 
         {/* MEGA MENU COLUMNS */}
 
         <div className="grid grid-cols-2 gap-x-12 px-7 py-8 sm:px-10 lg:gap-x-20">
-
           {config.columns.map((column, index) => (
             <div
               key={index}
@@ -400,7 +395,6 @@ function MegaMenu({
                   key={group.title}
                   className="min-w-0"
                 >
-
                   {/* CATEGORY */}
 
                   {group.href ? (
@@ -470,12 +464,10 @@ function MegaMenu({
                       })}
                     </ul>
                   )}
-
                 </section>
               ))}
             </div>
           ))}
-
         </div>
 
         {/* BOTTOM SIGNATURE */}
@@ -486,7 +478,6 @@ function MegaMenu({
             Financial Solutions
           </p>
         </div>
-
       </div>
     </motion.div>
   );
@@ -756,7 +747,6 @@ export default function Navbar() {
           : "border-transparent bg-transparent shadow-none"
       }`}
     >
-
       {/* ======================================
           NAVIGATION ROW
       ====================================== */}
@@ -900,6 +890,38 @@ export default function Navbar() {
             );
           })}
 
+          {/* ==================================
+              BOOKKEEPING TOP-LEVEL LINK
+          ================================== */}
+
+          <Link
+            href="/bookkeeping"
+            onClick={closeMenus}
+            onMouseEnter={() => {
+              setDesktopMenu(null);
+            }}
+            aria-current={
+              activePath("/bookkeeping")
+                ? "page"
+                : undefined
+            }
+            className={`group relative flex h-full items-center px-4 text-[13px] font-medium focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#E8F0F2] ${
+              activePath("/bookkeeping")
+                ? "text-white"
+                : "text-white/80 hover:text-white"
+            }`}
+          >
+            Bookkeeping
+
+            <span
+              aria-hidden="true"
+              className={`absolute bottom-0 left-4 right-4 h-[2px] origin-left bg-[#D9E7E9] transition-transform duration-300 ${
+                activePath("/bookkeeping")
+                  ? "scale-x-100"
+                  : "scale-x-0 group-hover:scale-x-100"
+              }`}
+            />
+          </Link>
         </div>
 
         {/* ==================================
@@ -960,7 +982,6 @@ export default function Navbar() {
             />
           )}
         </button>
-
       </div>
 
       {/* ======================================
@@ -989,7 +1010,6 @@ export default function Navbar() {
           id="mobile-navigation"
           className="absolute inset-x-0 top-full h-[calc(100dvh-76px)] overflow-y-auto overscroll-contain border-t border-white/15 bg-[#182832] shadow-[0_26px_65px_rgba(5,15,20,0.35)] xl:hidden"
         >
-
           <div className="container-systems pb-12 pt-5">
 
             {/* HOME LINK */}
@@ -1016,7 +1036,6 @@ export default function Navbar() {
                   key={key}
                   className="border-b border-white/10"
                 >
-
                   {/* ACCORDION TRIGGER */}
 
                   <button
@@ -1081,7 +1100,6 @@ export default function Navbar() {
                         }}
                         className="overflow-hidden"
                       >
-
                         <div className="space-y-6 pb-7">
 
                           {/* OVERVIEW LINK */}
@@ -1104,9 +1122,7 @@ export default function Navbar() {
                           {config.columns
                             .flat()
                             .map((group) => (
-                              <div
-                                key={group.title}
-                              >
+                              <div key={group.title}>
 
                                 {/* CATEGORY HEADING */}
 
@@ -1134,7 +1150,6 @@ export default function Navbar() {
 
                                 {group.links && (
                                   <ul className="space-y-1">
-
                                     {group.links.map(
                                       (link) => (
                                         <li
@@ -1146,7 +1161,6 @@ export default function Navbar() {
                                             className="flex min-h-10 items-start justify-between gap-3 rounded-sm py-2 text-[13px] leading-6 text-white/75 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
                                           >
                                             <span className="min-w-0">
-
                                               {link.label}
 
                                               {link.description && (
@@ -1154,7 +1168,6 @@ export default function Navbar() {
                                                   {link.description}
                                                 </span>
                                               )}
-
                                             </span>
 
                                             <ArrowRight
@@ -1162,27 +1175,42 @@ export default function Navbar() {
                                               aria-hidden="true"
                                               className="mt-1 shrink-0 text-[#A3C7D0]"
                                             />
-
                                           </Link>
                                         </li>
                                       )
                                     )}
-
                                   </ul>
                                 )}
-
                               </div>
                             ))}
-
                         </div>
-
                       </motion.div>
                     )}
                   </AnimatePresence>
-
                 </div>
               );
             })}
+
+            {/* ==================================
+                MOBILE BOOKKEEPING LINK
+            ================================== */}
+
+            <Link
+              href="/bookkeeping"
+              onClick={closeMenus}
+              aria-current={
+                activePath("/bookkeeping")
+                  ? "page"
+                  : undefined
+              }
+              className={`flex min-h-14 items-center border-b border-white/10 py-4 text-[15px] font-medium focus-visible:outline-2 focus-visible:outline-[#DDE9EC] ${
+                activePath("/bookkeeping")
+                  ? "text-white"
+                  : "text-white/85 hover:text-white"
+              }`}
+            >
+              Bookkeeping
+            </Link>
 
             {/* MOBILE CONTACT CTA */}
 
@@ -1198,12 +1226,9 @@ export default function Navbar() {
                 aria-hidden="true"
               />
             </Link>
-
           </div>
-
         </div>
       )}
-
     </nav>
   );
 }
