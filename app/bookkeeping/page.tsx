@@ -12,7 +12,7 @@ import {
   CreditCard, FileCheck2, FileSpreadsheet, FolderSync,
   Handshake, Landmark, Layers3, LockKeyhole, Mail,
   Pause, Play, Plus, Quote, ReceiptText, RefreshCcw,
-  ShieldCheck, ShoppingBag, Star, Store, TrendingUp,
+  Scale, ShieldCheck, ShoppingBag, Star, Store, TrendingUp,
   Users, WalletCards, type LucideIcon,
 } from "lucide-react";
 
@@ -129,7 +129,7 @@ const plans: Plan[] = [
     price: 59,
     transactions: 50,
     accounts: 1,
-    reports: ["Profit & Loss"],
+    reports: ["Financial"],
     invoicing: false,
     reminders: false,
     payroll: 0,
@@ -142,7 +142,7 @@ const plans: Plan[] = [
     price: 99,
     transactions: 150,
     accounts: 3,
-    reports: ["Profit & Loss", "Balance Sheet"],
+    reports: ["Financial", "Balance Sheet"],
     invoicing: true,
     reminders: false,
     payroll: 5,
@@ -156,7 +156,7 @@ const plans: Plan[] = [
     price: 149,
     transactions: 300,
     accounts: 5,
-    reports: ["Profit & Loss", "Balance Sheet", "Cash Flow"],
+    reports: ["Financial", "Balance Sheet", "Cash Flow"],
     invoicing: true,
     reminders: true,
     payroll: 10,
@@ -174,8 +174,8 @@ const compare: {
   { label: "Transactions / month", value: p => `Up to ${p.transactions}` },
   { label: "Bank/card accounts", value: p => `Up to ${p.accounts}` },
   {
-    label: "Profit & Loss report",
-    value: p => p.reports.includes("Profit & Loss") ? "Included" : "—",
+    label: "Financial reports",
+    value: p => p.reports.includes("Financial") ? "Included" : "—",
   },
   {
     label: "Balance Sheet",
@@ -224,6 +224,10 @@ const faqs = [
     a: "Yes. Catch-up, cleanup, reconciliation, and bookkeeping setup can be scoped as one-time projects.",
   },
   {
+    q: "What does yearly bookkeeping include?",
+    a: "Yearly bookkeeping can mean an ongoing annual contract or a once-a-year project covering a full year's records. We'll confirm the scope, delivery schedule, and custom pricing before work begins.",
+  },
+  {
     q: "How much does bookkeeping cost?",
     a: "Our monthly packages are Basic ($59), Standard ($99), and Premium ($149) in USD. Work outside the included limits or one-time engagements is quoted separately.",
   },
@@ -240,8 +244,12 @@ const faqs = [
     a: "The Standard and Premium package descriptions contemplate payroll calculations and payslip support. Availability depends on the country, qualified delivery capacity, and an agreed written scope; tax filings and statutory remittances are not included by default.",
   },
   {
-    q: "Do you file taxes or provide independent audits?",
-    a: "Standard bookkeeping does not include tax filings, audit opinions, or regulated accounting advice. Such work requires a separate arrangement with appropriately qualified professionals.",
+    q: "What financial records should clients provide?",
+    a: "Clients should supply complete, authentic, accurate, and timely records relevant to the agreed work, such as bank and credit-card statements, invoices, receipts, and supporting documents. Known errors or missing records should be disclosed promptly. Sensitive documents should be shared through an agreed secure process, not the public inquiry form.",
+  },
+  {
+    q: "Does Cloudlem provide tax preparation and filing?",
+    a: "Cloudlem provides bookkeeping and financial reporting. For eligible clients, tax preparation or filing may be arranged through appropriately qualified professionals, where legally permitted and under a separate written agreement. These services are not included in standard bookkeeping packages, and avoiding tax penalties cannot be guaranteed.",
   },
 ];
 
@@ -257,7 +265,7 @@ const testimonials: Testimonial[] = [
   {
     name: "Chirs SIlva LLC",
     context: "QuickBooks Online transaction organization",
-    quote: "Mueen did a great job organizing my QBO transactions. Everything was properly categorized and accurately reconciled. She was efficient, detail-oriented, and made the whole process smooth and easy. I would definitely recommend him",
+    quote: "Mueen did a great job organizing my QBO transactions. Everything was properly categorized and accurately reconciled. He was efficient, detail-oriented, and made the whole process smooth and easy. I would definitely recommend him",
   },
   {
     name: "Property management client",
@@ -1462,102 +1470,235 @@ function Testimonials() {
 }
 
 /* ==========================================
+   FINANCIAL INTEGRITY & PROFESSIONAL ETHICS
+========================================== */
+
+const integrityPrinciples = [
+  {
+    title: "Accurate client records",
+    description:
+      "Clients provide complete, authentic, accurate, and timely financial information, including relevant statements, invoices, receipts, and supporting documents.",
+    icon: FileCheck2,
+  },
+  {
+    title: "Ethical bookkeeping",
+    description:
+      "Cloudlem handles agreed bookkeeping work carefully, treats financial information confidentially, and raises identified discrepancies for clarification.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Tax and compliance readiness",
+    description:
+      "Organized books support tax preparation and compliance reviews. Tax preparation and filing, when available, require eligible clients, qualified professionals, and a separate scope.",
+    icon: Scale,
+  },
+  {
+    title: "Shared accountability",
+    description:
+      "Clients disclose known issues and respond to questions; Cloudlem communicates findings and follows agreed review, reporting, and delivery responsibilities.",
+    icon: Handshake,
+  },
+];
+
+function FinancialIntegrity() {
+  return (
+    <section
+      id="bookkeeping-ethics"
+      aria-label="Financial integrity and professional ethics"
+      className="scroll-mt-24 border-y border-[#E9DFEF] bg-[#FBF9FD] py-20 sm:py-24"
+    >
+      <div className="container-systems">
+        <Heading
+          eyebrow="Our professional commitment"
+          title="Financial integrity & ethical bookkeeping"
+          description="Reliable financial reporting begins with accurate information, transparent communication, and shared responsibility."
+        />
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {integrityPrinciples.map((principle) => {
+            const Icon = principle.icon;
+            return (
+              <Reveal key={principle.title} className="h-full">
+                <article className="flex h-full items-start gap-4 rounded-[14px] border border-[#E6DAED] bg-white p-6 shadow-[0_7px_24px_rgba(72,44,90,.045)] sm:p-7">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-[#F2E9F8] text-[#75449B]">
+                    <Icon size={23} strokeWidth={1.7} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#30243B]">
+                      {principle.title}
+                    </h3>
+                    <p className="mt-2 text-[13px] leading-7 text-[#706477]">
+                      {principle.description}
+                    </p>
+                  </div>
+                </article>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        <div className="mt-7 rounded-[13px] border border-[#DED0E8] bg-[#F4EDF9] p-6 sm:p-7">
+          <h3 className="flex items-center gap-2 text-[15px] font-semibold text-[#523466]">
+            <ShieldCheck size={19} aria-hidden="true" />
+            Client responsibility for financial accuracy
+          </h3>
+          <p className="mt-3 text-[13px] leading-7 text-[#665670]">
+            Financial records and reports depend on the quality of the information
+            supplied. Incomplete, misleading, or delayed records can affect
+            reporting accuracy and tax-related decisions. Accurate bookkeeping
+            helps reduce avoidable reporting errors, but cannot guarantee that
+            taxes, filing deadlines, or penalties will be unaffected.
+          </p>
+          <p className="mt-3 text-[12px] leading-6 text-[#7C6B86]">
+            Tax services are not part of standard bookkeeping packages. Where
+            offered, eligibility, jurisdiction, qualified professional involvement,
+            and responsibilities will be confirmed in a separate written agreement.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================
    MAIN BOOKKEEPING HOMEPAGE
 ========================================== */
 
 const inputClass =
   "mt-2 block w-full rounded-[8px] border border-[#DFD5E5] bg-white px-4 py-3 text-[13px] text-[#30243B] outline-none transition-colors placeholder:text-[#A69BAE] focus:border-[#8754AA] focus:ring-2 focus:ring-[#8754AA]/15";
 
+const selectableServices = [
+  services[0].title,
+  "Yearly Bookkeeping",
+  ...services.slice(1).map((service) => service.title),
+  "Other / Custom Bookkeeping Support",
+];
+
+const engagementTypes = [
+  "Monthly contract",
+  "Yearly bookkeeping",
+  "One-time project",
+  "Not sure yet",
+] as const;
+
+const yearlyArrangements = [
+  {
+    value: "Annual contract — ongoing bookkeeping",
+    description: "Regular bookkeeping throughout the year under an annual agreement.",
+  },
+  {
+    value: "Once-a-year project — full-year records",
+    description: "Organize and reconcile an entire year's records as one project.",
+  },
+] as const;
+
 export default function BookkeepingPage() {
   const [selectedPackage, setSelectedPackage] = useState("");
+  const [engagement, setEngagement] = useState("");
+  const [yearlyArrangement, setYearlyArrangement] = useState("");
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [servicesError, setServicesError] = useState(false);
   const [notice, setNotice] = useState("");
+  const [noticeKind, setNoticeKind] = useState<"success" | "error">("success");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-const handleProposal = async (
-  event: FormEvent<HTMLFormElement>
-) => {
-  event.preventDefault();
-
-  if (isSubmitting) return;
-
-  const form = event.currentTarget;
-
-  if (!form.reportValidity()) return;
-
-  const data = new FormData(form);
-
-  const get = (field: string) =>
-    String(data.get(field) ?? "").trim();
-
-  const service = get("service");
-
-  const details = [
-    "CLOUDLEM BOOKKEEPING INQUIRY",
-    "",
-    `Engagement: ${get("engagement")}`,
-    `Bookkeeping Service: ${service}`,
-    `Selected Package: ${get("package") || "Custom / Not selected"}`,
-    `Country / Region: ${get("country") || "Not specified"}`,
-    `Accounting Software: ${get("software") || "Not specified"}`,
-    "",
-    "PROJECT REQUIREMENTS:",
-    get("message"),
-  ].join("\n");
-
-  const payload = {
-    serviceTitle: `Bookkeeping - ${service}`,
-    name: get("name"),
-    email: get("email"),
-    company: get("company"),
-    details,
-    website: get("website"),
+  const chooseEngagement = (value: string) => {
+    setEngagement(value);
+    if (value !== "Yearly bookkeeping") setYearlyArrangement("");
+    if (value !== "Monthly contract") setSelectedPackage("");
   };
 
-  setIsSubmitting(true);
-  setNotice("");
+  const chooseMonthlyPackage = (name: Plan["name"]) => {
+    chooseEngagement("Monthly contract");
+    setSelectedPackage(name);
+  };
 
-  try {
-    const response = await fetch(
-      "/api/service-inquiries",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
+  const toggleService = (name: string, checked: boolean) => {
+    setSelectedServices((current) =>
+      checked ? [...current, name] : current.filter((item) => item !== name)
     );
+    if (checked) setServicesError(false);
+  };
 
-    const result: {
-      success?: boolean;
-      error?: string;
-    } = await response.json();
+  const handleProposal = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isSubmitting) return;
 
-    if (!response.ok || result.success !== true) {
-      throw new Error(
-        result.error ||
-          "Unable to submit your inquiry."
-      );
+    const form = event.currentTarget;
+    if (!form.reportValidity()) return;
+
+    if (selectedServices.length === 0) {
+      setServicesError(true);
+      setNoticeKind("error");
+      setNotice("Please select at least one bookkeeping service.");
+      document.getElementById("bookkeeping-service-choices")?.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+      return;
     }
 
-    setNotice(
-      "Success! Your bookkeeping inquiry has been submitted. Our team will review your requirements."
-    );
+    const data = new FormData(form);
+    const get = (field: string) => String(data.get(field) ?? "").trim();
+    const servicesRequested = data.getAll("services").map(String);
 
-    form.reset();
-    setSelectedPackage("");
-  } catch (error) {
-    setNotice(
-      error instanceof Error
-        ? error.message
-        : "Something went wrong. Please try again."
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    const details = [
+      "CLOUDLEM BOOKKEEPING INQUIRY",
+      "",
+      `Engagement: ${engagement}`,
+      ...(engagement === "Yearly bookkeeping"
+        ? [`Yearly Arrangement: ${yearlyArrangement}`]
+        : []),
+      `Bookkeeping Services: ${servicesRequested.join(", ")}`,
+      `Selected Package: ${engagement === "Monthly contract" ? (selectedPackage || "Custom / Not selected") : "Custom quote / Not applicable"}`,
+      `Country / Region: ${get("country") || "Not specified"}`,
+      `Accounting Software: ${get("software") || "Not specified"}`,
+      `Client Financial Accuracy Acknowledgment: ${get("financialAccuracyAcknowledged") === "yes" ? "Confirmed — client agrees to provide complete, authentic, accurate, and timely relevant records, disclose known discrepancies, and supply supporting documentation if engaged." : "Not confirmed"}`,
+      "",
+      "PROJECT REQUIREMENTS:",
+      get("message"),
+    ].join("\n");
 
+    const payload = {
+      serviceTitle: servicesRequested.length === 1
+        ? `Bookkeeping - ${servicesRequested[0]}`
+        : "Bookkeeping - Multiple Services",
+      name: get("name"),
+      email: get("email"),
+      company: get("company"),
+      details,
+      website: get("website"),
+    };
+
+    setIsSubmitting(true);
+    setNotice("");
+    try {
+      const response = await fetch("/api/service-inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result: { success?: boolean; error?: string } = await response.json();
+      if (!response.ok || result.success !== true) {
+        throw new Error(result.error || "Unable to submit your inquiry.");
+      }
+
+      setNoticeKind("success");
+      setNotice("Success! Your bookkeeping inquiry has been submitted. Our team will review your requirements.");
+      form.reset();
+      setSelectedPackage("");
+      setEngagement("");
+      setYearlyArrangement("");
+      setSelectedServices([]);
+      setServicesError(false);
+    } catch (error) {
+      setNoticeKind("error");
+      setNotice(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <main className="min-w-0 overflow-x-clip bg-white text-[#30243B]">
@@ -1617,6 +1758,7 @@ const handleProposal = async (
             <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[11px] text-[#7C6E84]">
               {[
                 "Monthly bookkeeping",
+                "Yearly bookkeeping",
                 "One-time projects",
                 "International inquiries",
               ].map((t) => (
@@ -1688,14 +1830,15 @@ const handleProposal = async (
         <div className="container-systems">
           <Heading
             eyebrow="Flexible arrangements"
-            title="Two ways to work with Cloudlem"
-            description="An ongoing monthly contract or a clearly scoped one-time bookkeeping project."
+            title="Three ways to work with Cloudlem"
+            description="Choose monthly support, an annual bookkeeping arrangement, or a clearly scoped one-time project."
           />
 
-          <div className="mx-auto grid max-w-[950px] gap-5 md:grid-cols-2">
+          <div className="mx-auto grid max-w-[1190px] gap-5 lg:grid-cols-3">
             {[
               {
                 name: "Monthly bookkeeping",
+                engagement: "Monthly contract",
                 eyebrow: "Recurring services",
                 icon: CalendarCheck2,
                 description:
@@ -1707,7 +1850,21 @@ const handleProposal = async (
                 ],
               },
               {
+                name: "Yearly bookkeeping",
+                engagement: "Yearly bookkeeping",
+                eyebrow: "Annual services",
+                icon: CalendarCheck2,
+                description:
+                  "Choose an ongoing annual bookkeeping contract or a once-a-year project for your full year's records.",
+                points: [
+                  "Annual contract with regular bookkeeping",
+                  "Or one-time full-year record processing",
+                  "Custom scope and pricing",
+                ],
+              },
+              {
                 name: "One-time projects",
+                engagement: "One-time project",
                 eyebrow: "Project-based services",
                 icon: FolderSync,
                 description:
@@ -1755,6 +1912,7 @@ const handleProposal = async (
 
                     <Link
                       href="#request-proposal"
+                      onClick={() => chooseEngagement(m.engagement)}
                       className="mt-auto inline-flex items-center gap-2 pt-8 text-[12px] font-bold text-[#75449B]"
                     >
                       Discuss an engagement
@@ -1768,8 +1926,9 @@ const handleProposal = async (
         </div>
       </section>
 
-      <Pricing onChoose={setSelectedPackage} />
+      <Pricing onChoose={chooseMonthlyPackage} />
 
+      <FinancialIntegrity />
 
       {/* LIGHT CTA */}
 
@@ -1947,7 +2106,7 @@ const handleProposal = async (
             <p className="mt-6 max-w-[490px] text-[15px] leading-8 text-[#716478]">
               Tell us about the bookkeeping work your company would
               like to outsource. We can discuss monthly packages,
-              one-time engagements, and a suitable proposal.
+              yearly arrangements, one-time engagements, and a suitable proposal.
             </p>
 
             <div className="mt-9 space-y-6 border-t border-[#E1D5E9] pt-7">
@@ -2004,7 +2163,7 @@ const handleProposal = async (
               </h3>
 
               <p className="mt-2 text-[13px] leading-6 text-[#796D80]">
-                Share your requirements and preferred package.
+                Select your engagement and the services you need. We'll discuss a suitable proposal.
               </p>
 
               <form
@@ -2079,61 +2238,120 @@ const handleProposal = async (
                   </label>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block text-[12px] font-semibold">
+                <fieldset className="space-y-3">
+                  <legend className="text-[12px] font-semibold">
                     Engagement type *
-                    <select
-                      name="engagement"
-                      required
-                      defaultValue=""
-                      className={inputClass}
-                    >
-                      <option value="" disabled>Select one</option>
-                      <option>Monthly contract</option>
-                      <option>One-time project</option>
-                      <option>Not sure yet</option>
-                    </select>
-                  </label>
+                  </legend>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {engagementTypes.map((value) => (
+                      <label
+                        key={value}
+                        className={`flex cursor-pointer items-center gap-2.5 rounded-[9px] border px-3.5 py-3 text-[12px] transition-colors ${
+                          engagement === value
+                            ? "border-[#8754AA] bg-[#F6EFFA] text-[#55346C]"
+                            : "border-[#E2D8E8] bg-white text-[#675A70] hover:border-[#C7A9DB]"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="engagement"
+                          value={value}
+                          checked={engagement === value}
+                          onChange={() => chooseEngagement(value)}
+                          required
+                          className="h-4 w-4 shrink-0 accent-[#75449B]"
+                        />
+                        {value}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
 
+                {engagement === "Yearly bookkeeping" && (
+                  <fieldset className="space-y-3 rounded-[10px] border border-[#DCC9E9] bg-[#FBF8FD] p-4">
+                    <legend className="px-1 text-[12px] font-semibold text-[#55346C]">
+                      What kind of yearly bookkeeping? *
+                    </legend>
+                    {yearlyArrangements.map((option) => (
+                      <label key={option.value} className="flex cursor-pointer items-start gap-3">
+                        <input
+                          type="radio"
+                          name="yearlyArrangement"
+                          value={option.value}
+                          required
+                          checked={yearlyArrangement === option.value}
+                          onChange={() => setYearlyArrangement(option.value)}
+                          className="mt-1 h-4 w-4 shrink-0 accent-[#75449B]"
+                        />
+                        <span>
+                          <strong className="block text-[12px] text-[#493752]">{option.value}</strong>
+                          <span className="mt-1 block text-[11px] leading-5 text-[#84748C]">{option.description}</span>
+                        </span>
+                      </label>
+                    ))}
+                    <p className="text-[11px] leading-5 text-[#84748C]">
+                      Annual scope, billing, and pricing are confirmed in your proposal.
+                    </p>
+                  </fieldset>
+                )}
+
+                <fieldset id="bookkeeping-service-choices" className="space-y-3 scroll-mt-28">
+                  <legend className="text-[12px] font-semibold">
+                    Bookkeeping services *
+                  </legend>
+                  <p className="text-[11px] text-[#85778B]">
+                    Select all that apply ({selectedServices.length} selected).
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {selectableServices.map((name) => {
+                      const selected = selectedServices.includes(name);
+                      return (
+                        <label
+                          key={name}
+                          className={`flex cursor-pointer items-start gap-2.5 rounded-[8px] border px-3 py-2.5 text-[11px] leading-5 transition-colors ${
+                            selected
+                              ? "border-[#A77FC3] bg-[#F5EDF9] text-[#54376A]"
+                              : "border-[#E7DEEC] bg-white text-[#6B5E74] hover:border-[#C7A9DB]"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            name="services"
+                            value={name}
+                            checked={selected}
+                            onChange={(event) => toggleService(name, event.target.checked)}
+                            className="mt-0.5 h-4 w-4 shrink-0 accent-[#75449B]"
+                          />
+                          {name}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {servicesError && (
+                    <p role="alert" className="text-[12px] font-medium text-[#AD3151]">
+                      Please select at least one bookkeeping service.
+                    </p>
+                  )}
+                </fieldset>
+
+                {engagement === "Monthly contract" && (
                   <label className="block text-[12px] font-semibold">
-                    Bookkeeping service *
+                    Monthly package
                     <select
-                      name="service"
-                      required
-                      defaultValue=""
+                      name="package"
                       className={inputClass}
+                      value={selectedPackage}
+                      onChange={(event) => setSelectedPackage(event.target.value)}
                     >
-                      <option value="" disabled>
-                        Select a service
-                      </option>
-                      {services.map((s) => (
-                        <option key={s.title} value={s.title}>
-                          {s.title}
+                      <option value="">Not sure / custom scope</option>
+                      {plans.map((plan) => (
+                        <option key={plan.name} value={plan.name}>
+                          {plan.name} — ${plan.price}/month
                         </option>
                       ))}
-                      <option>Multiple services / Other</option>
                     </select>
                   </label>
-                </div>
-
-                <label className="block text-[12px] font-semibold">
-                  Monthly package
-                  <select
-                    name="package"
-                    className={inputClass}
-                    value={selectedPackage}
-                    onChange={(e) =>
-                      setSelectedPackage(e.target.value)
-                    }
-                  >
-                    <option value="">Not sure / custom scope</option>
-                    {plans.map((p) => (
-                      <option key={p.name} value={p.name}>
-                        {p.name} — ${p.price}/month
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                )}
 
                 <label className="block text-[12px] font-semibold">
                   Accounting software
@@ -2156,6 +2374,26 @@ const handleProposal = async (
                     className={`${inputClass} resize-y leading-6`}
                     placeholder="Describe your bookkeeping needs, approximate transaction volume, and timeline."
                   />
+                </label>
+
+                <label className="flex items-start gap-3 rounded-[10px] border border-[#E2D5EB] bg-[#FBF8FD] p-4 text-[12px] leading-6 text-[#665670]">
+                  <input
+                    type="checkbox"
+                    name="financialAccuracyAcknowledged"
+                    value="yes"
+                    required
+                    className="mt-1 h-4 w-4 shrink-0 accent-[#75449B]"
+                  />
+                  <span>
+                    <strong className="block font-semibold text-[#493554]">
+                      Client financial accuracy acknowledgment *
+                    </strong>
+                    I understand that accurate bookkeeping and financial reporting
+                    depend on complete, authentic, and timely information. If an
+                    engagement proceeds, I agree to disclose known discrepancies
+                    and provide relevant financial records and supporting documents
+                    through an agreed secure process.
+                  </span>
                 </label>
 
                 <label className="flex items-start gap-3 text-[11px] leading-6 text-[#776B7E]">
@@ -2186,7 +2424,11 @@ const handleProposal = async (
                   <p
                     role="status"
                     aria-live="polite"
-                    className="rounded-[8px] bg-[#F3EAF8] px-4 py-3 text-[12px] leading-6 text-[#624276]"
+                    className={`rounded-[8px] border px-4 py-3 text-[12px] leading-6 ${
+                      noticeKind === "success"
+                        ? "border-[#BCE1CD] bg-[#EEFAF2] text-[#256447]"
+                        : "border-[#F0C2CD] bg-[#FFF1F4] text-[#992C49]"
+                    }`}
                   >
                     {notice}
                   </p>
