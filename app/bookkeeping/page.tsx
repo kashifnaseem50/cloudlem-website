@@ -9,8 +9,8 @@ import {
   ArrowRight, ArrowUpRight, BookOpenCheck, BriefcaseBusiness,
   Building2, CalendarCheck2, ChartNoAxesCombined, Check,
   CheckCircle2, ChevronLeft, ChevronRight, ClipboardCheck,
-  CreditCard, FileCheck2, FileSpreadsheet, FolderSync,
-  Handshake, Landmark, Layers3, LockKeyhole, Mail,
+  FileCheck2, FileSpreadsheet, FolderSync,
+  Handshake, Landmark, LockKeyhole, Mail,
   Pause, Play, Plus, Quote, ReceiptText, RefreshCcw,
   Scale, ShieldCheck, ShoppingBag, Star, Store, TrendingUp,
   Users, WalletCards, type LucideIcon,
@@ -53,15 +53,9 @@ const services: Service[] = [
     tag: "One-time",
   },
   {
-    title: "Bank Reconciliation",
-    description: "Match bank statements against recorded transactions and investigate differences.",
+    title: "Bank & Credit Card Reconciliation",
+    description: "Match your bank and card transactions to your statements and resolve any differences.",
     icon: Landmark,
-    tag: "Recurring",
-  },
-  {
-    title: "Credit Card Reconciliation",
-    description: "Review card transactions, statements, and reconciliation items.",
-    icon: CreditCard,
     tag: "Recurring",
   },
   {
@@ -83,26 +77,14 @@ const services: Service[] = [
     tag: "Reporting",
   },
   {
-    title: "Expense Categorization",
-    description: "Classify business expenses consistently and maintain clear supporting records.",
-    icon: FileSpreadsheet,
-    tag: "Recurring",
-  },
-  {
-    title: "General Ledger Support",
-    description: "Maintain ledger organization and review entries within the agreed scope.",
-    icon: Layers3,
-    tag: "Operations",
-  },
-  {
     title: "Bookkeeping Setup",
     description: "Establish a chart of accounts and practical recording workflows.",
     icon: ClipboardCheck,
     tag: "One-time",
   },
   {
-    title: "Year-End Book Preparation",
-    description: "Organize accounts and records for review by your accountant or tax professional.",
+    title: "Year-End Bookkeeping",
+    description: "Prepare your full year's books for your accountant or tax professional.",
     icon: FileCheck2,
     tag: "Project",
   },
@@ -135,14 +117,14 @@ const plans: Plan[] = [
     payroll: 0,
     reviewCall: false,
     description: "The essentials for keeping simple books organized.",
-    audience: "Freelancers, startups, and smaller businesses.",
+    audience: "Freelancers, startups, and small businesses.",
   },
   {
     name: "Standard",
     price: 99,
     transactions: 150,
     accounts: 3,
-    reports: ["Financial", "Balance Sheet"],
+    reports: ["Financial"],
     invoicing: true,
     reminders: false,
     payroll: 5,
@@ -156,7 +138,7 @@ const plans: Plan[] = [
     price: 149,
     transactions: 300,
     accounts: 5,
-    reports: ["Financial", "Balance Sheet", "Cash Flow"],
+    reports: ["Financial"],
     invoicing: true,
     reminders: true,
     payroll: 10,
@@ -176,14 +158,6 @@ const compare: {
   {
     label: "Financial reports",
     value: p => p.reports.includes("Financial") ? "Included" : "—",
-  },
-  {
-    label: "Balance Sheet",
-    value: p => p.reports.includes("Balance Sheet") ? "Included" : "—",
-  },
-  {
-    label: "Cash Flow report",
-    value: p => p.reports.includes("Cash Flow") ? "Included" : "—",
   },
   {
     label: "Invoicing & bill tracking",
@@ -210,7 +184,7 @@ const industries = [
   { title: "Professional Services", text: "Structured records for service-focused firms.", icon: Building2 },
   { title: "Consultants", text: "Income, expenses, and invoicing activity.", icon: Users },
   { title: "Retail", text: "Transaction and expense organization.", icon: ReceiptText },
-  { title: "Growing Teams", text: "Consistent bookkeeping as activity expands.", icon: TrendingUp },
+  { title: "Property Management", text: "Rent, expenses, and property-level records.", icon: TrendingUp },
   { title: "Other Businesses", text: "Discuss a tailored scope for your needs.", icon: Handshake },
 ];
 
@@ -224,8 +198,8 @@ const faqs = [
     a: "Yes. Catch-up, cleanup, reconciliation, and bookkeeping setup can be scoped as one-time projects.",
   },
   {
-    q: "What does yearly bookkeeping include?",
-    a: "Yearly bookkeeping can mean an ongoing annual contract or a once-a-year project covering a full year's records. We'll confirm the scope, delivery schedule, and custom pricing before work begins.",
+    q: "What does year-end bookkeeping include?",
+    a: "We organize and reconcile your full year's transactions and prepare year-end financial reports, ready for tax filing. We confirm the scope and price before we start.",
   },
   {
     q: "How much does bookkeeping cost?",
@@ -249,7 +223,7 @@ const faqs = [
   },
   {
     q: "Does Cloudlem provide tax preparation and filing?",
-    a: "Cloudlem provides bookkeeping and financial reporting. For eligible clients, tax preparation or filing may be arranged through appropriately qualified professionals, where legally permitted and under a separate written agreement. These services are not included in standard bookkeeping packages, and avoiding tax penalties cannot be guaranteed.",
+    a: "Tax preparation and filing are not included in our bookkeeping packages. We prepare organized, tax-ready books for your tax professional.",
   },
 ];
 
@@ -263,8 +237,9 @@ type Testimonial = {
 
 const testimonials: Testimonial[] = [
   {
-    name: "Chirs SIlva LLC",
+    name: "Chris Silva LLC",
     context: "QuickBooks Online transaction organization",
+    rating: 5,
     quote: "Mueen did a great job organizing my QBO transactions. Everything was properly categorized and accurately reconciled. He was efficient, detail-oriented, and made the whole process smooth and easy. I would definitely recommend him",
   },
   {
@@ -748,7 +723,7 @@ function Pricing({
                     {[
                       `Up to ${p.transactions} transactions/month`,
                       `Up to ${p.accounts} bank/card account${p.accounts === 1 ? "" : "s"}`,
-                      ...p.reports.map((r) => `${r} report`),
+                      ...p.reports.map((r) => r === "Financial" ? "Financial reports" : `${r} report`),
                       ...(p.invoicing ? ["Invoicing & bill tracking"] : []),
                       ...(p.reminders ? ["Customer payment reminders"] : []),
                       ...(p.payroll
@@ -1124,9 +1099,6 @@ function AccountingTools() {
             <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#493B50]">
               Accounting platforms & tools
             </p>
-            <p className="mt-1 text-[12px] text-[#807587]">
-              Familiar tools, presented in a Cloudlem-style carousel
-            </p>
           </div>
 
           {!reduced && (
@@ -1342,7 +1314,7 @@ function CoFounder() {
           </p>
 
           <h2 className="text-[2rem] font-semibold tracking-[-0.045em] sm:text-[2.25rem]">
-            Mueen Khan.
+            Mueen Khan
           </h2>
 
           <p className="mt-2 text-[11px] font-semibold text-[#8250A1]">
@@ -1360,7 +1332,7 @@ function CoFounder() {
             href="/about"
             className="group mt-6 inline-flex w-fit items-center gap-3 rounded-[5px] bg-[#75449B] px-5 py-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white hover:bg-[#633787]"
           >
-            Meet our story
+            Read our story
             <ArrowRight
               size={14}
               className="transition-transform group-hover:translate-x-1"
@@ -1477,25 +1449,25 @@ const integrityPrinciples = [
   {
     title: "Accurate client records",
     description:
-      "Clients provide complete, authentic, accurate, and timely financial information, including relevant statements, invoices, receipts, and supporting documents.",
+      "Your books are only as accurate as the records behind them. We'll ask for your bank statements, invoices, and receipts, and let you know if anything is missing.",
     icon: FileCheck2,
   },
   {
     title: "Ethical bookkeeping",
     description:
-      "Cloudlem handles agreed bookkeeping work carefully, treats financial information confidentially, and raises identified discrepancies for clarification.",
+      "We handle your financial information with care and keep it confidential. If we spot a discrepancy, we raise it with you straight away.",
     icon: ShieldCheck,
   },
   {
     title: "Tax and compliance readiness",
     description:
-      "Organized books support tax preparation and compliance reviews. Tax preparation and filing, when available, require eligible clients, qualified professionals, and a separate scope.",
+      "We keep your books organized and ready for your tax professional to prepare and file your taxes.",
     icon: Scale,
   },
   {
     title: "Shared accountability",
     description:
-      "Clients disclose known issues and respond to questions; Cloudlem communicates findings and follows agreed review, reporting, and delivery responsibilities.",
+      "You share your records and answer our questions. We keep you updated, explain what we find, and deliver on the schedule we agreed.",
     icon: Handshake,
   },
 ];
@@ -1543,16 +1515,12 @@ function FinancialIntegrity() {
             Client responsibility for financial accuracy
           </h3>
           <p className="mt-3 text-[13px] leading-7 text-[#665670]">
-            Financial records and reports depend on the quality of the information
-            supplied. Incomplete, misleading, or delayed records can affect
-            reporting accuracy and tax-related decisions. Accurate bookkeeping
-            helps reduce avoidable reporting errors, but cannot guarantee that
-            taxes, filing deadlines, or penalties will be unaffected.
+            Accurate reports depend on complete and timely information.
+            If records are missing or late, we'll flag it so nothing is overlooked.
+            Final tax decisions and filings remain with you and your tax professional.
           </p>
           <p className="mt-3 text-[12px] leading-6 text-[#7C6B86]">
-            Tax services are not part of standard bookkeeping packages. Where
-            offered, eligibility, jurisdiction, qualified professional involvement,
-            and responsibilities will be confirmed in a separate written agreement.
+            Tax preparation and filing are not included in our bookkeeping packages.
           </p>
         </div>
       </div>
@@ -1567,16 +1535,11 @@ function FinancialIntegrity() {
 const inputClass =
   "mt-2 block w-full rounded-[8px] border border-[#DFD5E5] bg-white px-4 py-3 text-[13px] text-[#30243B] outline-none transition-colors placeholder:text-[#A69BAE] focus:border-[#8754AA] focus:ring-2 focus:ring-[#8754AA]/15";
 
-const selectableServices = [
-  services[0].title,
-  "Yearly Bookkeeping",
-  ...services.slice(1).map((service) => service.title),
-  "Other / Custom Bookkeeping Support",
-];
+const selectableServices = services.map((service) => service.title);
 
 const engagementTypes = [
   "Monthly contract",
-  "Yearly bookkeeping",
+  "Year-end bookkeeping",
   "One-time project",
   "Not sure yet",
 ] as const;
@@ -1604,7 +1567,7 @@ export default function BookkeepingPage() {
 
   const chooseEngagement = (value: string) => {
     setEngagement(value);
-    if (value !== "Yearly bookkeeping") setYearlyArrangement("");
+    if (value !== "Year-end bookkeeping") setYearlyArrangement("");
     if (value !== "Monthly contract") setSelectedPackage("");
   };
 
@@ -1646,8 +1609,8 @@ export default function BookkeepingPage() {
       "CLOUDLEM BOOKKEEPING INQUIRY",
       "",
       `Engagement: ${engagement}`,
-      ...(engagement === "Yearly bookkeeping"
-        ? [`Yearly Arrangement: ${yearlyArrangement}`]
+      ...(engagement === "Year-end bookkeeping"
+        ? [`Year-end Arrangement: ${yearlyArrangement}`]
         : []),
       `Bookkeeping Services: ${servicesRequested.join(", ")}`,
       `Selected Package: ${engagement === "Monthly contract" ? (selectedPackage || "Custom / Not selected") : "Custom quote / Not applicable"}`,
@@ -1725,8 +1688,8 @@ export default function BookkeepingPage() {
             <p className="mt-6 max-w-[580px] text-[15px] leading-[1.85] text-[#695E72] sm:text-[16px]">
               Bookkeeping support built around your business. Organize
               transactions, reconcile accounts, and understand your
-              financial position, whether you need an ongoing contract
-              or a one-time project.
+              financial position, whether you need monthly bookkeeping,
+              year-end bookkeeping, or a one-time project.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -1758,7 +1721,7 @@ export default function BookkeepingPage() {
             <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[11px] text-[#7C6E84]">
               {[
                 "Monthly bookkeeping",
-                "Yearly bookkeeping",
+                "Year-end bookkeeping",
                 "One-time projects",
                 "International inquiries",
               ].map((t) => (
@@ -1831,7 +1794,7 @@ export default function BookkeepingPage() {
           <Heading
             eyebrow="Flexible arrangements"
             title="Three ways to work with Cloudlem"
-            description="Choose monthly support, an annual bookkeeping arrangement, or a clearly scoped one-time project."
+            description="Choose monthly support, year-end bookkeeping, or a clearly scoped one-time project."
           />
 
           <div className="mx-auto grid max-w-[1190px] gap-5 lg:grid-cols-3">
@@ -1850,15 +1813,15 @@ export default function BookkeepingPage() {
                 ],
               },
               {
-                name: "Yearly bookkeeping",
-                engagement: "Yearly bookkeeping",
+                name: "Year-end bookkeeping",
+                engagement: "Year-end bookkeeping",
                 eyebrow: "Annual services",
                 icon: CalendarCheck2,
                 description:
-                  "Choose an ongoing annual bookkeeping contract or a once-a-year project for your full year's records.",
+                  "Get your full year's books organized, reconciled, and ready for tax filing.",
                 points: [
-                  "Annual contract with regular bookkeeping",
-                  "Or one-time full-year record processing",
+                  "Full-year categorization and reconciliation",
+                  "Year-end financial reports",
                   "Custom scope and pricing",
                 ],
               },
@@ -2267,10 +2230,10 @@ export default function BookkeepingPage() {
                   </div>
                 </fieldset>
 
-                {engagement === "Yearly bookkeeping" && (
+                {engagement === "Year-end bookkeeping" && (
                   <fieldset className="space-y-3 rounded-[10px] border border-[#DCC9E9] bg-[#FBF8FD] p-4">
                     <legend className="px-1 text-[12px] font-semibold text-[#55346C]">
-                      What kind of yearly bookkeeping? *
+                      What kind of year-end bookkeeping? *
                     </legend>
                     {yearlyArrangements.map((option) => (
                       <label key={option.value} className="flex cursor-pointer items-start gap-3">
