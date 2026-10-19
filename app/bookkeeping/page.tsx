@@ -203,7 +203,7 @@ const faqs = [
   },
   {
     q: "How much does bookkeeping cost?",
-    a: "Our monthly packages are Basic ($59), Standard ($99), and Premium ($149) in USD. Work outside the included limits or one-time engagements is quoted separately.",
+    a: "Our monthly packages are Basic ($59), Standard ($99), and Premium ($149) in USD. Work outside the included limits or one-time engagements are quoted separately.",
   },
   {
     q: "Can international businesses inquire?",
@@ -246,7 +246,6 @@ const testimonials: Testimonial[] = [
     name: "Property management client",
     context: "Property Management Accountant for Multi-Property Review",
     rating: 5,
-    date: "Apr 15–16, 2026",
     quote: "Mueen did an outstanding job handling our multi-property financials. He identified errors, corrected reports, and gave us a clear and accurate financial picture. He explained everything in a simple way and delivered exactly what we needed. Highly recommended, professional, experienced, and someone we’ll definitely work with again",
   },
 ];
@@ -361,7 +360,7 @@ function FinancialDashboard() {
     { name: "Operations", value: 6450, color: "#A87BCA" },
     { name: "Marketing", value: 4130, color: "#C4A2DB" },
     { name: "Software", value: 2890, color: "#D8C3E7" },
-    { name: "Other", value: 2520, color: "#ECE3F2" },
+    { name: "Other", value: 2630, color: "#ECE3F2" },
   ];
 
   const current = months[months.length - 1];
@@ -1538,7 +1537,7 @@ const inputClass =
 const selectableServices = services.map((service) => service.title);
 
 const engagementTypes = [
-  "Monthly contract",
+  "Monthly bookkeeping",
   "Year-end bookkeeping",
   "One-time project",
   "Not sure yet",
@@ -1568,11 +1567,11 @@ export default function BookkeepingPage() {
   const chooseEngagement = (value: string) => {
     setEngagement(value);
     if (value !== "Year-end bookkeeping") setYearlyArrangement("");
-    if (value !== "Monthly contract") setSelectedPackage("");
+    if (value !== "Monthly bookkeeping") setSelectedPackage("");
   };
 
   const chooseMonthlyPackage = (name: Plan["name"]) => {
-    chooseEngagement("Monthly contract");
+    chooseEngagement("Monthly bookkeeping");
     setSelectedPackage(name);
   };
 
@@ -1613,7 +1612,7 @@ export default function BookkeepingPage() {
         ? [`Year-end Arrangement: ${yearlyArrangement}`]
         : []),
       `Bookkeeping Services: ${servicesRequested.join(", ")}`,
-      `Selected Package: ${engagement === "Monthly contract" ? (selectedPackage || "Custom / Not selected") : "Custom quote / Not applicable"}`,
+      `Selected Package: ${engagement === "Monthly bookkeeping" ? (selectedPackage || "Custom / Not selected") : "Custom quote / Not applicable"}`,
       `Country / Region: ${get("country") || "Not specified"}`,
       `Accounting Software: ${get("software") || "Not specified"}`,
       `Client Financial Accuracy Acknowledgment: ${get("financialAccuracyAcknowledged") === "yes" ? "Confirmed — client agrees to provide complete, authentic, accurate, and timely relevant records, disclose known discrepancies, and supply supporting documentation if engaged." : "Not confirmed"}`,
@@ -1801,7 +1800,7 @@ export default function BookkeepingPage() {
             {[
               {
                 name: "Monthly bookkeeping",
-                engagement: "Monthly contract",
+                engagement: "Monthly bookkeeping",
                 eyebrow: "Recurring services",
                 icon: CalendarCheck2,
                 description:
@@ -1955,51 +1954,6 @@ export default function BookkeepingPage() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* ABOUT CLOUDLEM */}
-
-      <section className="bg-[#F8F5FA] py-20 sm:py-24">
-        <div className="container-systems grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <Reveal>
-            <Photo
-              src="/images/services/finance-accounting.png"
-              alt="Bookkeeping records workspace"
-              label="Business-focused bookkeeping support"
-            />
-          </Reveal>
-
-          <Reveal>
-            <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.17em] text-[#8754A5]">
-              Part of Cloudlem
-            </p>
-
-            <h2 className="text-[clamp(2.05rem,3.4vw,3.1rem)] font-semibold leading-[1.12] tracking-[-0.05em]">
-              A financial operations partner you can talk to.
-            </h2>
-
-            <p className="mt-6 text-[14px] leading-8 text-[#6D6274]">
-              Cloudlem brings technology, business operations, and
-              financial-record services together. Our bookkeeping offering
-              centers on clearly defined requirements, practical
-              workflows, and agreed deliverables.
-            </p>
-
-            <p className="mt-4 text-[14px] leading-8 text-[#6D6274]">
-              Whether you need to address overdue records or want
-              continuing support, start by telling us what your
-              business needs.
-            </p>
-
-            <Link
-              href="/about"
-              className="mt-7 inline-flex items-center gap-2 text-[12px] font-bold uppercase text-[#75449B]"
-            >
-              Learn about Cloudlem
-              <ArrowUpRight size={16} />
-            </Link>
-          </Reveal>
         </div>
       </section>
 
@@ -2297,7 +2251,7 @@ export default function BookkeepingPage() {
                   )}
                 </fieldset>
 
-                {engagement === "Monthly contract" && (
+                {engagement === "Monthly bookkeeping" && (
                   <label className="block text-[12px] font-semibold">
                     Monthly package
                     <select
