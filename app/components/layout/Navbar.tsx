@@ -5,7 +5,6 @@ import {
   useEffect,
   useRef,
   useState,
-  type CSSProperties,
 } from "react";
 
 import Image from "next/image";
@@ -68,18 +67,6 @@ type MenuConfig = {
     href: string;
   };
   columns: MenuGroup[][];
-};
-
-// ==========================================
-// ORIGINAL CLOUDLEM BRANDING
-// ==========================================
-
-const logoStyle: CSSProperties = {
-  backgroundImage:
-    "linear-gradient(100deg,#62C449 0%,#58BF4A 30%,#F47B2B 68%,#E6383C 100%)",
-  backgroundClip: "text",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
 };
 
 // ==========================================
@@ -754,7 +741,8 @@ export default function Navbar() {
       <div className="container-systems relative z-30 flex h-full items-center justify-between gap-4">
 
         {/* ==================================
-            ORIGINAL MULTICOLOR LOGO
+            CLOUDLEM INFINITY LOGO
+            Icon is the only image; wordmark and tagline remain editable text.
         ================================== */}
 
         <Link
@@ -764,22 +752,24 @@ export default function Navbar() {
             setDesktopMenu(null);
           }}
           aria-label="Cloudlem home"
-          className="flex shrink-0 items-center gap-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#E7EFF1]"
+          className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#E7EFF1]"
         >
           <Image
-            src="/images/logo.png"
+            src="/images/bigcloudlemlogo.png"
             alt=""
-            width={55}
-            height={60}
+            width={235}
+            height={251}
             priority
-            className="h-[60px] w-[55px] object-contain"
+            className="h-[43px] w-[55px] shrink-0 object-contain sm:h-[70px] sm:w-[70px]"
           />
 
-          <span
-            style={logoStyle}
-            className="-ml-[7px] text-[21px] font-bold tracking-[-0.045em] sm:text-[22px]"
-          >
-            Cloudlem
+          <span className="flex min-w-0 flex-col justify-center">
+            <span className="text-[22px] font-bold leading-[1.05] tracking-[-0.025em] text-white sm:text-[24px]">
+              Cloudlem
+            </span>
+            <span className="mt-1 whitespace-nowrap text-[9px] font-medium leading-[1.15] tracking-[0.012em] text-[#E4E9EB] sm:text-[10px]">
+              Automate anything anywhere
+            </span>
           </span>
         </Link>
 
