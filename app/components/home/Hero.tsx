@@ -143,6 +143,7 @@ export default function Hero() {
           ref={videoRef}
           autoPlay
           loop
+          muted
           playsInline
           preload="metadata"
           tabIndex={-1}
@@ -470,7 +471,7 @@ export default function Hero() {
 
                       <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#55717D]">
 
-                        Build. Automate. Scale.
+                        Automate. Anything. Anywhere
 
                       </span>
 

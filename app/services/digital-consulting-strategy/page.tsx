@@ -334,7 +334,7 @@ export default function DigitalConsultingStrategyPage() {
             >
               From vision
 
-              <span className="block bg-[linear-gradient(100deg,#6F3E96,#A877C8)] bg-clip-text text-transparent">
+              <span className="block text-[#291D34]">
                 to meaningful
               </span>
 

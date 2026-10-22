@@ -1,35 +1,26 @@
-
 import type { Metadata } from "next";
 
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
-  CalendarDays,
-  FileText,
+  ChevronRight,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
+import { insights } from "../../data/insights";
+import BlogMarkdownContent from "../../components/blog/BlogMarkdownContent";
 
-// ==========================================
-// CLOUDLEM BLOG ARTICLE PAGE
-// Warm Cream / Stone Beige / Charcoal
-// ==========================================
-
+// Keep the blog's existing live Supabase data and published-only protection.
+// This remains a Server Component. Do not add "use client".
 export const dynamic = "force-dynamic";
 
 type BlogArticlePageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
-
-// ==========================================
-// FETCH ONLY PUBLISHED ARTICLES
-// ==========================================
 
 async function getArticle(slug: string) {
   const supabase = await createClient();
@@ -44,63 +35,28 @@ async function getArticle(slug: string) {
     .maybeSingle();
 
   if (error) {
-    console.error(
-      "Unable to fetch blog article:",
-      error.code
-    );
-
+    console.error("Unable to load blog article:", error.code);
     throw new Error("Unable to load the article.");
   }
 
   return data;
 }
 
-// ==========================================
-// FORMAT ARTICLE DATE
-// ==========================================
-
-function formatDate(date: string): string {
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "";
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
-
-// ==========================================
-// VALIDATE OPTIONAL COVER IMAGE URL
-// ==========================================
-
-function getValidCoverUrl(
-  value: string | null
-): string | null {
-  if (!value || !value.trim()) {
-    return null;
-  }
-
+// Validate a supplied blog cover before passing it to next/image.
+function validCoverUrl(value: string | null): string | null {
+  if (!value?.trim()) return null;
   const url = value.trim();
 
-  if (
-    url.startsWith("/") &&
-    !url.startsWith("//") &&
-    !url.startsWith("/\\")
-  ) {
+  if (url.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\")) {
     return url;
   }
 
   try {
     const parsed = new URL(url);
-
     if (
-      parsed.protocol === "https:" ||
-      parsed.protocol === "http:"
+      (parsed.protocol === "https:" || parsed.protocol === "http:") &&
+      !parsed.username &&
+      !parsed.password
     ) {
       return url;
     }
@@ -111,439 +67,285 @@ function getValidCoverUrl(
   return null;
 }
 
-// ==========================================
-// ARTICLE SEO METADATA
-// ==========================================
+// When no custom blog cover has been supplied, choose an existing Cloudlem
+// Insights visual according to the blog's topic. This does not change the
+// article content or store a new image in Supabase.
+function findMatchingInsight(title: string) {
+  if (insights.length === 0) return null;
+
+  const words = title
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((word) => word.length > 3)
+    .filter((word) => !new Set([
+      "with", "from", "that", "this", "into", "your", "about", "modern",
+      "business", "businesses", "what", "when", "where", "their", "through",
+      "transforming", "growth", "future", "cloudlem", "technology",
+    ]).has(word));
+
+  let winner = insights[0];
+  let highestScore = -1;
+
+  for (const insight of insights) {
+    const haystack = `${insight.title} ${insight.category} ${insight.slug}`.toLowerCase();
+    const score = words.reduce(
+      (total, word) => total + (haystack.includes(word) ? 1 : 0),
+      0
+    );
+    if (score > highestScore) {
+      highestScore = score;
+      winner = insight;
+    }
+  }
+
+  return winner;
+}
+
+function formatDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
 
 export async function generateMetadata({
   params,
 }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-
   const post = await getArticle(slug);
 
-  if (!post) {
-    return {
-      title: "Article Not Found | Cloudlem",
-    };
-  }
+  if (!post) return { title: "Article Not Found | Cloudlem" };
+
+  const cover = validCoverUrl(post.cover_image_url);
 
   return {
-    title: `${post.title} | Cloudlem`,
-    description:
-      post.excerpt ||
-      `Read ${post.title} on Cloudlem.`,
-
+    title: `${post.title} | Cloudlem Journal`,
+    description: post.excerpt || `Read ${post.title} on Cloudlem.`,
+    alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       title: post.title,
-      description:
-        post.excerpt || post.title,
+      description: post.excerpt || post.title,
       type: "article",
-      publishedTime:
-        post.published_at ??
-        post.created_at,
+      publishedTime: post.published_at ?? post.created_at,
+      ...(cover ? { images: [{ url: cover, alt: post.title }] } : {}),
     },
   };
 }
-
-// ==========================================
-// PUBLIC BLOG ARTICLE PAGE
-// ==========================================
 
 export default async function BlogArticlePage({
   params,
 }: BlogArticlePageProps) {
   const { slug } = await params;
-
   const post = await getArticle(slug);
 
-  // Draft and nonexistent articles return 404.
-  if (!post) {
-    notFound();
-  }
+  // Keep drafts and nonexistent posts private.
+  if (!post) notFound();
 
-  const articleDate = formatDate(
-    post.published_at ?? post.created_at
-  );
+  const matchingInsight = findMatchingInsight(post.title);
+  const customCover = validCoverUrl(post.cover_image_url);
+  const featuredImage = customCover ?? matchingInsight?.image ?? null;
+  const featuredAlt = customCover
+    ? `Featured image for ${post.title}`
+    : matchingInsight?.imageAlt ?? `Cloudlem editorial illustration for ${post.title}`;
 
-  const coverImageUrl = getValidCoverUrl(
-    post.cover_image_url
+  // Use the same genuine Insights stories and images as the reference page.
+  // This also avoids displaying unpublished or test Supabase posts as recommendations.
+  const matchingIndex = insights.findIndex(
+    (item) => item.slug === matchingInsight?.slug
   );
+  const relatedInsights = insights.length > 1
+    ? [1, 2]
+        .map((offset) => insights[(Math.max(0, matchingIndex) + offset) % insights.length])
+        .filter((item, index, items) =>
+          item.slug !== matchingInsight?.slug &&
+          items.findIndex((candidate) => candidate.slug === item.slug) === index
+        )
+    : [];
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#D8D2C8]">
+    <main className="min-h-screen bg-white text-[#181818]">
+      {/* 01 — FULL-WIDTH FEATURED IMAGE: EXACT INSIGHTS GEOMETRY */}
+      <section
+        aria-label={`Featured image for ${post.title}`}
+        className="relative h-[52svh] min-h-[360px] max-h-[700px] overflow-hidden bg-[#160A24] sm:h-[65svh]"
+      >
+        {featuredImage ? (
+          <Image
+            src={featuredImage}
+            alt={featuredAlt}
+            fill
+            priority
+            unoptimized={Boolean(customCover)}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(130deg,#1B0D2C,#67328E_55%,#AA78D8)]"
+          />
+        )}
 
-      {/* ===================================
-          ARTICLE HERO — CHARCOAL
-      =================================== */}
-
-      <section className="relative overflow-hidden bg-[#181818] pb-20 pt-32 text-[#D8D2C8] lg:pb-24 lg:pt-40">
-        <div className="container-systems relative z-10">
-
-          <div className="mx-auto max-w-[900px]">
-
-            {/* BACK TO BLOG */}
-
-            <Link
-              href="/blog"
-              className="group mb-12 inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[#B7B09F] transition-colors hover:text-[#D8D2C8]"
-            >
-              <ArrowLeft
-                size={17}
-                strokeWidth={1.7}
-                className="transition-transform duration-300 group-hover:-translate-x-1.5"
-                aria-hidden="true"
-              />
-
-              Back to Blog
-            </Link>
-
-            {/* ARTICLE CATEGORY */}
-
-            <div className="mb-7 flex items-center gap-4">
-              <span className="h-px w-9 bg-[#B7B09F]" />
-
-              <BookOpen
-                size={17}
-                strokeWidth={1.6}
-                className="text-[#B7B09F]"
-                aria-hidden="true"
-              />
-
-              <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#B7B09F]">
-                Cloudlem Insights
-              </span>
-            </div>
-
-            {/* ARTICLE TITLE */}
-
-            <h1 className="max-w-[880px] break-words text-[2.7rem] font-semibold leading-[1.04] tracking-[-0.055em] text-[#D8D2C8] sm:text-[3.6rem] lg:text-[4.5rem]">
-              {post.title}
-            </h1>
-
-            {/* ACCENT */}
-
-            <div className="mt-8 h-[2px] w-14 bg-[#B7B09F]" />
-
-            {/* ARTICLE EXCERPT */}
-
-            {post.excerpt && (
-              <p className="mt-8 max-w-[770px] break-words text-[15px] leading-8 text-[#D8D2C8]/80 sm:text-[17px]">
-                {post.excerpt}
-              </p>
-            )}
-
-            {/* ARTICLE METADATA */}
-
-            <div className="mt-10 flex flex-wrap items-center gap-x-9 gap-y-5 border-t border-[#D8D2C8]/20 pt-7">
-
-              {/* DATE */}
-
-              {articleDate && (
-                <div className="flex items-center gap-3">
-                  <CalendarDays
-                    size={17}
-                    strokeWidth={1.7}
-                    className="text-[#B7B09F]"
-                    aria-hidden="true"
-                  />
-
-                  <span className="text-[12px] font-medium text-[#D8D2C8]/75">
-                    {articleDate}
-                  </span>
-                </div>
-              )}
-
-              {/* ARTICLE TYPE */}
-
-              <div className="flex items-center gap-3">
-                <FileText
-                  size={17}
-                  strokeWidth={1.7}
-                  className="text-[#B7B09F]"
-                  aria-hidden="true"
-                />
-
-                <span className="text-[12px] font-medium text-[#D8D2C8]/75">
-                  Cloudlem Journal
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* BACKGROUND TYPOGRAPHY */}
-
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 -bottom-12 overflow-hidden"
-        >
-          <p className="select-none whitespace-nowrap text-center text-[8rem] font-bold leading-none tracking-[-0.08em] text-[#D8D2C8]/[0.035] sm:text-[11rem] lg:text-[15rem]">
-            INSIGHTS
-          </p>
-        </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/55 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/20 to-transparent" />
       </section>
 
-      {/* ===================================
-          ARTICLE CONTENT — WARM CREAM
-      =================================== */}
-
-      <section className="bg-[#D8D2C8] py-14 text-[#181818] sm:py-16 lg:py-24">
-
+      {/* 02 — SAME WHITE EDITORIAL LAYOUT AS app/insights/[slug]/page.tsx */}
+      <section className="bg-white pb-20 pt-12 sm:pt-16 lg:pb-28">
         <div className="container-systems">
-          <article className="mx-auto max-w-[900px]">
+          {/* Breadcrumb */}
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-10 flex flex-wrap items-center gap-2 text-[12px] text-[#777777] lg:mb-14"
+          >
+            <Link href="/" className="transition-colors hover:text-[#181818]">
+              Home
+            </Link>
+            <ChevronRight size={14} aria-hidden="true" />
+            <Link href="/blog" className="transition-colors hover:text-[#181818]">
+              Blog &amp; Insights
+            </Link>
+            <ChevronRight size={14} aria-hidden="true" />
+            <span className="font-medium text-[#7B4A9A]">Cloudlem Journal</span>
+          </nav>
 
-            {/* ===================================
-                COVER IMAGE OR FALLBACK
-            =================================== */}
-
-            <div
-              role="img"
-              aria-label={`Article cover for ${post.title}`}
-              className="relative mb-14 aspect-[16/9] w-full overflow-hidden border border-[#181818]/20 bg-[#181818] sm:mb-16"
-              style={
-                coverImageUrl
-                  ? {
-                      backgroundImage:
-                        `linear-gradient(180deg, ` +
-                        `rgba(24,24,24,0.05) 0%, ` +
-                        `rgba(24,24,24,0.4) 100%), ` +
-                        `url(${JSON.stringify(coverImageUrl)})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }
-                  : undefined
-              }
-            >
-
-              {/* DECORATIVE CORNERS */}
-
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 border border-[#B7B09F]/20"
-              />
-
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -bottom-12 -left-12 h-44 w-44 border border-[#B7B09F]/20"
-              />
-
-              {/* BRANDED FALLBACK */}
-
-              {!coverImageUrl && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-
-                  <div className="flex h-17 w-17 items-center justify-center border border-[#B7B09F]/50 bg-[#B7B09F]/10 text-[#D8D2C8]">
-                    <BookOpen
-                      size={29}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.25em] text-[#D8D2C8]">
-                    Cloudlem
-                  </p>
-
-                  <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#B7B09F]">
-                    Insights & Resources
-                  </p>
-                </div>
-              )}
-
-              {/* COVER IMAGE LABEL */}
-
-              {coverImageUrl && (
-                <div className="absolute bottom-5 left-5 border border-[#B7B09F]/45 bg-[#181818]/90 px-4 py-2.5 sm:bottom-7 sm:left-7">
-
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D8D2C8]">
-                    Cloudlem Insights
-                  </span>
-                </div>
-              )}
-
-              {/* BOTTOM IMAGE ACCENT */}
-
-              <div className="absolute inset-x-0 bottom-0 h-[3px] bg-[#181818]" />
-            </div>
-
-            {/* ===================================
-                ARTICLE BODY
-            =================================== */}
-
-            <div className="grid gap-10 lg:grid-cols-[155px_minmax(0,1fr)] lg:gap-14">
-
-              {/* STICKY SIDE LABEL */}
-
-              <aside className="hidden lg:block">
-                <div className="sticky top-28">
-
-                  <div className="mb-5 h-[2px] w-9 bg-[#181818]" />
-
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#181818]">
-                    The Article
-                  </p>
-
-                  <p className="mt-4 text-[11px] leading-6 text-[#181818]/65">
-                    Cloudlem Insights
-                  </p>
-
-                  <div className="mt-7 border-t border-[#181818]/20 pt-5">
-                    <BookOpen
-                      size={20}
-                      strokeWidth={1.5}
-                      className="text-[#181818]/70"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-              </aside>
-
-              {/* ARTICLE CONTENT */}
-
-              <div className="min-w-0">
-
-                {/* MOBILE ARTICLE LABEL */}
-
-                <div className="mb-9 flex items-center gap-3 lg:hidden">
-
-                  <span className="h-px w-8 bg-[#181818]" />
-
-                  <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#181818]">
-                    The Article
-                  </span>
-                </div>
-
-                {/* ===================================
-                    SAFE PLAIN-TEXT RENDERING
-
-                    Preserves the current CMS
-                    content display behavior.
-                =================================== */}
-
-                <div className="min-w-0 whitespace-pre-wrap break-words text-[15px] leading-[1.95] text-[#181818]/90 sm:text-[16px]">
-                  {post.content}
-                </div>
-
-                {/* ARTICLE END MARKER */}
-
-                <div className="mt-14 flex items-center gap-4">
-
-                  <span className="h-[2px] w-12 bg-[#181818]" />
-
-                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#181818]/60">
-                    End of Article
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* ===================================
-                ARTICLE FOOTER
-            =================================== */}
-
-            <div className="mt-16 border-t border-[#181818]/20 pt-9 sm:mt-20">
-
-              <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-
-                <div>
-
-                  <div className="mb-4 flex items-center gap-3">
-                    <span className="h-px w-7 bg-[#181818]" />
-
-                    <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#181818]/70">
-                      Keep Exploring
-                    </p>
-                  </div>
-
-                  <p className="text-[19px] font-semibold tracking-[-0.035em] text-[#181818]">
-                    Cloudlem Insights
-                  </p>
-
-                  <p className="mt-3 max-w-[450px] text-[12.5px] leading-7 text-[#181818]/75">
-                    Explore more perspectives on
-                    cloud technology, AI, DevOps,
-                    and modern engineering.
-                  </p>
-                </div>
-
-                {/* MORE ARTICLES LINK */}
-
+          <div className="grid gap-10 lg:grid-cols-[140px_minmax(0,1fr)_240px] lg:gap-10 xl:grid-cols-[160px_minmax(0,1fr)_260px] xl:gap-16">
+            {/* LEFT SIDEBAR — same spacing, type and sticky position */}
+            <aside className="min-w-0">
+              <div className="lg:sticky lg:top-28">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#777777]">
+                  Cloudlem Insights
+                </p>
+                <div className="mt-4 h-[2px] w-10 bg-[#9C67B7]" />
+                <p className="mt-5 text-[12px] font-medium leading-6 text-[#777777]">
+                  Cloud &amp; Digital Innovation
+                </p>
                 <Link
                   href="/blog"
-                  className="group inline-flex min-h-12 shrink-0 items-center justify-between gap-6 border border-[#181818] bg-[#181818] px-6 py-3 text-[10px] font-bold uppercase tracking-[0.13em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
+                  className="group mt-7 inline-flex items-center gap-2 text-[12px] font-semibold text-[#754B91] transition-colors hover:text-[#181818]"
                 >
-                  More Articles
-
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-300 group-hover:translate-x-1.5"
+                  <ArrowLeft
+                    size={15}
+                    className="transition-transform duration-200 group-hover:-translate-x-1"
                     aria-hidden="true"
                   />
+                  All articles
                 </Link>
               </div>
-            </div>
-          </article>
+            </aside>
+
+            {/* ARTICLE — NO BOXED CONTAINER */}
+            <article className="min-w-0">
+              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#8652A6]">
+                Cloudlem Journal
+              </p>
+
+              <h1 className="max-w-[850px] break-words text-[clamp(2.2rem,3.5vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em] text-[#181818]">
+                {post.title}
+              </h1>
+
+              {post.excerpt && (
+                <p className="mt-6 text-[17px] font-medium leading-[1.8] text-[#68636B]">
+                  {post.excerpt}
+                </p>
+              )}
+
+              <div className="my-9 h-px w-full bg-[#E6E6E6]" />
+
+              {/* Same safe Markdown renderer used by the admin preview. */}
+              <div className="min-w-0">
+                <BlogMarkdownContent content={post.content ?? ""} />
+              </div>
+
+              <div className="mt-14 border-t border-[#E5E5E5] pt-8">
+                <Link
+                  href="/blog"
+                  className="group inline-flex min-h-10 items-center gap-3 border-b border-[#71468C] pb-2 text-[12px] font-bold uppercase tracking-[0.1em] text-[#67407F] transition-colors hover:border-[#181818] hover:text-[#181818]"
+                >
+                  <ArrowLeft
+                    size={17}
+                    className="transition-transform duration-200 group-hover:-translate-x-1"
+                    aria-hidden="true"
+                  />
+                  Back to all articles
+                </Link>
+              </div>
+            </article>
+
+            {/* RIGHT SIDEBAR — genuine pre-existing Insights assets */}
+            <aside className="min-w-0">
+              <div className="lg:sticky lg:top-28">
+                <h2 className="text-[17px] font-semibold tracking-[-0.02em] text-[#181818]">
+                  You may also like
+                </h2>
+
+                <div className="mt-6 space-y-6">
+                  {relatedInsights.map((related) => (
+                    <Link
+                      key={related.slug}
+                      href={`/insights/${related.slug}`}
+                      className="group block border-b border-[#E5E5E5] pb-6"
+                    >
+                      <div className="relative aspect-[16/10] overflow-hidden rounded-[5px] bg-[#21112B]">
+                        <Image
+                          src={related.image}
+                          alt={related.imageAlt}
+                          fill
+                          sizes="(min-width: 1024px) 260px, 100vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                      <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.13em] text-[#8B619F]">
+                        {related.category}
+                      </p>
+                      <h3 className="mt-2 text-[15px] font-semibold leading-[1.5] text-[#262626] transition-colors duration-200 group-hover:text-[#7D48A0]">
+                        {related.title}
+                      </h3>
+                      <span className="mt-3 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#8554A3]">
+                        Read More
+                        <ArrowRight
+                          size={15}
+                          className="transition-transform duration-200 group-hover:translate-x-1"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
 
-      {/* ===================================
-          FINAL CTA — STONE BEIGE
-      =================================== */}
-
-      <section className="bg-[#B7B09F] py-16 text-[#181818] lg:py-20">
-
-        <div className="container-systems">
-
-          <div className="grid gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:items-end lg:gap-16">
-
-            {/* CTA HEADING */}
-
-            <div>
-
-              <div className="mb-5 flex items-center gap-3">
-
-                <span className="h-px w-8 bg-[#181818]" />
-
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#181818]/75">
-                  Work With Cloudlem
-                </p>
-              </div>
-
-              <h2 className="max-w-[750px] text-[35px] font-semibold leading-[1.07] tracking-[-0.055em] text-[#181818] sm:text-[46px]">
-                Have a technology
-
-                <span className="mt-2 block text-[#514C43]">
-                  challenge to solve?
-                </span>
-              </h2>
-            </div>
-
-            {/* CTA DESCRIPTION */}
-
-            <div className="lg:justify-self-end">
-
-              <p className="max-w-[370px] text-[13px] leading-8 text-[#181818]/80">
-                Connect with Cloudlem to discuss
-                how we can help your business
-                build, modernize, and scale.
-              </p>
-
-              <Link
-                href="/contact"
-                className="group mt-7 inline-flex min-h-12 items-center justify-between gap-7 border border-[#181818] bg-[#181818] px-6 py-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[#D8D2C8] transition-colors hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
-              >
-                Get In Touch
-
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-300 group-hover:translate-x-1.5"
-                  aria-hidden="true"
-                />
-              </Link>
-            </div>
-          </div>
+      {/* 03 — SAME FINAL CONTACT SECTION AS INSIGHTS */}
+      <section className="border-t border-[#E9E9E9] bg-[#F8F7F9] py-20 sm:py-24">
+        <div className="container-systems text-center">
+          <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#8958A5]">
+            Let&apos;s Move Forward
+          </p>
+          <h2 className="text-[clamp(2.2rem,4vw,3.6rem)] font-semibold leading-[1.1] tracking-[-0.05em] text-[#181818]">
+            How can we help you?
+          </h2>
+          <p className="mx-auto mt-5 max-w-[580px] text-[16px] leading-[1.85] text-[#676767]">
+            Explore how Cloudlem can help your business solve operational challenges and develop practical technology solutions.
+          </p>
+          <Link
+            href="/contact"
+            className="group mt-9 inline-flex min-h-[52px] items-center gap-4 rounded-[3px] bg-[#211B2B] px-7 py-3.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white transition-all duration-200 hover:bg-[#71459B] hover:shadow-[0_12px_30px_rgba(0,0,0,0.13)]"
+          >
+            Let&apos;s Work Together
+            <ArrowRight
+              size={17}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+              aria-hidden="true"
+            />
+          </Link>
         </div>
       </section>
     </main>

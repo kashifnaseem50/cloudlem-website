@@ -1,12 +1,9 @@
-
 "use client";
 
 import { useState, type ReactNode } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
 import {
   ArrowRight,
   BookOpen,
@@ -15,57 +12,29 @@ import {
   FolderOpen,
 } from "lucide-react";
 
-// ==========================================
-// BLOG CARD PROPERTIES
-// ==========================================
-
+// Keep the existing interface for BlogListing and other consumers.
 interface BlogCardProps {
   title: string;
   excerpt: string;
   date: string;
-
-  // Existing properties retained
-  // for compatibility.
   category?: string;
   gradient?: string;
   icon?: ReactNode;
-
-  // Supabase article properties.
   href?: string;
   coverImageUrl?: string | null;
   readTime?: string;
 }
 
-// ==========================================
-// VALIDATE ARTICLE IMAGE URL
-// ==========================================
-
-// Accept supported local paths and HTTP(S) URLs.
-// Missing or malformed URLs use the fallback.
-
-function getValidImageUrl(
-  value: string | null | undefined
-): string | null {
-  if (!value || !value.trim()) {
-    return null;
-  }
-
+// Accept local public assets and HTTP(S) images, exactly as before.
+function getValidImageUrl(value: string | null | undefined): string | null {
+  if (!value || !value.trim()) return null;
   const url = value.trim();
 
-  if (
-    url.startsWith("/") &&
-    !url.startsWith("//")
-  ) {
-    return url;
-  }
+  if (url.startsWith("/") && !url.startsWith("//")) return url;
 
   try {
     const parsed = new URL(url);
-
-    if (
-      parsed.protocol === "https:" ||
-      parsed.protocol === "http:"
-    ) {
+    if (parsed.protocol === "https:" || parsed.protocol === "http:") {
       return url;
     }
   } catch {
@@ -74,11 +43,6 @@ function getValidImageUrl(
 
   return null;
 }
-
-// ==========================================
-// CLOUDLEM BLOG CARD
-// Warm Cream / Stone Beige / Charcoal
-// ==========================================
 
 export default function BlogCard({
   title,
@@ -90,259 +54,162 @@ export default function BlogCard({
   coverImageUrl = null,
   readTime,
 }: BlogCardProps) {
-  const [failedImageUrl, setFailedImageUrl] =
-    useState<string | null>(null);
-
+  // Store the failed URL, not just a boolean: a new URL can be attempted.
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const imageUrl = getValidImageUrl(coverImageUrl);
-
-  // Failed images display the fallback.
-  // If the URL changes, the new image
-  // can still be attempted.
-
-  const showCoverImage =
-    imageUrl !== null &&
-    imageUrl !== failedImageUrl;
-
+  const showCoverImage = imageUrl !== null && imageUrl !== failedImageUrl;
   const articleHref =
-    typeof href === "string" &&
-    href.trim().length > 0
-      ? href
-      : null;
+    typeof href === "string" && href.trim().length > 0 ? href : null;
 
   return (
     <motion.article
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-      }}
-      viewport={{
-        once: true,
-      }}
-      transition={{
-        duration: 0.55,
-      }}
-      className="group relative flex h-full min-w-0 flex-col overflow-hidden border border-[#181818]/20 bg-[#B7B09F] text-[#181818] transition-[border-color,box-shadow] duration-300 hover:border-[#181818]/65 hover:shadow-[0_20px_45px_rgba(24,24,24,0.12)]"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.55 }}
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#E8DDF1] bg-white text-[#30213D] shadow-[0_12px_40px_rgba(75,43,105,0.045)] transition-[transform,border-color,box-shadow] duration-300 hover:border-[#CFB4E1] hover:shadow-[0_22px_55px_rgba(91,50,130,0.11)] motion-safe:hover:-translate-y-1"
     >
+      {/* Brand accent */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 z-20 h-[3px] bg-gradient-to-r from-[#C6A4DC] via-[#75449B] to-[#EADCF4]"
+      />
 
-      {/* ===================================
-          TOP ACCENT
-      =================================== */}
-
-      <div className="absolute inset-x-0 top-0 z-20 h-[3px] bg-[#181818]" />
-
-      {/* ===================================
-          COVER IMAGE / FALLBACK
-      =================================== */}
-
-      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden border-b border-[#181818]/20 bg-[#181818]">
-
+      {/* Existing Supabase cover-image behavior, with a light fallback */}
+      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden border-b border-[#EEE6F4] bg-[#F2EAF9]">
         {showCoverImage && imageUrl ? (
-
-          /* EXISTING SUPABASE COVER IMAGE */
-
           <Image
             src={imageUrl}
             alt={`Cover image for ${title}`}
             fill
             unoptimized
             sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={() => {
-              setFailedImageUrl(imageUrl);
-            }}
+            className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
+            onError={() => setFailedImageUrl(imageUrl)}
           />
-
         ) : (
-
-          /* ===================================
-              CLOUDLEM IMAGE FALLBACK
-          =================================== */
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#181818]">
-
-            {/* DECORATIVE BACKGROUND */}
-
+          <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[linear-gradient(135deg,#FBF8FE_0%,#EEE4F7_55%,#E8D7F3_100%)]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 border border-[#B7B09F]/20"
+              className="pointer-events-none absolute -right-10 -top-20 h-52 w-52 rounded-full border border-[#CFB6E2]/65 bg-white/20"
             />
-
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-14 -left-14 h-44 w-44 border border-[#B7B09F]/15"
+              className="pointer-events-none absolute -bottom-24 -left-14 h-60 w-60 rounded-full border border-[#CFB6E2]/50 bg-white/20"
             />
-
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-[#D8D2C8]/[0.05]"
+              className="pointer-events-none absolute inset-x-10 top-1/2 h-px bg-[#B68DCE]/20"
             />
 
-            <div className="relative z-10 flex flex-col items-center">
-
-              {/* FALLBACK ICON */}
-
-              <div className="flex h-16 w-16 items-center justify-center border border-[#B7B09F]/50 bg-[#B7B09F]/10 text-[#D8D2C8] transition-colors duration-300 group-hover:bg-[#B7B09F]/20">
+            <div className="relative z-10 flex flex-col items-center px-5 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#D9C5E8] bg-white/80 text-[#75449B] shadow-[0_10px_25px_rgba(103,61,141,0.07)] transition-[transform,background-color] duration-300 group-hover:bg-white motion-safe:group-hover:-translate-y-1">
                 {icon ?? (
-                  <BookOpen
-                    size={27}
-                    strokeWidth={1.5}
-                    aria-hidden="true"
-                  />
+                  <BookOpen size={27} strokeWidth={1.6} aria-hidden="true" />
                 )}
               </div>
-
-              {/* BRAND */}
-
-              <span className="mt-5 text-[12px] font-bold uppercase tracking-[0.26em] text-[#D8D2C8]">
+              <span className="mt-5 text-[12px] font-bold uppercase tracking-[0.24em] text-[#4D3462]">
                 Cloudlem
               </span>
-
-              <span className="mt-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#B7B09F]">
-                Insights & Resources
+              <span className="mt-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#8662A0]">
+                Insights &amp; Resources
               </span>
             </div>
           </div>
         )}
 
-        {/* ===================================
-            ARTICLE CATEGORY BADGE
-        =================================== */}
-
-        <div className="absolute bottom-4 left-4 z-10">
-          <span className="inline-flex items-center gap-2 border border-[#B7B09F]/50 bg-[#181818]/95 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.13em] text-[#D8D2C8]">
-            <FolderOpen
-              size={13}
-              strokeWidth={1.7}
-              aria-hidden="true"
-            />
-
-            {category}
+        {/* Category is readable on either a photo or a fallback */}
+        <div className="absolute bottom-4 left-4 z-10 max-w-[calc(100%-2rem)]">
+          <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/80 bg-white/95 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[#75449B] shadow-[0_5px_20px_rgba(36,22,48,0.09)] backdrop-blur-sm">
+            <FolderOpen size={13} strokeWidth={1.7} aria-hidden="true" className="shrink-0" />
+            <span className="truncate">{category}</span>
           </span>
         </div>
       </div>
 
-      {/* ===================================
-          ARTICLE CONTENT
-      =================================== */}
-
-      <div className="flex grow flex-col p-6 sm:p-8">
-
-        {/* ===================================
-            ARTICLE LABEL
-        =================================== */}
-
+      <div className="flex grow flex-col p-6 sm:p-7 lg:p-8">
+        {/* Editorial eyebrow */}
         <div className="mb-5 flex items-center gap-3">
-          <span className="h-px w-7 bg-[#181818]" />
-
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#181818]/75">
+          <span aria-hidden="true" className="h-px w-7 bg-[#B78DCE]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#8D68A7]">
             Cloudlem Journal
           </span>
         </div>
 
-        {/* ===================================
-            ARTICLE TITLE
-        =================================== */}
-
-        <h3 className="break-words text-[25px] font-semibold leading-[1.14] tracking-[-0.05em] text-[#181818] sm:text-[28px]">
+        <h3 className="break-words text-[24px] font-semibold leading-[1.16] tracking-[-0.05em] text-[#30213D] sm:text-[27px]">
           {title}
         </h3>
 
-        {/* DECORATIVE ACCENT */}
+        <div
+          aria-hidden="true"
+          className="mt-5 h-[3px] w-11 rounded-full bg-[#AC7AC8] transition-[width,background-color] duration-300 group-hover:w-16 group-hover:bg-[#75449B]"
+        />
 
-        <div className="mt-6 h-[2px] w-11 bg-[#181818]" />
-
-        {/* ===================================
-            ARTICLE EXCERPT
-        =================================== */}
-
-        <p className="mt-6 grow break-words text-[13px] leading-8 text-[#181818]/80">
+        <p className="mt-5 grow break-words text-[13px] leading-[1.85] text-[#756980] sm:text-[14px]">
           {excerpt}
         </p>
 
-        {/* ===================================
-            ARTICLE METADATA
-        =================================== */}
+        {/* Keep published date and optional reading time */}
+        {(date || readTime) && (
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-[#EEE6F4] pt-5">
+            {date && (
+              <div className="flex items-center gap-2">
+                <CalendarDays
+                  size={16}
+                  strokeWidth={1.7}
+                  className="shrink-0 text-[#906BAA]"
+                  aria-hidden="true"
+                />
+                <span className="text-[11px] font-medium text-[#766984]">
+                  {date}
+                </span>
+              </div>
+            )}
 
-        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-[#181818]/20 pt-6">
+            {readTime && (
+              <div className="flex items-center gap-2">
+                <Clock3
+                  size={16}
+                  strokeWidth={1.7}
+                  className="shrink-0 text-[#906BAA]"
+                  aria-hidden="true"
+                />
+                <span className="text-[11px] font-medium text-[#766984]">
+                  {readTime}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
-          {/* PUBLISHED DATE */}
-
-          {date && (
-            <div className="flex items-center gap-2.5">
-              <CalendarDays
-                size={16}
-                strokeWidth={1.7}
-                className="shrink-0 text-[#181818]"
-                aria-hidden="true"
-              />
-
-              <span className="text-[11px] font-medium text-[#181818]/75">
-                {date}
-              </span>
-            </div>
-          )}
-
-          {/* OPTIONAL READING TIME */}
-
-          {readTime && (
-            <div className="flex items-center gap-2.5">
-              <Clock3
-                size={16}
-                strokeWidth={1.7}
-                className="shrink-0 text-[#181818]"
-                aria-hidden="true"
-              />
-
-              <span className="text-[11px] font-medium text-[#181818]/75">
-                {readTime}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* ===================================
-            READ ARTICLE CTA
-        =================================== */}
-
-        <div className="mt-auto pt-8">
-
+        {/* Keep the exact existing article-link / unavailable behavior */}
+        <div className="mt-auto pt-7">
           {articleHref ? (
-
             <Link
               href={articleHref}
               aria-label={`Read article: ${title}`}
-              className="group/btn flex min-h-12 w-full items-center justify-between gap-5 border border-[#181818] bg-[#181818] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D8D2C8] transition-colors duration-200 hover:bg-[#33312D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#181818]"
+              className="group/btn flex min-h-[52px] w-full items-center justify-between gap-5 rounded-xl bg-[#75449B] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.11em] text-white shadow-[0_10px_24px_rgba(117,68,155,0.16)] transition-[background-color,box-shadow] duration-300 hover:bg-[#623682] hover:shadow-[0_14px_30px_rgba(117,68,155,0.25)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#75449B]"
             >
-              Read Article
-
+              <span>Read Article</span>
               <ArrowRight
                 size={17}
                 strokeWidth={1.8}
-                className="shrink-0 transition-transform duration-300 group-hover/btn:translate-x-1.5"
+                className="shrink-0 transition-transform duration-300 motion-safe:group-hover/btn:translate-x-1.5"
                 aria-hidden="true"
               />
             </Link>
-
           ) : (
-
-            /* ARTICLE UNAVAILABLE */
-
-            <div className="flex min-h-12 items-center justify-center border border-[#181818]/30 bg-[#181818]/[0.05] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#181818]/60">
+            <div className="flex min-h-[52px] items-center justify-center rounded-xl border border-[#E3D7ED] bg-[#F5F0F9] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.11em] text-[#8D7A9B]">
               Article Unavailable
             </div>
           )}
         </div>
       </div>
 
-      {/* ===================================
-          DECORATIVE BOTTOM HOVER LINE
-      =================================== */}
-
-      <div className="pointer-events-none absolute bottom-0 left-0 h-[3px] w-0 bg-[#181818] transition-all duration-500 group-hover:w-full" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 h-[3px] w-0 bg-[#75449B] transition-[width] duration-500 group-hover:w-full"
+      />
     </motion.article>
   );
 }

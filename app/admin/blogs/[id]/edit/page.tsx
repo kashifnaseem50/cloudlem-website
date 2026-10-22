@@ -1,8 +1,8 @@
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
+  AlertTriangle,
   ArrowLeft,
   BookOpen,
   FileText,
@@ -10,11 +10,10 @@ import {
   Save,
   Send,
   ShieldCheck,
-  AlertTriangle,
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/admin/require-admin";
-
+import BlogMarkdownEditor from "@/app/components/blog/BlogMarkdownEditor";
 import {
   saveBlogChanges,
   publishBlogChanges,
@@ -23,27 +22,27 @@ import {
 export const dynamic = "force-dynamic";
 
 type EditBlogPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-
-  searchParams: Promise<{
-    error?: string | string[];
-  }>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string | string[] }>;
 };
+
+const fieldClass =
+  "w-full rounded-xl border border-[#E4D8EE] bg-[#FCFAFE] px-4 py-3 " +
+  "text-[13px] text-[#30213D] outline-none transition-colors " +
+  "placeholder:text-[#A69AAD] focus:border-[#75449B] " +
+  "focus:ring-4 focus:ring-[#75449B]/10";
+
+const labelClass = "mb-2.5 block text-[12px] font-semibold text-[#41344D]";
 
 export default async function EditBlogPage({
   params,
   searchParams,
 }: EditBlogPageProps) {
-  // Verify administrator permissions.
+  // Keep administrator checks and database access on the server.
   const { supabase } = await requireAdmin();
 
-  // Next.js 16 dynamic route parameters.
   const { id } = await params;
   const query = await searchParams;
-
-  // Validate the blog post ID.
   const uuidPattern =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -51,21 +50,15 @@ export default async function EditBlogPage({
     notFound();
   }
 
-  // Load the existing article from Supabase.
+  // Load the current post; its UUID and public slug must be preserved.
   const { data: post, error: fetchError } = await supabase
     .from("blog_posts")
-    .select(
-      "id, title, slug, excerpt, content, cover_image_url, status, published_at"
-    )
+    .select("id, title, slug, excerpt, content, cover_image_url, status, published_at")
     .eq("id", id)
     .maybeSingle();
 
   if (fetchError) {
-    console.error(
-      "Unable to load article:",
-      fetchError.message
-    );
-
+    console.error("Unable to load article:", fetchError.message);
     throw new Error("Unable to load this blog post.");
   }
 
@@ -73,136 +66,86 @@ export default async function EditBlogPage({
     notFound();
   }
 
-  // Read optional form error.
-  const errorCode = Array.isArray(query.error)
-    ? query.error[0]
-    : query.error;
-
+  const errorCode = Array.isArray(query.error) ? query.error[0] : query.error;
   const errorMessages: Record<string, string> = {
-    invalid:
-      "Please check the title, description, and article content.",
-    image:
-      "Please enter a valid HTTPS cover image URL.",
-    database:
-      "Unable to update the article. Please try again.",
+    invalid: "Please check the title, description, and article content.",
+    image: "Please enter a valid HTTPS cover image URL.",
+    database: "Unable to update the article. Please try again.",
   };
-
-  const errorMessage = errorCode
-    ? errorMessages[errorCode]
-    : null;
-
+  const errorMessage = errorCode ? errorMessages[errorCode] : null;
   const isPublished = post.status === "published";
 
   return (
-    <main className="min-h-screen bg-[#0B0D0C] px-5 pb-24 pt-28 text-[#F3F1EC]">
-      <div className="mx-auto max-w-[1000px]">
-
-        {/* BACK NAVIGATION */}
+    <main className="min-h-screen bg-[#FBF9FE] px-4 pb-24 pt-28 text-[#30213D] sm:px-6 sm:pt-32">
+      <div className="mx-auto max-w-[1050px]">
         <Link
           href="/admin/blogs"
-          className="mb-8 inline-flex items-center gap-2 text-[12px] text-white/55 transition-colors hover:text-white"
+          className="mb-7 inline-flex min-h-10 items-center gap-2 text-[12px] font-medium text-[#75449B] transition-colors hover:text-[#533071]"
         >
-          <ArrowLeft size={15} />
-          Back to Blog Posts
+          <ArrowLeft size={16} aria-hidden="true" /> Back to Blog Posts
         </Link>
 
-        {/* PAGE HEADER */}
-        <div className="mb-8 flex flex-col gap-5 border-b border-white/[0.10] pb-8 sm:flex-row sm:items-end sm:justify-between">
+        <header className="mb-8 flex flex-col justify-between gap-5 border-b border-[#E8DDF1] pb-8 sm:flex-row sm:items-end">
           <div>
-            <div className="mb-3 flex items-center gap-2">
-              <BookOpen
-                size={15}
-                className="text-[#C97A4A]"
-              />
-
-              <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#C97A4A]">
-                Content Management
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#E4D5EF] bg-white px-4 py-2 text-[#75449B]">
+              <BookOpen size={16} aria-hidden="true" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em]">
+                Cloudlem Journal
               </span>
             </div>
-
-            <h1 className="text-[34px] font-semibold tracking-[-0.05em] sm:text-[44px]">
-              Edit Blog Post
+            <h1 className="text-[clamp(2.2rem,4.5vw,3.3rem)] font-semibold leading-tight tracking-[-0.055em]">
+              Edit your <span className="text-[#75449B]">Insight.</span>
             </h1>
-
-            <p className="mt-3 max-w-[560px] text-[13px] leading-6 text-white/55">
-              Update your article, change its content,
-              or manage its publishing status.
+            <p className="mt-3 max-w-[660px] text-[13px] leading-7 text-[#786C82]">
+              Refine your article, preview its formatting, and manage its publishing status.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <ShieldCheck
-              size={15}
-              className="text-[#B5C7A7]"
-            />
-
-            <span className="text-[11px] text-white/55">
+          <div className="flex flex-wrap items-center gap-3 self-start sm:self-end">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium text-[#806890]">
+              <ShieldCheck size={16} className="text-[#75449B]" aria-hidden="true" />
               Administrator Access
             </span>
-
             <span
-              className={`rounded-[4px] border px-3 py-1.5 text-[10px] font-semibold ${
+              className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold ${
                 isPublished
-                  ? "border-green-400/20 bg-green-400/[0.07] text-green-300"
-                  : "border-[#D8B08B]/25 bg-[#D8B08B]/[0.06] text-[#D8B08B]"
+                  ? "border-[#BFE7D0] bg-[#F0FBF5] text-[#23774B]"
+                  : "border-[#E5D5EE] bg-[#F5ECFB] text-[#75449B]"
               }`}
             >
               {isPublished ? "Published" : "Draft"}
             </span>
           </div>
-        </div>
+        </header>
 
-        {/* ERROR MESSAGE */}
         {errorMessage && (
           <div
             role="alert"
-            className="mb-7 rounded-[5px] border border-red-400/25 bg-red-400/[0.07] px-5 py-4 text-[12px] text-red-200"
+            className="mb-7 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-[12px] text-red-700"
           >
             {errorMessage}
           </div>
         )}
 
-        {/* EDIT FORM */}
-        <form className="space-y-6">
+        {/* The existing action functions receive the unchanged FormData keys. */}
+        <form className="space-y-7">
+          <input type="hidden" name="id" value={post.id} />
 
-          {/* Hidden blog ID */}
-          <input
-            type="hidden"
-            name="id"
-            value={post.id}
-          />
-
-          {/* ARTICLE INFORMATION */}
-          <section className="rounded-[6px] border border-white/[0.09] bg-[#171917] p-6 sm:p-8">
-
-            <div className="mb-7 flex items-center gap-3 border-b border-white/[0.08] pb-5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#C97A4A]/25 bg-[#C97A4A]/[0.06] text-[#D8B08B]">
-                <FileText
-                  size={19}
-                  strokeWidth={1.6}
-                />
+          <section className="rounded-[22px] border border-[#E8DDF1] bg-white p-5 shadow-[0_12px_38px_rgba(75,43,105,0.035)] sm:p-8">
+            <div className="mb-7 flex items-center gap-3 border-b border-[#EEE7F4] pb-5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F2EAF9] text-[#75449B]">
+                <FileText size={20} aria-hidden="true" />
               </div>
-
               <div>
-                <h2 className="text-[18px] font-semibold">
-                  Article Information
-                </h2>
-
-                <p className="mt-1 text-[11px] text-white/45">
-                  Update your article details
+                <h2 className="text-[19px] font-semibold">Article Information</h2>
+                <p className="mt-1 text-[11px] text-[#8B7D96]">
+                  Update the title and article summary.
                 </p>
               </div>
             </div>
 
-            {/* TITLE */}
             <div className="mb-6">
-              <label
-                htmlFor="title"
-                className="mb-2 block text-[12px] font-semibold text-white/85"
-              >
-                Article Title *
-              </label>
-
+              <label htmlFor="title" className={labelClass}>Article Title *</label>
               <input
                 id="title"
                 name="title"
@@ -210,191 +153,107 @@ export default async function EditBlogPage({
                 required
                 maxLength={160}
                 defaultValue={post.title}
-                className="h-12 w-full rounded-[4px] border border-white/[0.12] bg-[#0D0F0D] px-4 text-[13px] text-white outline-none transition-colors focus:border-[#C97A4A]"
+                className={`${fieldClass} min-h-12`}
               />
             </div>
 
-            {/* URL SLUG */}
             <div className="mb-6">
-              <label className="mb-2 block text-[12px] font-semibold text-white/85">
-                Article URL
-              </label>
-
-              <div className="rounded-[4px] border border-white/[0.08] bg-[#111311] px-4 py-3">
-                <p className="break-all text-[12px] text-white/55">
-                  /blog/{post.slug}
-                </p>
+              <p className={labelClass}>Existing Article URL</p>
+              <div className="break-all rounded-xl border border-[#EBE2F2] bg-[#F6F0FA] px-4 py-3 text-[12px] text-[#6A527D]">
+                /blog/{post.slug}
               </div>
-
-              <p className="mt-2 text-[10px] leading-5 text-white/40">
-                The URL remains unchanged when you edit the title.
-                This helps preserve existing article links.
+              <p className="mt-2 text-[11px] leading-5 text-[#93869C]">
+                Your URL stays unchanged when the title is edited, protecting existing links.
               </p>
             </div>
 
-            {/* EXCERPT */}
             <div>
-              <label
-                htmlFor="excerpt"
-                className="mb-2 block text-[12px] font-semibold text-white/85"
-              >
-                Short Description
-              </label>
-
+              <label htmlFor="excerpt" className={labelClass}>Short Description</label>
               <textarea
                 id="excerpt"
                 name="excerpt"
-                rows={4}
+                rows={3}
                 maxLength={500}
                 defaultValue={post.excerpt ?? ""}
-                className="w-full resize-y rounded-[4px] border border-white/[0.12] bg-[#0D0F0D] px-4 py-3 text-[13px] leading-6 text-white outline-none transition-colors focus:border-[#C97A4A]"
+                className={`${fieldClass} resize-y leading-6`}
               />
-
-              <p className="mt-2 text-[10px] text-white/40">
-                This summary can appear on your public blog cards.
+              <p className="mt-2 text-[11px] leading-5 text-[#93869C]">
+                This summary may appear on article cards and search previews.
               </p>
             </div>
           </section>
 
-          {/* ARTICLE CONTENT */}
-          <section className="rounded-[6px] border border-white/[0.09] bg-[#171917] p-6 sm:p-8">
-
-            <div className="mb-6">
-              <h2 className="text-[18px] font-semibold">
-                Article Content
-              </h2>
-
-              <p className="mt-2 text-[11px] text-white/45">
-                Edit your article content below.
-              </p>
-            </div>
-
-            <label
-              htmlFor="content"
-              className="mb-2 block text-[12px] font-semibold text-white/85"
-            >
-              Blog Content
-            </label>
-
-            <textarea
-              id="content"
-              name="content"
-              rows={20}
-              maxLength={100000}
-              defaultValue={post.content ?? ""}
-              className="min-h-[380px] w-full resize-y rounded-[4px] border border-white/[0.12] bg-[#0D0F0D] px-4 py-4 font-mono text-[13px] leading-7 text-white outline-none transition-colors focus:border-[#C97A4A]"
-            />
-
-            <p className="mt-3 text-[10px] leading-5 text-white/40">
-              This editor currently uses plain text.
-              Rich-text formatting and image insertion will be
-              added in a future step.
+          <section className="rounded-[22px] border border-[#E8DDF1] bg-white p-5 shadow-[0_12px_38px_rgba(75,43,105,0.035)] sm:p-8">
+            <h2 className="text-[19px] font-semibold">Edit Article Content</h2>
+            <p className="mb-6 mt-2 max-w-[720px] text-[12px] leading-6 text-[#84768E]">
+              Add headings, lists, quotations, links, images, and key takeaways. The Preview
+              tab uses the same renderer as your public article page.
             </p>
+            <BlogMarkdownEditor key={post.id} initialValue={post.content ?? ""} />
           </section>
 
-          {/* COVER IMAGE */}
-          <section className="rounded-[6px] border border-white/[0.09] bg-[#171917] p-6 sm:p-8">
-
+          <section className="rounded-[22px] border border-[#E8DDF1] bg-white p-5 shadow-[0_12px_38px_rgba(75,43,105,0.035)] sm:p-8">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#C97A4A]/25 bg-[#C97A4A]/[0.06] text-[#D8B08B]">
-                <ImageIcon
-                  size={19}
-                  strokeWidth={1.6}
-                />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F2EAF9] text-[#75449B]">
+                <ImageIcon size={20} aria-hidden="true" />
               </div>
-
               <div>
-                <h2 className="text-[18px] font-semibold">
-                  Cover Image
-                </h2>
-
-                <p className="mt-1 text-[11px] text-white/45">
-                  Update the article's featured image
+                <h2 className="text-[19px] font-semibold">Cover Image</h2>
+                <p className="mt-1 text-[11px] text-[#8B7D96]">
+                  Optional featured image for this article.
                 </p>
               </div>
             </div>
-
-            <label
-              htmlFor="cover_image_url"
-              className="mb-2 block text-[12px] font-semibold text-white/85"
-            >
-              Image URL
-            </label>
-
+            <label htmlFor="cover_image_url" className={labelClass}>HTTPS Image URL</label>
             <input
               id="cover_image_url"
               name="cover_image_url"
               type="url"
               defaultValue={post.cover_image_url ?? ""}
-              placeholder="https://example.com/image.jpg"
-              className="h-12 w-full rounded-[4px] border border-white/[0.12] bg-[#0D0F0D] px-4 text-[13px] text-white outline-none transition-colors placeholder:text-white/25 focus:border-[#C97A4A]"
+              placeholder="https://example.com/article-image.jpg"
+              className={`${fieldClass} min-h-12`}
             />
-
-            <p className="mt-3 text-[10px] leading-5 text-white/40">
-              Use an HTTPS image URL. Direct image uploads
-              will be implemented later.
+            <p className="mt-3 text-[11px] leading-5 text-[#93869C]">
+              Direct HTTPS image URLs are supported. Image uploads require a separate storage integration.
             </p>
           </section>
 
-          {/* PUBLISHING */}
-          <section className="rounded-[6px] border border-white/[0.09] bg-[#171917] p-6 sm:p-8">
-
-            <h2 className="text-[18px] font-semibold">
-              Save Your Changes
-            </h2>
-
-            <p className="mt-3 text-[12px] leading-6 text-white/55">
-              Choose whether to keep this article as a
-              draft or publish the updated version.
+          <section className="rounded-[22px] border border-[#E8DDF1] bg-white p-5 shadow-[0_12px_38px_rgba(75,43,105,0.035)] sm:p-8">
+            <h2 className="text-[19px] font-semibold">Save Your Changes</h2>
+            <p className="mt-2 text-[12px] leading-6 text-[#84768E]">
+              Save a private draft or publish your updated article using the existing Supabase workflow.
             </p>
 
-            {/* WARNING FOR PUBLISHED POSTS */}
             {isPublished && (
-              <div className="mt-5 flex items-start gap-3 rounded-[4px] border border-[#D8B08B]/20 bg-[#D8B08B]/[0.05] px-4 py-3">
-                <AlertTriangle
-                  size={16}
-                  className="mt-0.5 shrink-0 text-[#D8B08B]"
-                />
-
-                <p className="text-[11px] leading-5 text-[#D8B08B]">
-                  Saving this article as a draft will unpublish
-                  it. Use Publish Changes to keep it published.
+              <div className="mt-5 flex items-start gap-3 rounded-xl border border-[#E8D2AC] bg-[#FFF8EB] px-4 py-4">
+                <AlertTriangle size={18} className="mt-0.5 shrink-0 text-[#976619]" aria-hidden="true" />
+                <p className="text-[12px] leading-6 text-[#7B541E]">
+                  <strong>Save as Draft</strong> will unpublish this article. Choose
+                  <strong> Publish Changes</strong> to keep it publicly available.
                 </p>
               </div>
             )}
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-
-              {/* SAVE DRAFT */}
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
                 type="submit"
                 formAction={saveBlogChanges}
-                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-[4px] border border-white/[0.16] bg-[#242624] px-6 py-3 text-[11px] font-semibold text-white transition-colors hover:bg-[#303330]"
+                className="inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl border border-[#DCC9E9] bg-[#F4ECFA] px-6 py-3 text-[12px] font-semibold text-[#65417D] transition-colors hover:bg-[#EDE0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75449B]"
               >
-                <Save size={16} />
-
-                {isPublished
-                  ? "Save as Draft (Unpublish)"
-                  : "Save Draft Changes"}
+                <Save size={17} aria-hidden="true" />
+                {isPublished ? "Save as Draft (Unpublish)" : "Save Draft Changes"}
               </button>
-
-              {/* PUBLISH */}
               <button
                 type="submit"
                 formAction={publishBlogChanges}
-                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-[4px] bg-[#D8D2C8] px-7 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[#151515] transition-colors hover:bg-[#F3F1EC]"
+                className="inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl bg-[#75449B] px-7 py-3 text-[12px] font-semibold text-white transition-colors hover:bg-[#623682] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75449B]"
               >
-                <Send size={15} />
-
-                {isPublished
-                  ? "Publish Changes"
-                  : "Publish Article"}
+                <Send size={17} aria-hidden="true" />
+                {isPublished ? "Publish Changes" : "Publish Article"}
               </button>
-
-              {/* CANCEL */}
               <Link
                 href="/admin/blogs"
-                className="inline-flex min-h-12 items-center justify-center px-4 text-[11px] text-white/50 transition-colors hover:text-white sm:ml-auto"
+                className="inline-flex min-h-11 items-center justify-center px-4 text-[12px] text-[#8A7A95] transition-colors hover:text-[#75449B] sm:ml-auto"
               >
                 Cancel
               </Link>
@@ -402,12 +261,9 @@ export default async function EditBlogPage({
           </section>
         </form>
 
-        {/* FOOTER */}
-        <div className="mt-8 border-t border-white/[0.09] pt-5">
-          <p className="text-[10px] text-white/35">
-            Cloudlem Content Management System
-          </p>
-        </div>
+        <p className="mt-8 border-t border-[#EAE0F2] pt-5 text-[11px] text-[#95899D]">
+          Cloudlem Content Management System · Markdown article editor
+        </p>
       </div>
     </main>
   );
