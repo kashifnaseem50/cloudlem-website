@@ -43,6 +43,36 @@ import ServiceInquiryModal from "../../components/services/ServiceInquiryModal";
 
 const SERVICE_TITLE = "Security";
 
+const featuredServices = [
+  {
+    number: "01",
+    title: "DevSecOps & CI/CD Security",
+    description:
+      "Build security into every release with automated code, dependency, secrets, and infrastructure checks across your delivery pipelines.",
+    href: "/services/security/devsecops",
+    icon: GitBranch,
+    details: ["Secure CI/CD workflows", "Automated security gates", "Secrets and supply chain controls"],
+  },
+  {
+    number: "02",
+    title: "Cloud Security & Posture Management",
+    description:
+      "Assess and strengthen AWS, Azure, and Google Cloud environments through identity reviews, configuration hardening, and prioritized remediation.",
+    href: "/services/security/cloud-security",
+    icon: Cloud,
+    details: ["Multi-cloud posture reviews", "IAM and network hardening", "Risk-based remediation"],
+  },
+  {
+    number: "03",
+    title: "Kubernetes & Container Security",
+    description:
+      "Protect Kubernetes platforms and container workloads with secure configuration, image controls, and workload-focused guardrails.",
+    href: "/services/security/kubernetes-security",
+    icon: ShieldCheck,
+    details: ["EKS, AKS and GKE", "Container image scanning", "Cluster and runtime controls"],
+  },
+];
+
 // ORIGINAL CLOUDLEM IMAGES
 
 const images = {
@@ -637,10 +667,10 @@ export default function SecurityPage() {
               </button>
 
               <a
-                href="#capabilities"
+                href="#featured-security-services"
                 className="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[9px] border border-[#D8C7E5] bg-white/80 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B3C8E] transition-colors hover:border-[#A879C4] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96]"
               >
-                Explore Capabilities
+                Explore Security Services
 
                 <ArrowRight
                   size={16}
@@ -778,6 +808,58 @@ export default function SecurityPage() {
 
           </Reveal>
 
+        </div>
+      </section>
+
+      {/* THREE FEATURED SECURITY SERVICES */}
+      <section
+        id="featured-security-services"
+        aria-labelledby="featured-security-heading"
+        className="scroll-mt-24 border-y border-[#EEE4F4] bg-[#FBF8FE] py-20 sm:py-24 lg:py-28"
+      >
+        <div className="container-systems">
+          <SectionHeader
+            id="featured-security-heading"
+            eyebrow="Specialist Security Services"
+            title="Three focused ways"
+            highlight="to reduce risk."
+            description="Explore Cloudlem's dedicated services in secure software delivery, multi-cloud protection, and Kubernetes security. Each engagement is shaped around your environment and priorities."
+          />
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {featuredServices.map((service, index) => {
+              const Icon = service.icon;
+              return (
+                <Reveal key={service.href} delay={index * 0.08} className="h-full">
+                  <Link
+                    href={service.href}
+                    className="group flex h-full flex-col rounded-[22px] border border-[#E5D8EC] bg-white p-7 shadow-[0_18px_45px_rgba(75,38,103,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#BB96D1] hover:shadow-[0_26px_55px_rgba(75,38,103,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#713F96] sm:p-8"
+                  >
+                    <div className="flex items-start justify-between">
+                      <span className={iconStyle}><Icon size={25} strokeWidth={1.7} aria-hidden="true" /></span>
+                      <span className="text-xs font-bold tabular-nums text-[#AF8FC4]">{service.number}</span>
+                    </div>
+                    <h3 className="mt-8 text-[24px] font-semibold leading-tight tracking-[-0.04em] text-[#30213B]">
+                      {service.title}
+                    </h3>
+                    <p className="mt-4 text-[15px] leading-[1.8] text-[#665A70]">{service.description}</p>
+                    <ul className="my-7 space-y-3">
+                      {service.details.map((detail) => (
+                        <li key={detail} className="flex items-start gap-2.5 text-[13px] leading-6 text-[#544761]">
+                          <Check size={16} className="mt-1 shrink-0 text-[#8750A7]" aria-hidden="true" />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                    <span className="mt-auto inline-flex items-center gap-3 border-t border-[#EEE5F4] pt-5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#713F96]">
+                      Explore Service
+                      <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-0.5" aria-hidden="true" />
+                    </span>
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
       </section>
 

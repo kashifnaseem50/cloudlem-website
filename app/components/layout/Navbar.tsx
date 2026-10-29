@@ -71,7 +71,8 @@ type MenuConfig = {
 
 // ==========================================
 // NAVIGATION DATA
-// Links updated to existing routes
+// Service links aligned with existing Next.js routes.
+// Security includes three dedicated service pages.
 // ==========================================
 
 const menus: Record<MenuKey, MenuConfig> = {
@@ -154,9 +155,20 @@ const menus: Record<MenuKey, MenuConfig> = {
         {
           title: "Security",
           href: "/services/security",
-        },
-        {
-          title: "Emerging Technologies",
+          links: [
+            {
+              label: "DevSecOps & CI/CD Security",
+              href: "/services/security/devsecops",
+            },
+            {
+              label: "Cloud Security & Posture Management",
+              href: "/services/security/cloud-security",
+            },
+            {
+              label: "Kubernetes & Container Security",
+              href: "/services/security/kubernetes-security",
+            },
+          ],
         },
         {
           title: "Business Process Services",
@@ -174,12 +186,8 @@ const menus: Record<MenuKey, MenuConfig> = {
               href: "/services/staff-augmentation",
             },
             {
-              label: "Legal Process Outsourcing",
-              href: "/contact",
-            },
-            {
-              label: "Recruitment Process Outsourcing",
-              href: "/contact",
+              label: "Finance & Accounting",
+              href: "/services/finance-accounting",
             },
           ],
         },
@@ -388,6 +396,7 @@ function MegaMenu({
                     <Link
                       href={group.href}
                       onClick={onNavigate}
+                      aria-current={pathname === group.href ? "page" : undefined}
                       className="group inline-flex items-start gap-2 rounded-sm text-[16px] font-semibold leading-6 tracking-[-0.02em] text-[#17252D] hover:text-[#46798B] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#537F93]"
                     >
                       {group.title}
@@ -484,6 +493,9 @@ export default function Navbar() {
 
   const menuButtonRef =
     useRef<HTMLButtonElement>(null);
+
+  const desktopTriggerRefs =
+    useRef<Partial<Record<MenuKey, HTMLButtonElement>>>({});
 
   const [scrolled, setScrolled] =
     useState(false);
@@ -636,6 +648,8 @@ export default function Navbar() {
 
       if (mobileOpen) {
         menuButtonRef.current?.focus();
+      } else if (desktopMenu) {
+        desktopTriggerRefs.current[desktopMenu]?.focus();
       }
 
       closeMenus();
@@ -652,7 +666,26 @@ export default function Navbar() {
         handleEscape
       );
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, desktopMenu]);
+
+  // Switch cleanly between mobile and desktop layouts when resizing.
+  // In particular, release the body scroll lock if a mobile menu was open.
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1280px)");
+
+    const handleViewportChange = () => {
+      setDesktopMenu(null);
+      setMobileMenu(null);
+      setMobileOpen(false);
+      setVisible(true);
+    };
+
+    desktop.addEventListener("change", handleViewportChange);
+
+    return () => {
+      desktop.removeEventListener("change", handleViewportChange);
+    };
+  }, []);
 
   // ========================================
   // CLOSE DESKTOP MENU ON OUTSIDE CLICK
@@ -738,7 +771,7 @@ export default function Navbar() {
           NAVIGATION ROW
       ====================================== */}
 
-      <div className="container-systems relative z-30 flex h-full items-center justify-between gap-4">
+      <div className="container-systems relative z-30 flex h-full items-center justify-between gap-2 sm:gap-4">
 
         {/* ==================================
             CLOUDLEM INFINITY LOGO
@@ -752,7 +785,7 @@ export default function Navbar() {
             setDesktopMenu(null);
           }}
           aria-label="Cloudlem home"
-          className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#E7EFF1]"
+          className="flex min-w-0 shrink items-center gap-1.5 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#E7EFF1] sm:shrink-0 sm:gap-2"
         >
           <Image
             src="/images/bigcloudlemlogo.png"
@@ -760,14 +793,14 @@ export default function Navbar() {
             width={235}
             height={251}
             priority
-            className="h-[43px] w-[55px] shrink-0 object-contain sm:h-[70px] sm:w-[70px]"
+            className="h-[43px] w-[48px] shrink-0 object-contain sm:h-[70px] sm:w-[70px]"
           />
 
           <span className="flex min-w-0 flex-col justify-center">
-            <span className="text-[22px] font-bold leading-[1.05] tracking-[-0.025em] text-white sm:text-[24px]">
+            <span className="text-[19px] font-bold leading-[1.05] tracking-[-0.025em] text-white min-[380px]:text-[22px] sm:text-[24px]">
               Cloudlem
             </span>
-            <span className="mt-1 whitespace-nowrap text-[9px] font-medium leading-[1.15] tracking-[0.012em] text-[#E4E9EB] sm:text-[10px]">
+            <span className="mt-1 whitespace-nowrap text-[8px] font-medium leading-[1.15] tracking-[0.012em] text-[#E4E9EB] min-[380px]:text-[9px] sm:text-[10px]">
               Automate anything anywhere
             </span>
           </span>
@@ -834,14 +867,22 @@ export default function Navbar() {
                 }}
               >
                 <button
+                  ref={(node) => {
+                    if (node) {
+                      desktopTriggerRefs.current[key] = node;
+                    }
+                  }}
                   type="button"
                   aria-haspopup="true"
                   aria-expanded={open}
-                  aria-controls={
-                    open
-                      ? `desktop-${key}-menu`
-                      : undefined
-                  }
+                  aria-controls={open ? `desktop-${key}-menu` : undefined}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      setDesktopMenu(key);
+                      setVisible(true);
+                    }
+                  }}
                   onClick={() => {
                     setDesktopMenu(
                       open ? null : key
@@ -958,7 +999,7 @@ export default function Navbar() {
             setDesktopMenu(null);
             setVisible(true);
           }}
-          className="flex h-11 w-11 items-center justify-center rounded-[7px] border border-white/30 bg-white/10 text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white xl:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[7px] border border-white/30 bg-white/10 text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white xl:hidden"
         >
           {mobileOpen ? (
             <X
@@ -1120,6 +1161,7 @@ export default function Navbar() {
                                   <Link
                                     href={group.href}
                                     onClick={closeMenus}
+                                    aria-current={pathname === group.href ? "page" : undefined}
                                     className="mb-3 flex items-center gap-2 text-[15px] font-semibold text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
                                   >
                                     {group.title}
@@ -1139,7 +1181,7 @@ export default function Navbar() {
                                 {/* CATEGORY LINKS */}
 
                                 {group.links && (
-                                  <ul className="space-y-1">
+                                  <ul className="space-y-1 border-l border-white/15 pl-4">
                                     {group.links.map(
                                       (link) => (
                                         <li
@@ -1148,7 +1190,12 @@ export default function Navbar() {
                                           <Link
                                             href={link.href}
                                             onClick={closeMenus}
-                                            className="flex min-h-10 items-start justify-between gap-3 rounded-sm py-2 text-[13px] leading-6 text-white/75 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC]"
+                                            aria-current={pathname === link.href ? "page" : undefined}
+                                            className={`flex min-h-10 items-start justify-between gap-3 rounded-sm py-2 text-[13px] leading-6 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-[#DDE9EC] ${
+                                              pathname === link.href
+                                                ? "font-semibold text-white"
+                                                : "text-white/75"
+                                            }`}
                                           >
                                             <span className="min-w-0">
                                               {link.label}
